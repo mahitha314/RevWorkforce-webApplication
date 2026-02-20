@@ -1,7 +1,6 @@
 package com.workforce.model;
 
 import java.time.LocalDate;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -40,8 +39,7 @@ public class PerformanceReview {
     @Column(name = "submitted_date")
     private LocalDate submittedDate;
 
-    public PerformanceReview() {
-    }
+    public PerformanceReview() {}
 
     public PerformanceReview(Employee employee, String deliverables, String accomplishments,
                              String areasOfImprovement, int selfRating,
@@ -88,4 +86,5 @@ public class PerformanceReview {
 
     public LocalDate getSubmittedDate() { return submittedDate; }
     public void setSubmittedDate(LocalDate submittedDate) { this.submittedDate = submittedDate; }
+    
 }

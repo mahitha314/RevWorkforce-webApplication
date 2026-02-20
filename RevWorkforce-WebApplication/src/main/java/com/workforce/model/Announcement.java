@@ -29,7 +29,6 @@ public class Announcement {
         this.postedDate = postedDate;
     }
 
-
     public Long getAnnouncementId() { return announcementId; }
     public void setAnnouncementId(Long announcementId) { this.announcementId = announcementId; }
 

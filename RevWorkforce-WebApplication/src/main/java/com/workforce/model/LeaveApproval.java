@@ -1,6 +1,5 @@
 package com.workforce.model;
 
-
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
@@ -30,8 +29,7 @@ public class LeaveApproval {
     @Column(name = "approval_date")
     private LocalDate approvalDate;
 
-    public LeaveApproval() {
-    }
+    public LeaveApproval() {}
 
     public LeaveApproval(LeaveRequest leaveRequest, Employee manager, String status, String comments, LocalDate approvalDate) {
         this.leaveRequest = leaveRequest;
@@ -41,52 +39,22 @@ public class LeaveApproval {
         this.approvalDate = approvalDate;
     }
 
+    public Long getApprovalId(){return approvalId;}
+    public void setApprovalId(Long approvalId){this.approvalId=approvalId;}
 
-    public Long getApprovalId() {
-        return approvalId;
-    }
+    public LeaveRequest getLeaveRequest(){return leaveRequest;}
+    public void setLeaveRequest(LeaveRequest leaveRequest){this.leaveRequest=leaveRequest;}
 
-    public void setApprovalId(Long approvalId) {
-        this.approvalId = approvalId;
-    }
+    public Employee getManager(){return manager;}
+    public void setManager(Employee manager){this.manager=manager;}
 
-    public LeaveRequest getLeaveRequest() {
-        return leaveRequest;
-    }
+    public String getStatus(){return status;}
+    public void setStatus(String status){this.status=status;}
 
-    public void setLeaveRequest(LeaveRequest leaveRequest) {
-        this.leaveRequest = leaveRequest;
-    }
+    public String getComments(){return comments;}
+    public void setComments(String comments){this.comments=comments;}
 
-    public Employee getManager() {
-        return manager;
-    }
-
-    public void setManager(Employee manager) {
-        this.manager = manager;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public LocalDate getApprovalDate() {
-        return approvalDate;
-    }
-
-    public void setApprovalDate(LocalDate approvalDate) {
-        this.approvalDate = approvalDate;
-    }
+    public LocalDate getApprovalDate(){return approvalDate;}
+    public void setApprovalDate(LocalDate approvalDate){this.approvalDate=approvalDate;}
+    
 }

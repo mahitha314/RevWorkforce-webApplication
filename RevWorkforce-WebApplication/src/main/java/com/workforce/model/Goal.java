@@ -1,4 +1,5 @@
 package com.workforce.model;
+
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -26,8 +27,7 @@ public class Goal {
     @Column(name = "deadline")
     private LocalDate deadline;
 
-    public Goal() {
-    }
+    public Goal() {}
 
     public Goal(Employee employee, String goalDescription, String priority,
                 String status, LocalDate deadline) {
@@ -37,7 +37,6 @@ public class Goal {
         this.status = status;
         this.deadline = deadline;
     }
-
 
     public Long getGoalId() { return goalId; }
     public void setGoalId(Long goalId) { this.goalId = goalId; }

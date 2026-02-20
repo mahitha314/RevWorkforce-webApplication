@@ -21,8 +21,7 @@ public class Holiday {
     @Column(name = "description", length = 300)
     private String description;
 
-    public Holiday() {
-    }
+    public Holiday() {}
 
     public Holiday(String holidayName, LocalDate holidayDate, String description) {
         this.holidayName = holidayName;
@@ -30,36 +29,16 @@ public class Holiday {
         this.description = description;
     }
 
+    public Long getHolidayId() { return holidayId; }
+    public void setHolidayId(Long holidayId) { this.holidayId = holidayId; }
 
-    public Long getHolidayId() {
-        return holidayId;
-    }
+    public String getHolidayName() { return holidayName; }
+    public void setHolidayName(String holidayName) { this.holidayName = holidayName; }
 
-    public void setHolidayId(Long holidayId) {
-        this.holidayId = holidayId;
-    }
+    public LocalDate getHolidayDate() { return holidayDate; }
+    public void setHolidayDate(LocalDate holidayDate) { this.holidayDate = holidayDate; }
 
-    public String getHolidayName() {
-        return holidayName;
-    }
-
-    public void setHolidayName(String holidayName) {
-        this.holidayName = holidayName;
-    }
-
-    public LocalDate getHolidayDate() {
-        return holidayDate;
-    }
-
-    public void setHolidayDate(LocalDate holidayDate) {
-        this.holidayDate = holidayDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    
 }

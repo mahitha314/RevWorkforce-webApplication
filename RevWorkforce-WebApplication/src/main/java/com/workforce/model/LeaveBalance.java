@@ -24,11 +24,8 @@ public class LeaveBalance {
 
     @Column(name = "remaining_leaves", nullable = false)
     private int remainingLeaves;
-
    
-    public LeaveBalance() {
-    }
-
+    public LeaveBalance() {}
   
     public LeaveBalance(Employee employee, String leaveType, int totalLeaves, int usedLeaves, int remainingLeaves) {
         this.employee = employee;
@@ -38,52 +35,22 @@ public class LeaveBalance {
         this.remainingLeaves = remainingLeaves;
     }
 
+    public Long getLeaveBalanceId(){return leaveBalanceId;}
+    public void setLeaveBalanceId(Long leaveBalanceId){this.leaveBalanceId=leaveBalanceId;}
 
-    public Long getLeaveBalanceId() {
-        return leaveBalanceId;
-    }
+    public Employee getEmployee(){return employee;}
+    public void setEmployee(Employee employee){this.employee=employee;}
 
-    public void setLeaveBalanceId(Long leaveBalanceId) {
-        this.leaveBalanceId = leaveBalanceId;
-    }
+    public String getLeaveType(){return leaveType;}
+    public void setLeaveType(String leaveType){this.leaveType=leaveType;}
 
-    public Employee getEmployee() {
-        return employee;
-    }
+    public int getTotalLeaves(){return totalLeaves;}
+    public void setTotalLeaves(int totalLeaves){this.totalLeaves=totalLeaves;}
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
+    public int getUsedLeaves(){return usedLeaves;}
+    public void setUsedLeaves(int usedLeaves){this.usedLeaves=usedLeaves;}
 
-    public String getLeaveType() {
-        return leaveType;
-    }
-
-    public void setLeaveType(String leaveType) {
-        this.leaveType = leaveType;
-    }
-
-    public int getTotalLeaves() {
-        return totalLeaves;
-    }
-
-    public void setTotalLeaves(int totalLeaves) {
-        this.totalLeaves = totalLeaves;
-    }
-
-    public int getUsedLeaves() {
-        return usedLeaves;
-    }
-
-    public void setUsedLeaves(int usedLeaves) {
-        this.usedLeaves = usedLeaves;
-    }
-
-    public int getRemainingLeaves() {
-        return remainingLeaves;
-    }
-
-    public void setRemainingLeaves(int remainingLeaves) {
-        this.remainingLeaves = remainingLeaves;
-    }
+    public int getRemainingLeaves(){return remainingLeaves;}
+    public void setRemainingLeaves(int remainingLeaves){this.remainingLeaves=remainingLeaves;}
+    
 }

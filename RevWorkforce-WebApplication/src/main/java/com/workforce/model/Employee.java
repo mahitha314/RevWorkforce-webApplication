@@ -1,4 +1,5 @@
 package com.workforce.model;
+
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -25,13 +26,13 @@ public class Employee {
     @Column(nullable = false)
     private String password;
 
-    @Column
+    @Column(nullable = false, length = 10)
     private String phoneNumber;
 
-    @Column
+    @Column(nullable = false, length = 255)
     private String address;
 
-    @Column
+    @Column(nullable = false, length = 10)
     private String emergencyContact;
 
     @Column(nullable = false)
@@ -40,10 +41,10 @@ public class Employee {
     @Column(nullable = false)
     private boolean active;
 
-    @Column
+    @Column(nullable = false)
     private LocalDate joiningDate;
 
-    @Column
+    @Column(nullable = false)
     private Double salary;
 
     @ManyToOne
@@ -82,7 +83,6 @@ public class Employee {
         this.designation = designation;
         this.manager = manager;
     }
-
     
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
