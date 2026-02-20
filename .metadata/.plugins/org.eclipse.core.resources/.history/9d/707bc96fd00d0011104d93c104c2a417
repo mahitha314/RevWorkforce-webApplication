@@ -1,0 +1,5 @@
+package com.workforce.repository;
+
+public class DesignationRepository {
+
+}

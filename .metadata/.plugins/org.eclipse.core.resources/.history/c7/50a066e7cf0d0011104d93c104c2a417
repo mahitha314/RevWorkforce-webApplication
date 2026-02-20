@@ -1,0 +1,5 @@
+package com.workforce.dto;
+
+public interface NotificationDTO {
+
+}
