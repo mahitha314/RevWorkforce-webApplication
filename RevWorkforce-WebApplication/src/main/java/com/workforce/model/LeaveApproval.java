@@ -22,7 +22,7 @@ public class LeaveApproval {
     private Employee manager;
 
     @Column(name = "status", nullable = false, length = 20)
-    private String status; // Approved / Rejected
+    private String status; 
 
     @Column(name = "comments", length = 500)
     private String comments;

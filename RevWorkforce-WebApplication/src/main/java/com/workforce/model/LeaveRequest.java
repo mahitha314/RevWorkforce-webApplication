@@ -18,13 +18,13 @@ public class LeaveRequest {
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private String leaveType; // Casual, Sick, Paid
+    private String leaveType; 
 
     @Column(nullable = false)
     private String reason;
 
     @Column(nullable = false)
-    private String status; // PENDING / APPROVED / REJECTED / CANCELLED
+    private String status; 
 
     @ManyToOne
     @JoinColumn(name = "employee_id")

@@ -18,10 +18,10 @@ public class Goal {
     private String goalDescription;
 
     @Column(name = "priority", length = 20)
-    private String priority; // High / Medium / Low
+    private String priority; 
 
     @Column(name = "status", length = 30)
-    private String status; // Not Started / In Progress / Completed
+    private String status; 
 
     @Column(name = "deadline")
     private LocalDate deadline;

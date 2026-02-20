@@ -14,7 +14,7 @@ public class LeaveBalance {
     private Employee employee;
 
     @Column(name = "leave_type", nullable = false, length = 50)
-    private String leaveType; // Casual, Sick, Paid
+    private String leaveType; 
 
     @Column(name = "total_leaves", nullable = false)
     private int totalLeaves;
@@ -25,11 +25,11 @@ public class LeaveBalance {
     @Column(name = "remaining_leaves", nullable = false)
     private int remainingLeaves;
 
-    // Default Constructor
+   
     public LeaveBalance() {
     }
 
-    // Parameterized Constructor
+  
     public LeaveBalance(Employee employee, String leaveType, int totalLeaves, int usedLeaves, int remainingLeaves) {
         this.employee = employee;
         this.leaveType = leaveType;
@@ -38,7 +38,6 @@ public class LeaveBalance {
         this.remainingLeaves = remainingLeaves;
     }
 
-    // Getters and Setters
 
     public Long getLeaveBalanceId() {
         return leaveBalanceId;
