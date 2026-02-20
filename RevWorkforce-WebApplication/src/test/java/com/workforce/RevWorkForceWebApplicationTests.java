@@ -1,10 +1,10 @@
-package com.revworkforce.app;
+package com.workforce;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RevWorkforceWebApplicationTests {
+class RevWorkForceWebApplicationTests {
 
 	@Test
 	void contextLoads() {
