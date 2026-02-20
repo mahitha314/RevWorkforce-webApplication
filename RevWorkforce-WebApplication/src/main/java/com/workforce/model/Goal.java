@@ -38,7 +38,7 @@ public class Goal {
         this.deadline = deadline;
     }
 
-    public Long getGoalId() { return goalId; }
+    public Long getGoalId() { return goalId;}
     public void setGoalId(Long goalId) { this.goalId = goalId; }
 
     public Employee getEmployee() { return employee; }
