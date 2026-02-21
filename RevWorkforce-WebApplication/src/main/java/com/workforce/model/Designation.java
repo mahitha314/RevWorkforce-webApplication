@@ -1,28 +1,50 @@
 package com.workforce.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "designations")
 public class Designation {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
+	
+	@Column(nullable=false)
+	private String title;
+	
+	 
+	@OneToMany(mappedBy = "designation", fetch=FetchType.LAZY)
+	private List<Employee> employees;
+	
+	public Designation() {}
+	
+	public Designation(Long id,String title) {
+		this.id=id;
+		this.title=title;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id=id;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title=title;
+	}
 
-    @Column(nullable = false)
-    private String title;
+	public List<Employee> getEmployees() {
+		return employees;
+	}
 
-    public Designation() {}
-
-    public Designation(Long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+	public void setEmployees(List<Employee> employees) {
+		this.employees = employees;
+	}
 }
