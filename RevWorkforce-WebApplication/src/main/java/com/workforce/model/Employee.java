@@ -11,27 +11,41 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "employee_id", unique = true, nullable = false)
     private String employeeId;
+
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
 
+    @Column
     private String phoneNumber;
+
+    @Column
     private String address;
+
+    @Column
     private String emergencyContact;
 
+    @Column(nullable = false)
+    private String role; 
+
+    @Column(nullable = false)
+    private boolean active;
+
+    @Column
     private LocalDate joiningDate;
 
+    @Column
     private Double salary;
-
-    private String role; // EMPLOYEE / MANAGER / ADMIN
-    private String status; // ACTIVE / INACTIVE
-
-    // Self reference for Manager
-    @ManyToOne
-    @JoinColumn(name = "manager_id")
-    private Employee manager;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
@@ -41,13 +55,17 @@ public class Employee {
     @JoinColumn(name = "designation_id")
     private Designation designation;
 
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private Employee manager;
+
     public Employee() {
     }
 
     public Employee(Long id, String employeeId, String firstName, String lastName, String email,
                     String password, String phoneNumber, String address, String emergencyContact,
-                    LocalDate joiningDate, Double salary, String role, String status,
-                    Employee manager, Department department, Designation designation) {
+                    String role, boolean active, LocalDate joiningDate, Double salary,
+                    Department department, Designation designation, Employee manager) {
         this.id = id;
         this.employeeId = employeeId;
         this.firstName = firstName;
@@ -57,17 +75,15 @@ public class Employee {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.emergencyContact = emergencyContact;
+        this.role = role;
+        this.active = active;
         this.joiningDate = joiningDate;
         this.salary = salary;
-        this.role = role;
-        this.status = status;
-        this.manager = manager;
         this.department = department;
         this.designation = designation;
+        this.manager = manager;
     }
-
-    // GETTERS & SETTERS
-
+ 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -95,24 +111,25 @@ public class Employee {
     public String getEmergencyContact() { return emergencyContact; }
     public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
 
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+
     public LocalDate getJoiningDate() { return joiningDate; }
     public void setJoiningDate(LocalDate joiningDate) { this.joiningDate = joiningDate; }
 
     public Double getSalary() { return salary; }
     public void setSalary(Double salary) { this.salary = salary; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public Employee getManager() { return manager; }
-    public void setManager(Employee manager) { this.manager = manager; }
-
     public Department getDepartment() { return department; }
     public void setDepartment(Department department) { this.department = department; }
 
     public Designation getDesignation() { return designation; }
     public void setDesignation(Designation designation) { this.designation = designation; }
+
+    public Employee getManager() { return manager; }
+    public void setManager(Employee manager) { this.manager = manager; }
+    
 }

@@ -20,15 +20,13 @@ public class Announcement {
     @Column(name = "posted_date")
     private LocalDate postedDate;
 
-    public Announcement() {
-    }
+    public Announcement() {}
 
     public Announcement(String title, String message, LocalDate postedDate) {
         this.title = title;
         this.message = message;
         this.postedDate = postedDate;
     }
-
 
     public Long getAnnouncementId() { return announcementId; }
     public void setAnnouncementId(Long announcementId) { this.announcementId = announcementId; }
@@ -41,4 +39,5 @@ public class Announcement {
 
     public LocalDate getPostedDate() { return postedDate; }
     public void setPostedDate(LocalDate postedDate) { this.postedDate = postedDate; }
+    
 }

@@ -1,8 +1,6 @@
 package com.workforce.model;
 
-
 import java.time.LocalDate;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -22,7 +20,7 @@ public class LeaveApproval {
     private Employee manager;
 
     @Column(name = "status", nullable = false, length = 20)
-    private String status; // Approved / Rejected
+    private String status;
 
     @Column(name = "comments", length = 500)
     private String comments;
@@ -30,8 +28,7 @@ public class LeaveApproval {
     @Column(name = "approval_date")
     private LocalDate approvalDate;
 
-    public LeaveApproval() {
-    }
+    public LeaveApproval() {}
 
     public LeaveApproval(LeaveRequest leaveRequest, Employee manager, String status, String comments, LocalDate approvalDate) {
         this.leaveRequest = leaveRequest;
@@ -40,7 +37,6 @@ public class LeaveApproval {
         this.comments = comments;
         this.approvalDate = approvalDate;
     }
-
 
     public Long getApprovalId() {
         return approvalId;
@@ -89,4 +85,5 @@ public class LeaveApproval {
     public void setApprovalDate(LocalDate approvalDate) {
         this.approvalDate = approvalDate;
     }
+    
 }

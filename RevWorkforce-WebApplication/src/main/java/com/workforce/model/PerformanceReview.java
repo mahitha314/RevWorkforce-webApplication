@@ -1,7 +1,6 @@
 package com.workforce.model;
 
 import java.time.LocalDate;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -35,16 +34,14 @@ public class PerformanceReview {
     private String managerFeedback;
 
     @Column(name = "status", length = 30)
-    private String status; // Submitted / Reviewed
+    private String status;
 
     @Column(name = "submitted_date")
     private LocalDate submittedDate;
 
-    // Default Constructor
     public PerformanceReview() {
     }
 
-    // Parameterized Constructor
     public PerformanceReview(Employee employee, String deliverables, String accomplishments,
                              String areasOfImprovement, int selfRating,
                              int managerRating, String managerFeedback,
@@ -60,8 +57,6 @@ public class PerformanceReview {
         this.status = status;
         this.submittedDate = submittedDate;
     }
-
-    // Getters and Setters
 
     public Long getReviewId() { return reviewId; }
     public void setReviewId(Long reviewId) { this.reviewId = reviewId; }
@@ -92,4 +87,5 @@ public class PerformanceReview {
 
     public LocalDate getSubmittedDate() { return submittedDate; }
     public void setSubmittedDate(LocalDate submittedDate) { this.submittedDate = submittedDate; }
+    
 }

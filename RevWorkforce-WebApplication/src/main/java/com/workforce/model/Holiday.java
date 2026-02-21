@@ -21,15 +21,13 @@ public class Holiday {
     @Column(name = "description", length = 300)
     private String description;
 
-    public Holiday() {
-    }
+    public Holiday() {}
 
     public Holiday(String holidayName, LocalDate holidayDate, String description) {
         this.holidayName = holidayName;
         this.holidayDate = holidayDate;
         this.description = description;
     }
-
 
     public Long getHolidayId() {
         return holidayId;
@@ -62,4 +60,5 @@ public class Holiday {
     public void setDescription(String description) {
         this.description = description;
     }
+    
 }

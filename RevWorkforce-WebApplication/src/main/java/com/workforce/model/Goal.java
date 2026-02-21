@@ -18,16 +18,15 @@ public class Goal {
     private String goalDescription;
 
     @Column(name = "priority", length = 20)
-    private String priority; // High / Medium / Low
+    private String priority;
 
     @Column(name = "status", length = 30)
-    private String status; // Not Started / In Progress / Completed
+    private String status;
 
     @Column(name = "deadline")
     private LocalDate deadline;
 
-    public Goal() {
-    }
+    public Goal() {}
 
     public Goal(Employee employee, String goalDescription, String priority,
                 String status, LocalDate deadline) {
@@ -37,7 +36,6 @@ public class Goal {
         this.status = status;
         this.deadline = deadline;
     }
-
 
     public Long getGoalId() { return goalId; }
     public void setGoalId(Long goalId) { this.goalId = goalId; }
@@ -56,4 +54,5 @@ public class Goal {
 
     public LocalDate getDeadline() { return deadline; }
     public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
+    
 }

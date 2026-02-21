@@ -24,8 +24,7 @@ public class Notification {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public Notification() {
-    }
+    public Notification() {}
 
     public Notification(Employee employee, String message, boolean isRead, LocalDateTime createdAt) {
         this.employee = employee;
@@ -48,4 +47,5 @@ public class Notification {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
 }
