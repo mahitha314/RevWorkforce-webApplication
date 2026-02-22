@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>RevWorkForce Admin</title>
+</head>
+
+<body style="margin:0;font-family:Arial;background:#f4f6f9;">
+
+<!-- ================= HEADER ================= -->
+<div style="
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:60px;
+    background:#2c3e50;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+    font-size:18px;
+    z-index:1000;">
+
+    <div style="display:flex;align-items:center;gap:10px;">
+        <b>RevWorkForce HRM</b>
+    </div>
+
+    <div>
+        🔔
+        <span style="margin-left:15px;">
+            Welcome, <b th:text="${adminName}"></b>
+        </span>
+    </div>
+</div>
+
+<!-- ================= SIDEBAR ================= -->
+<div style="
+    position:fixed;
+    top:60px;
+    left:0;
+    bottom:0;
+    width:240px;
+    background:#34495e;
+    padding-top:20px;">
+
+    <a th:href="@{/admin/dashboard}" class="menu">Dashboard</a>
+    <a th:href="@{/admin/profile}" class="menu">My Profile</a>
+    <a th:href="@{/admin/employees}" class="menu">Employee Management</a>
+    <a th:href="@{/admin/leaves}" class="menu">Leave Management</a>
+    <a th:href="@{/admin/performance}" class="menu">Performance Reviews</a>
+    <a th:href="@{/admin/reports}" class="menu">Reports</a>
+    <a th:href="@{/logout}" class="menu">Logout</a>
+
+</div>
+
+<style>
+.menu{
+    color:white;
+    display:block;
+    padding:12px 20px;
+    text-decoration:none;
+}
+.menu:hover{
+    background:#2c3e50;
+}
+</style>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div style="
+    margin-left:240px;
+    margin-top:60px;
+    padding:30px;">
+
+<!-- ================================================= -->
+<!-- ================= DASHBOARD ===================== -->
+<!-- ================================================= -->
+
+<div th:if="${page == 'dashboard'}">
+
+    <h2>Welcome Back, <span th:text="${adminName}"></span> 👋</h2>
+    <p><b>Role:</b> Admin</p>
+    <p><b>Date:</b> <span th:text="${#temporals.format(today,'dd MMMM yyyy')}"></span></p>
+
+    <br>
+
+    <div style="display:flex;gap:25px;flex-wrap:wrap;">
+
+        <div style="background:#3498db;color:white;padding:25px;width:220px;border-radius:10px;">
+            <h4>Total Employees</h4>
+            <h2 th:text="${totalEmployees}"></h2>
+        </div>
+
+        <div style="background:#2ecc71;color:white;padding:25px;width:220px;border-radius:10px;">
+            <h4>Active Employees</h4>
+            <h2 th:text="${activeEmployees}"></h2>
+        </div>
+
+        <div style="background:#e74c3c;color:white;padding:25px;width:220px;border-radius:10px;">
+            <h4>Inactive Employees</h4>
+            <h2 th:text="${inactiveEmployees}"></h2>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================================================= -->
+<!-- ================= EMPLOYEE LIST ================= -->
+<!-- ================================================= -->
+
+<div th:if="${page == 'employeeList'}">
+
+    <h2>Employee Management</h2>
+
+    <table border="1" width="100%" cellpadding="8"
+           style="border-collapse:collapse;text-align:center;background:white;">
+
+        <tr style="background:#ecf0f1;">
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+
+        <tr th:each="emp : ${employees}">
+
+            <td th:text="${emp.firstName + ' ' + emp.lastName}"></td>
+            <td th:text="${emp.email}"></td>
+
+            <td>
+                <span th:if="${emp.active}" style="color:green;font-weight:bold;">Active</span>
+                <span th:unless="${emp.active}" style="color:red;font-weight:bold;">Inactive</span>
+            </td>
+
+            <td>
+
+                <a th:if="${emp.active}"
+                   th:href="@{/admin/employees/deactivate/{id}(id=${emp.id})}">
+                    <button style="background:red;color:white;border:none;padding:5px 10px;">
+                        Deactivate
+                    </button>
+                </a>
+
+                <a th:unless="${emp.active}"
+                   th:href="@{/admin/employees/activate/{id}(id=${emp.id})}">
+                    <button style="background:green;color:white;border:none;padding:5px 10px;">
+                        Activate
+                    </button>
+                </a>
+
+                <a th:href="@{/admin/employees/delete/{id}(id=${emp.id})}">
+                    <button style="background:black;color:white;border:none;padding:5px 10px;">
+                        Delete
+                    </button>
+                </a>
+
+            </td>
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- ================================================= -->
+<!-- ================= LEAVE MANAGEMENT ============== -->
+<!-- ================================================= -->
+
+<div th:if="${page == 'leaveManagement'}">
+
+    <h2>Leave Management</h2>
+
+    <div style="margin-bottom:20px;">
+        <a th:href="@{/admin/leaves/calendar}">
+            <button>Holiday Calendar</button>
+        </a>
+        <a th:href="@{/admin/leaves/history}">
+            <button>Employee History</button>
+        </a>
+        <a th:href="@{/admin/leaves/balance}">
+            <button>Leave Balance</button>
+        </a>
+    </div>
+
+    <div style="display:flex;gap:25px;flex-wrap:wrap;margin-bottom:30px;">
+
+        <div style="background:#f39c12;color:white;padding:20px;width:200px;border-radius:10px;">
+            <h4>Pending</h4>
+            <h2 th:text="${pendingCount}"></h2>
+        </div>
+
+        <div style="background:#27ae60;color:white;padding:20px;width:200px;border-radius:10px;">
+            <h4>Approved</h4>
+            <h2 th:text="${approvedCount}"></h2>
+        </div>
+
+        <div style="background:#e74c3c;color:white;padding:20px;width:200px;border-radius:10px;">
+            <h4>Rejected</h4>
+            <h2 th:text="${rejectedCount}"></h2>
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+</body>
+</html>

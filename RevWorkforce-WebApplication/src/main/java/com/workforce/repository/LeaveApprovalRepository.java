@@ -1,5 +1,7 @@
 package com.workforce.repository;
 
-public interface LeaveApprovalRepository {
+import com.workforce.model.LeaveApproval;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+public interface LeaveApprovalRepository extends JpaRepository<LeaveApproval, Long> {
 }

@@ -1,5 +1,7 @@
 package com.workforce.repository;
 
-public interface HolidayRepository {
+import com.workforce.model.Holiday;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+public interface HolidayRepository extends JpaRepository<Holiday, Long> {
 }

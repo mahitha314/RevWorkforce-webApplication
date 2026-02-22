@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>System Configuration</title>
+</head>
+<body>
+
+<h2>Departments & Designations</h2>
+
+<!-- ===================== -->
+<!-- ADD DEPARTMENT FORM  -->
+<!-- ===================== -->
+
+<h3>Add Department</h3>
+<form th:action="@{/admin/system-config/department/add}" method="post">
+    <input type="text" name="name" placeholder="Department Name" required>
+    <button type="submit">Add Department</button>
+</form>
+
+<br>
+
+<!-- Department List -->
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Department Name</th>
+    </tr>
+    <tr th:each="dept : ${departments}">
+        <td th:text="${dept.id}"></td>
+        <td th:text="${dept.name}"></td>
+    </tr>
+</table>
+
+<hr>
+
+<!-- ======================= -->
+<!-- ADD DESIGNATION FORM    -->
+<!-- ======================= -->
+
+<h3>Add Designation</h3>
+<form th:action="@{/admin/system-config/designation/add}" method="post">
+    <input type="text" name="title" placeholder="Designation Title" required>
+    <button type="submit">Add Designation</button>
+</form>
+
+<br>
+
+<!-- Designation List -->
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Designation Title</th>
+    </tr>
+    <tr th:each="des : ${designations}">
+        <td th:text="${des.id}"></td>
+        <td th:text="${des.title}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

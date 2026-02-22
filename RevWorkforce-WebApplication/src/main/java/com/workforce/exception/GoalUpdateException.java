@@ -1,5 +1,10 @@
 package com.workforce.exception;
 
-public class GoalUpdateException {
+public class GoalUpdateException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
+    public GoalUpdateException(String message) {
+        super(message);
+    }
 }

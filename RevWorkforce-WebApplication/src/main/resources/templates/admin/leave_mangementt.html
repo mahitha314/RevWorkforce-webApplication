@@ -1,0 +1,127 @@
+<div th:fragment="content">
+
+<h2>Employee Management</h2>
+
+<!-- ADD BUTTON -->
+<a th:href="@{/admin/employees}">
+    <button style="padding:8px 15px;background:#2563eb;color:white;border:none;border-radius:5px;">
+        + Add New Employee
+    </button>
+</a>
+
+<br><br>
+
+<!-- ADD / EDIT FORM -->
+<form th:action="@{/admin/employees/create}" method="post">
+
+    <label>Employee ID:</label>
+    <input type="text" name="employeeId" required>
+
+    <label>First Name:</label>
+    <input type="text" name="firstName" required>
+
+    <label>Last Name:</label>
+    <input type="text" name="lastName" required>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+
+    <label>Department:</label>
+    <select name="departmentId" required>
+        <option value="">-- Select Department --</option>
+        <option th:each="dept : ${departments}"
+                th:value="${dept.id}"
+                th:text="${dept.name}">
+        </option>
+    </select>
+
+    <label>Designation:</label>
+    <select name="designationId" required>
+        <option value="">-- Select Designation --</option>
+        <option th:each="des : ${designations}"
+                th:value="${des.id}"
+                th:text="${des.title}">
+        </option>
+    </select>
+
+    <label>Joining Date:</label>
+    <input type="date" name="joiningDate" required>
+
+    <button type="submit"
+            style="background:#16a34a;color:white;padding:8px 15px;border:none;border-radius:5px;">
+        Save
+    </button>
+
+</form>
+
+<hr>
+
+<!-- EMPLOYEE TABLE -->
+<table style="width:100%;border-collapse:collapse;margin-top:20px;">
+
+<tr style="background:#f3f4f6;">
+    <th>Emp ID</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Department</th>
+    <th>Designation</th>
+    <th>Status</th>
+    <th>Actions</th>
+</tr>
+
+<tr th:each="emp : ${employees}">
+    <td th:text="${emp.employeeId}"></td>
+    <td th:text="${emp.firstName + ' ' + emp.lastName}"></td>
+    <td th:text="${emp.email}"></td>
+    <td th:text="${emp.department != null ? emp.department.name : ''}"></td>
+    <td th:text="${emp.designation != null ? emp.designation.title : ''}"></td>
+
+    <!-- STATUS COLOR -->
+    <td>
+        <span th:if="${emp.status == 'ACTIVE'}"
+              style="color:green;font-weight:bold;">
+            ACTIVE
+        </span>
+
+        <span th:if="${emp.status == 'INACTIVE'}"
+              style="color:red;font-weight:bold;">
+            INACTIVE
+        </span>
+    </td>
+
+    <!-- ACTIONS -->
+    <td>
+
+        <!-- EDIT -->
+        <a th:href="@{/admin/employees/edit/{id}(id=${emp.id})}"
+           style="color:#2563eb;">Edit</a>
+
+        |
+
+        <!-- ACTIVATE / DEACTIVATE -->
+        <a th:if="${emp.status == 'ACTIVE'}"
+           th:href="@{/admin/employees/deactivate/{id}(id=${emp.id})}"
+           style="color:red;">
+           Deactivate
+        </a>
+
+        <a th:if="${emp.status == 'INACTIVE'}"
+           th:href="@{/admin/employees/activate/{id}(id=${emp.id})}"
+           style="color:green;">
+           Activate
+        </a>
+
+        |
+
+        <!-- DELETE -->
+        <a th:href="@{/admin/employees/delete/{id}(id=${emp.id})}"
+           style="color:#dc2626;">
+           Delete
+        </a>
+
+    </td>
+</tr>
+
+</table>
+
+</div>

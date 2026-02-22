@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Apply Leave</title>
+</head>
+<body style="font-family:Arial;margin:40px;">
+
+<h2>Apply Leave</h2>
+
+<form th:action="@{/admin/leaves/apply}" method="post">
+
+    Employee ID:<br>
+    <input type="number" name="employeeId" required><br><br>
+
+    Leave Type:<br>
+    <select name="leaveType" required>
+        <option value="">Select</option>
+        <option value="Casual">Casual</option>
+        <option value="Sick">Sick</option>
+        <option value="Earned">Earned</option>
+    </select><br><br>
+
+    From Date:<br>
+    <input type="date" name="startDate" required><br><br>
+
+    To Date:<br>
+    <input type="date" name="endDate" required><br><br>
+	Reason:<br>
+	<textarea name="reason" required></textarea><br><br>
+
+    <button type="submit"
+            style="background:green;color:white;padding:8px 15px;border:none;">
+        Submit Leave
+    </button>
+
+</form>
+
+</body>
+</html>
