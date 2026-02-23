@@ -1,5 +1,10 @@
 package com.workforce.exception;
 
-public class NotificationException {
+public class NotificationException extends RuntimeException {
+	
+	private static final long serialVersionUID = 1L;
 
+	public NotificationException(String message) {
+		super(message);
+	}
 }

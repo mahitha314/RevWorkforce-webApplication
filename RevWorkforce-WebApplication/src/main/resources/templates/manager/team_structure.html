@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Team Structure</title>
+</head>
+
+<body>
+
+	<h2>Team Members</h2>
+
+	<table border="1">
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Designation</th>
+		</tr>
+
+		<tr th:each="emp : ${team}">
+			<td th:text="${emp.firstName} + ' ' + ${emp.lastName}"></td>
+			<td th:text="${emp.email}"></td>
+			<td th:text="${emp.designation.title}"></td>
+		</tr>
+
+	</table>
+
+</body>
+
+</html>

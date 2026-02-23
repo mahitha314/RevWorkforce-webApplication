@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Performance Reviews</title>
+</head>
+
+<body>
+
+	<h2>Performance Reviews</h2>
+
+	<table border="1">
+		<tr>
+			<th>Employee</th>
+			<th>Self Rating</th>
+			<th>Status</th>
+			<th>Action</th>
+		</tr>
+
+		<tr th:each="review : ${reviews}">
+			<td th:text="${review.employeeName}"></td>
+			<td th:text="${review.selfRating}"></td>
+			<td th:text="${review.status}"></td>
+
+			<td>
+				<form th:action="@{/manager/performance-reviews/submit}" method="post">
+					<input type="hidden" name="reviewId" th:value="${review.reviewId}" />
+
+					Rating:
+					<input type="number" name="rating" min="1" max="5" required />
+
+					Feedback:
+					<input type="text" name="feedback" required />
+
+					<button type="submit">Submit</button>
+				</form>
+			</td>
+		</tr>
+
+	</table>
+
+</body>
+
+</html>

@@ -1,5 +1,16 @@
 package com.workforce.repository;
 
-public interface PerformanceReviewRepository {
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.workforce.model.PerformanceReview;
+
+@Repository
+public interface PerformanceReviewRepository 
+        extends JpaRepository<PerformanceReview, Long> {
+
+    List<PerformanceReview> findByEmployee_Manager_Id(Long managerId);
 
 }
