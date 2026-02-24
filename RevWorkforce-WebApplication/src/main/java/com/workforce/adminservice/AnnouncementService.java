@@ -17,51 +17,28 @@ public class AnnouncementService {
     public AnnouncementService(AnnouncementRepository announcementRepository) {
         this.announcementRepository = announcementRepository;
     }
-    public Announcement createAnnouncement(Announcement announcement) {
 
-        if (announcement.getTitle() == null || announcement.getTitle().isBlank()) {
-            throw new RuntimeException("Title cannot be empty");
-        }
+    public List<Announcement> getAllAnnouncements() {
+        return announcementRepository.findAll();
+    }
 
-        if (announcement.getMessage() == null || announcement.getMessage().isBlank()) {
-            throw new RuntimeException("Message cannot be empty");
-        }
+    public Announcement addAnnouncement(Announcement announcement) {
 
         announcement.setPostedDate(LocalDate.now());
 
         return announcementRepository.save(announcement);
     }
-    public List<Announcement> getAllAnnouncements() {
-        return announcementRepository.findAll();
-    }
+
     public Announcement getAnnouncementById(Long id) {
         return announcementRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Announcement not found with ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Announcement not found"));
     }
-    public Announcement updateAnnouncement(Long id, Announcement updatedAnnouncement) {
 
-        Announcement existing = getAnnouncementById(id);
-
-        if (updatedAnnouncement.getTitle() == null || updatedAnnouncement.getTitle().isBlank()) {
-            throw new RuntimeException("Title cannot be empty");
-        }
-
-        if (updatedAnnouncement.getMessage() == null || updatedAnnouncement.getMessage().isBlank()) {
-            throw new RuntimeException("Message cannot be empty");
-        }
-
-        existing.setTitle(updatedAnnouncement.getTitle());
-        existing.setMessage(updatedAnnouncement.getMessage());
-
-        return announcementRepository.save(existing);
+    public Announcement updateAnnouncement(Announcement announcement) {
+        return announcementRepository.save(announcement);
     }
+
     public void deleteAnnouncement(Long id) {
-
-        if (!announcementRepository.existsById(id)) {
-            throw new RuntimeException("Announcement not found with ID: " + id);
-        }
-
         announcementRepository.deleteById(id);
     }
 }

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Announcements</title>
+
+<style>
+
+/* Page Background */
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:30px;
+}
+
+/* Page Title */
+h2{
+    text-align:center;
+    color:#2c3e50;
+    margin-bottom:30px;
+}
+
+/* Card Box */
+.card{
+    background:white;
+    padding:25px;
+    border-radius:8px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    margin-bottom:30px;
+}
+
+/* Form Inputs */
+input[type="text"],
+input[type="date"],
+textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+/* Buttons */
+.btn{
+    padding:8px 14px;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.btn-add{
+    background:#3498db;
+    color:white;
+}
+
+.btn-edit{
+    background:#f39c12;
+    color:white;
+}
+
+.btn-delete{
+    background:#e74c3c;
+    color:white;
+}
+
+
+/* Table */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#2c3e50;
+    color:white;
+    padding:10px;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+    background:#f1f1f1;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📢 Announcements</h2>
+
+<div class="card">
+
+<form th:action="@{/admin/announcements/add}"
+      th:object="${announcement}"
+      method="post">
+
+<label>Title</label>
+<input type="text" th:field="*{title}" required>
+
+<label>Message</label>
+<textarea rows="4" th:field="*{message}" required></textarea>
+
+<label>Date</label>
+<input type="date" th:field="*{postedDate}">
+
+<button type="submit" class="btn btn-add">Add Announcement</button>
+
+</form>
+
+</div>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Date</th>
+<th>Description</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr th:each="a : ${announcements}">
+<td th:text="${a.title}"></td>
+<td th:text="${a.postedDate}"></td>
+<td th:text="${a.message}"></td>
+<td>
+<a th:href="@{/admin/announcements/edit/{id}(id=${a.announcementId})}">
+<button class="btn btn-edit">Edit</button>
+</a>
+<a th:href="@{/admin/announcements/delete/{id}(id=${a.announcementId})}">
+<button class="btn btn-delete">Delete</button>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div> <!-- container end -->
+
+</body>
+</html>

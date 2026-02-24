@@ -15,44 +15,48 @@ public class AnnouncementsController {
     public AnnouncementsController(AnnouncementService announcementService) {
         this.announcementService = announcementService;
     }
+
     @GetMapping
-    public String showAnnouncementsPage(Model model) {
+    public String viewAnnouncements(Model model) {
+    	
 
         model.addAttribute("announcements",
                 announcementService.getAllAnnouncements());
 
-        model.addAttribute("announcement",
-                new Announcement());
+        model.addAttribute("announcement", new Announcement());
 
-        return "admin/announcements";  // templates/admin/announcements.html
+        return "admin/announcements";
     }
-    @PostMapping("/create")
-    public String createAnnouncement(@ModelAttribute Announcement announcement) {
 
-        announcementService.createAnnouncement(announcement);
+    @PostMapping("/add")
+    public String addAnnouncement(@ModelAttribute Announcement announcement) {
+
+        announcementService.addAnnouncement(announcement);
 
         return "redirect:/admin/announcements";
     }
+
     @GetMapping("/edit/{id}")
-    public String editAnnouncement(@PathVariable Long id, Model model) {
+    public String editAnnouncement(@PathVariable Long id,
+                                   Model model) {
 
-        Announcement announcement =
-                announcementService.getAnnouncementById(id);
+        model.addAttribute("announcement",
+                announcementService.getAnnouncementById(id));
 
-        model.addAttribute("announcement", announcement);
         model.addAttribute("announcements",
                 announcementService.getAllAnnouncements());
 
         return "admin/announcements";
     }
-    @PostMapping("/update/{id}")
-    public String updateAnnouncement(@PathVariable Long id,
-                                     @ModelAttribute Announcement announcement) {
 
-        announcementService.updateAnnouncement(id, announcement);
+    @PostMapping("/update")
+    public String updateAnnouncement(@ModelAttribute Announcement announcement) {
+
+        announcementService.updateAnnouncement(announcement);
 
         return "redirect:/admin/announcements";
     }
+
     @GetMapping("/delete/{id}")
     public String deleteAnnouncement(@PathVariable Long id) {
 

@@ -23,7 +23,7 @@ public class PerformanceService {
         this.employeeRepository = employeeRepository;
     }
 
-    // ✅ Create Draft Review
+    
     public PerformanceReviewDTO createReview(Long employeeId, PerformanceReviewDTO dto) {
 
         Employee employee = employeeRepository.findById(employeeId)
@@ -46,7 +46,7 @@ public class PerformanceService {
         return mapToDTO(saved);
     }
 
-    // ✅ Submit Review
+    
     public PerformanceReviewDTO submitReview(Long reviewId) {
 
         PerformanceReview review = reviewRepository.findById(reviewId)
@@ -64,7 +64,7 @@ public class PerformanceService {
         return mapToDTO(updated);
     }
 
-    // ✅ Get Employee Reviews
+   
     public List<PerformanceReviewDTO> getEmployeeReviews(Long employeeId) {
 
         employeeRepository.findById(employeeId)
@@ -76,7 +76,7 @@ public class PerformanceService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ View Feedback
+   
     public PerformanceReviewDTO viewFeedback(Long reviewId) {
 
         PerformanceReview review = reviewRepository.findById(reviewId)
@@ -85,7 +85,7 @@ public class PerformanceService {
         return mapToDTO(review);
     }
 
-    // 🔹 Common Mapper Method
+    
     private PerformanceReviewDTO mapToDTO(PerformanceReview review) {
 
         PerformanceReviewDTO dto = new PerformanceReviewDTO();

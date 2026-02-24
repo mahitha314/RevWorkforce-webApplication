@@ -1,207 +1,656 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>RevWorkForce Admin</title>
-</head>
+	<!-- FullCalendar CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 
-<body style="margin:0;font-family:Arial;background:#f4f6f9;">
-
-<!-- ================= HEADER ================= -->
-<div style="
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    height:60px;
-    background:#2c3e50;
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 25px;
-    font-size:18px;
-    z-index:1000;">
-
-    <div style="display:flex;align-items:center;gap:10px;">
-        <b>RevWorkForce HRM</b>
-    </div>
-
-    <div>
-        🔔
-        <span style="margin-left:15px;">
-            Welcome, <b th:text="${adminName}"></b>
-        </span>
-    </div>
-</div>
-
-<!-- ================= SIDEBAR ================= -->
-<div style="
-    position:fixed;
-    top:60px;
-    left:0;
-    bottom:0;
-    width:240px;
-    background:#34495e;
-    padding-top:20px;">
-
-    <a th:href="@{/admin/dashboard}" class="menu">Dashboard</a>
-    <a th:href="@{/admin/profile}" class="menu">My Profile</a>
-    <a th:href="@{/admin/employees}" class="menu">Employee Management</a>
-    <a th:href="@{/admin/leaves}" class="menu">Leave Management</a>
-    <a th:href="@{/admin/performance}" class="menu">Performance Reviews</a>
-    <a th:href="@{/admin/reports}" class="menu">Reports</a>
-    <a th:href="@{/logout}" class="menu">Logout</a>
-
-</div>
+	<!-- FullCalendar JS -->
+	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<title>RevWorkForce Admin</title>
 
 <style>
-.menu{
-    color:white;
-    display:block;
-    padding:12px 20px;
-    text-decoration:none;
+body{margin:0;font-family:Segoe UI;background:#f4f6f9;}
+.header{position:fixed;top:0;left:0;right:0;height:60px;background:#2c3e50;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 25px;}
+.sidebar{position:fixed;top:60px;left:0;bottom:0;width:230px;background:#34495e;padding-top:20px;}
+.menu{display:block;color:white;padding:12px 20px;text-decoration:none;}
+.menu:hover{background:#2c3e50;}
+.main{margin-left:230px;margin-top:60px;padding:30px;}
+.card{background:white;padding:30px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+.center{display:flex;justify-content:center;align-items:center;height:70vh;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:#2c3e50;color:white;padding:8px;}
+td{padding:6px;border-bottom:1px solid #eee;}
+tr:hover{background:#f2f2f2;}
+.btn{padding:5px 10px;border:none;border-radius:4px;color:white;cursor:pointer;font-size:12px;}
+.add{background:#3498db;}
+.edit{background:#f39c12;}
+.activate{background:#27ae60;}
+.deactivate{background:#e74c3c;}
+.delete{background:#2c3e50;}
+.btn.edit{background:#3498db; color:white;border:none;padding:6px 12px; border-radius:4px; font-weight:600;}
+.btn-edit:hover{
+	background:#2980b9;
 }
-.menu:hover{
-    background:#2c3e50;
-}
+.form-box{max-width:600px;margin:auto;background:white;padding:25px;border-radius:10px;box-shadow:0 2px 15px rgba(0,0,0,0.1);}
+label{display:block;margin-top:10px;font-weight:600;}
+input,select{width:100%;padding:7px;margin-top:3px;border:1px solid #ccc;border-radius:4px;}
 </style>
+</head>
 
-<!-- ================= MAIN CONTENT ================= -->
-<div style="
-    margin-left:240px;
-    margin-top:60px;
-    padding:30px;">
+<body>
 
-<!-- ================================================= -->
-<!-- ================= DASHBOARD ===================== -->
-<!-- ================================================= -->
-
-<div th:if="${page == 'dashboard'}">
-
-    <h2>Welcome Back, <span th:text="${adminName}"></span> 👋</h2>
-    <p><b>Role:</b> Admin</p>
-    <p><b>Date:</b> <span th:text="${#temporals.format(today,'dd MMMM yyyy')}"></span></p>
-
-    <br>
-
-    <div style="display:flex;gap:25px;flex-wrap:wrap;">
-
-        <div style="background:#3498db;color:white;padding:25px;width:220px;border-radius:10px;">
-            <h4>Total Employees</h4>
-            <h2 th:text="${totalEmployees}"></h2>
-        </div>
-
-        <div style="background:#2ecc71;color:white;padding:25px;width:220px;border-radius:10px;">
-            <h4>Active Employees</h4>
-            <h2 th:text="${activeEmployees}"></h2>
-        </div>
-
-        <div style="background:#e74c3c;color:white;padding:25px;width:220px;border-radius:10px;">
-            <h4>Inactive Employees</h4>
-            <h2 th:text="${inactiveEmployees}"></h2>
-        </div>
-
-    </div>
-
+<div class="header">
+<b>RevWorkForce HRM</b>
+<div>Welcome, <b th:text="${adminName}"></b></div>
 </div>
 
-<!-- ================================================= -->
-<!-- ================= EMPLOYEE LIST ================= -->
-<!-- ================================================= -->
+<div class="sidebar">
+<a th:href="@{/admin/dashboard}" class="menu">Dashboard</a>
+<a th:href="@{/admin/profile}" class="menu">My Profile</a>
+<a th:href="@{/admin/employees}" class="menu">Employee Management</a>
+<a th:href="@{/admin/leaves}" class="menu">Leave Management</a>
+<a th:href="@{/admin/leaves/calendar}" class="menu">Holiday Calendar</a>
+<a th:href="@{/admin/leaves/performance}" class="menu">Performance Reviews</a>
+<a th:href="@{/admin/leaves/team-goals}" class="menu">Team Goals Management</a>
+<a th:href="@{/admin/announcements}" class="menu">Announcements</a>
+<a th:href="@{/admin/leaves/departments}" class="menu">Departments & Designations</a>
+<a th:href="@{/admin/leaves/reports}" class="menu">Reports</a>
+<a th:href="@{/admin/leaves/activity-logs}" class="menu">System Activity Logs </a>
+<a th:href="@{/admin/leaves/notifications}" class="menu">Notifications</a>
+<a th:href="@{/logout}" class="menu">Logout</a>
+</div>
+
+<div class="main">
+
+<div th:if="${page == 'dashboard'}" class="center">
+<div class="card" style="text-align:center;width:400px;">
+<h1>Welcome, <span th:text="${adminName}"></span> 👋</h1>
+<hr>
+<p>Total Employees: <b th:text="${totalEmployees}"></b></p>
+<p style="color:green;">Active: <b th:text="${activeEmployees}"></b></p>
+<p style="color:red;">Inactive: <b th:text="${inactiveEmployees}"></b></p>
+</div>
+</div>
+
+
+<div th:if="${page == 'profile'}" class="center">
+<div class="card" style="width:450px;">
+<h2 style="text-align:center;">My Profile</h2>
+<hr>
+<p><b>Name:</b> <span th:text="${admin.firstName + ' ' + admin.lastName}"></span></p>
+<p><b>Email:</b> <span th:text="${admin.email}"></span></p>
+<p><b>Phone:</b> <span th:text="${admin.phoneNumber}"></span></p>
+<p><b>Role:</b> <span style="color:#3498db;font-weight:bold;" th:text="${admin.role}"></span></p>
+</div>
+</div>
+
 
 <div th:if="${page == 'employeeList'}">
+<h2>Employee Management</h2>
+<a th:href="@{/admin/employees/add}">
+<button class="btn add">+ Add Employee</button>
+</a>
+<br><br>
 
-    <h2>Employee Management</h2>
+<div style="overflow-x:auto;">
+<table>
+<thead>
+<tr>
+<th>Emp ID</th>
+<th>First</th>
+<th>Last</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Address</th>
+<th>Emergency</th>
+<th>Role</th>
+<th>Joining</th>
+<th>Salary</th>
+<th>Department</th>
+<th>Designation</th>
+<th>Manager</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="emp : ${employees}">
+<td th:text="${emp.employeeId}"></td>
+<td th:text="${emp.firstName}"></td>
+<td th:text="${emp.lastName}"></td>
+<td th:text="${emp.email}"></td>
+<td th:text="${emp.phoneNumber}"></td>
+<td th:text="${emp.address}"></td>
+<td th:text="${emp.emergencyContact}"></td>
+<td th:text="${emp.role}"></td>
+<td th:text="${emp.joiningDate}"></td>
+<td th:text="${emp.salary}"></td>
+<td th:text="${emp.department != null ? emp.department.name : '-'}"></td>
+<td th:text="${emp.designation != null ? emp.designation.title : '-'}"></td>
+<td th:text="${emp.manager != null ? emp.manager.firstName : '-'}"></td>
+<td>
 
-    <table border="1" width="100%" cellpadding="8"
-           style="border-collapse:collapse;text-align:center;background:white;">
+    
+    <span th:text="${emp.active ? 'Active' : 'Inactive'}"
+          th:style="${emp.active} ? 'color:green;font-weight:bold;' : 'color:red;font-weight:bold;'">
+    </span>
 
-        <tr style="background:#ecf0f1;">
-            <th>Name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
+    <br><br>
 
-        <tr th:each="emp : ${employees}">
+    
+    <a th:if="${emp.active}"
+       th:href="@{/admin/employees/deactivate/{id}(id=${emp.id})}">
+        <button type="button" class="btn delete">
+            Deactivate
+        </button>
+    </a>
 
-            <td th:text="${emp.firstName + ' ' + emp.lastName}"></td>
-            <td th:text="${emp.email}"></td>
+    
+    <a th:if="${!emp.active}"
+       th:href="@{/admin/employees/activate/{id}(id=${emp.id})}">
+        <button type="button" class="btn edit">
+            Activate
+        </button>
+    </a>
 
-            <td>
-                <span th:if="${emp.active}" style="color:green;font-weight:bold;">Active</span>
-                <span th:unless="${emp.active}" style="color:red;font-weight:bold;">Inactive</span>
-            </td>
+</td>
+<td>
+<a th:href="@{/admin/employees/edit/{id}(id=${emp.id})}">
+<button class="btn edit">Edit</button>
+</a>
+<a th:href="@{/admin/employees/delete/{id}(id=${emp.id})}">
+<button class="btn delete">Delete</button>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 
-            <td>
 
-                <a th:if="${emp.active}"
-                   th:href="@{/admin/employees/deactivate/{id}(id=${emp.id})}">
-                    <button style="background:red;color:white;border:none;padding:5px 10px;">
-                        Deactivate
-                    </button>
-                </a>
+<div th:if="${page == 'leave'}">
+<h2>Leave Management</h2>
+<hr>
 
-                <a th:unless="${emp.active}"
-                   th:href="@{/admin/employees/activate/{id}(id=${emp.id})}">
-                    <button style="background:green;color:white;border:none;padding:5px 10px;">
-                        Activate
-                    </button>
-                </a>
+<div style="margin-bottom:20px;">
+<a th:href="@{/admin/leaves/types}"><button class="btn add">Configure Leave Types</button></a>
+<a th:href="@{/admin/leaves/quotas}"><button class="btn edit">Assign Leave Quotas</button></a>
+<a th:href="@{/admin/leaves/balances}"><button class="btn activate">Adjust Balances</button></a>
+</div>
 
-                <a th:href="@{/admin/employees/delete/{id}(id=${emp.id})}">
-                    <button style="background:black;color:white;border:none;padding:5px 10px;">
-                        Delete
-                    </button>
-                </a>
+<div class="card">
+<h3>Leave Requests</h3>
+<table>
+<thead>
+<tr>
+<th>Employee</th>
+<th>Leave Type</th>
+<th>From</th>
+<th>To</th>
+<th>Total Days</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="req : ${leaveRequests}">
+<td th:text="${req.employee.firstName}"></td>
 
-            </td>
-        </tr>
+<!-- 🔥 FIXED HERE -->
+<td th:text="${req.leaveType}"></td>
 
-    </table>
+<td th:text="${req.fromDate}"></td>
+<td th:text="${req.toDate}"></td>
+<td th:text="${req.totalDays}"></td>
+<td>
+<span th:if="${req.status == 'PENDING'}" style="color:orange;">Pending</span>
+<span th:if="${req.status == 'APPROVED'}" style="color:green;">Approved</span>
+<span th:if="${req.status == 'REJECTED'}" style="color:red;">Rejected</span>
+</td>
+<td>
+<a th:if="${req.status == 'PENDING'}" th:href="@{/admin/leaves/approve/{id}(id=${req.id})}">
+<button class="btn activate">Approve</button></a>
+<a th:if="${req.status == 'PENDING'}" th:href="@{/admin/leaves/reject/{id}(id=${req.id})}">
+<button class="btn deactivate">Reject</button></a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div th:if="${page == 'holidayCalendar'}">
+
+<h2>Holiday Calendar</h2>
+
+<div style="display:flex; justify-content:center; margin-top:30px;">
+    <div style="background:white; padding:20px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.1); width:950px;">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function () {
+
+    var calendarEl = document.getElementById('calendar');
+
+    var events = [];
+
+    /*[# th:each="h : ${holidays}"]*/
+    events.push({
+        title: "[[${h.holidayName}]]",
+        start: "[[${#temporals.format(h.holidayDate, 'yyyy-MM-dd')}]]",
+        allDay: true,
+        backgroundColor: "red",
+        borderColor: "red"
+    });
+    /*[/]*/
+
+    console.log("Events loaded:", events);
+
+	var calendar = new FullCalendar.Calendar(calendarEl, {
+	    initialView: 'dayGridMonth',
+	    height: 650,          
+	    contentHeight: 600,   
+	    aspectRatio: 1.8,     
+	    events: events
+	});
+
+    calendar.render();
+});
+</script>
+</div>
+
+<div th:if="${page == 'leaveTypes'}">
+
+<h2>Configure Leave Types</h2>
+
+<div class="card">
+<p>Leave Types Configuration Page</p>
+
+<ul>
+<li>Casual Leave</li>
+<li>Sick Leave</li>
+<li>Paid Leave</li>
+</ul>
 
 </div>
 
-<!-- ================================================= -->
-<!-- ================= LEAVE MANAGEMENT ============== -->
-<!-- ================================================= -->
+</div>
 
-<div th:if="${page == 'leaveManagement'}">
+<div th:if="${page == 'leaveQuotas'}">
 
-    <h2>Leave Management</h2>
+<h2>Assign Leave Quotas</h2>
 
-    <div style="margin-bottom:20px;">
-        <a th:href="@{/admin/leaves/calendar}">
-            <button>Holiday Calendar</button>
-        </a>
-        <a th:href="@{/admin/leaves/history}">
-            <button>Employee History</button>
-        </a>
-        <a th:href="@{/admin/leaves/balance}">
-            <button>Leave Balance</button>
-        </a>
-    </div>
+<form th:action="@{/admin/leaves/quotas/assign}" method="post" class="form-box">
 
-    <div style="display:flex;gap:25px;flex-wrap:wrap;margin-bottom:30px;">
+<label>Employee</label>
+<select name="empId">
+<option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.firstName}"></option>
+</select>
 
-        <div style="background:#f39c12;color:white;padding:20px;width:200px;border-radius:10px;">
-            <h4>Pending</h4>
-            <h2 th:text="${pendingCount}"></h2>
-        </div>
+<label>Leave Type</label>
+<select name="leaveType">
+<option value="Casual">Casual</option>
+<option value="Sick">Sick</option>
+<option value="Paid">Paid</option>
+</select>
 
-        <div style="background:#27ae60;color:white;padding:20px;width:200px;border-radius:10px;">
-            <h4>Approved</h4>
-            <h2 th:text="${approvedCount}"></h2>
-        </div>
+<label>Total Days</label>
+<input type="number" name="totalDays" required>
 
-        <div style="background:#e74c3c;color:white;padding:20px;width:200px;border-radius:10px;">
-            <h4>Rejected</h4>
-            <h2 th:text="${rejectedCount}"></h2>
-        </div>
+<br><br>
+<button type="submit" class="btn add">Assign</button>
+
+</form>
+
+</div>
+
+<div th:if="${page == 'leaveBalances'}">
+
+<h2>Adjust Leave Balances</h2>
+
+<table>
+<tr>
+<th>Employee</th>
+<th>Leave Type</th>
+<th>Total</th>
+<th>Used</th>
+<th>Remaining</th>
+</tr>
+
+<tr th:each="b : ${balances}">
+<td th:text="${b.employee.firstName}"></td>
+<td th:text="${b.leaveType}"></td>
+<td th:text="${b.totalLeaves}"></td>
+<td th:text="${b.usedLeaves}"></td>
+<td th:text="${b.remainingLeaves}"></td>
+</tr>
+
+</table>
+
+</div>
+
+
+<div th:if="${page == 'performance'}">
+
+<h2>Performance Reviews</h2>
+<hr>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Employee</th>
+<th>Deliverables</th>
+<th>Accomplishments</th>
+<th>Improvement</th>
+<th>Self Rating</th>
+<th>Manager Rating</th>
+<th>Feedback</th>
+<th>Status</th>
+<th>Submitted</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr th:each="r : ${reviews}">
+
+<td th:text="${r.employee.firstName}"></td>
+<td th:text="${r.deliverables}"></td>
+<td th:text="${r.accomplishments}"></td>
+<td th:text="${r.areasOfImprovement}"></td>
+<td th:text="${r.selfRating}"></td>
+<td th:text="${r.managerRating}"></td>
+<td th:text="${r.managerFeedback}"></td>
+<td th:text="${r.status}"></td>
+<td th:text="${r.submittedDate}"></td>
+
+<td>
+<form th:if="${r.status != 'Reviewed'}"
+      th:action="@{/admin/leaves/performance/review}"
+      method="post">
+
+<input type="hidden" name="reviewId"
+       th:value="${r.reviewId}"/>
+
+<input type="number" name="managerRating"
+       placeholder="Rating" min="1" max="5" required/>
+
+<input type="text" name="managerFeedback"
+       placeholder="Feedback" required/>
+
+<button class="btn activate">Submit</button>
+
+</form>
+</td>
+
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div th:if="${page == 'teamGoals'}">
+
+<h2>Team Goals Management</h2>
+<hr>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Employee</th>
+<th>Goal</th>
+<th>Deadline</th>
+<th>Priority</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr th:each="g : ${goals}">
+
+<td th:text="${g.employee.firstName}"></td>
+<td th:text="${g.goalDescription}"></td>
+<td th:text="${g.deadline}"></td>
+<td>
+<span th:text="${g.priority}"
+      th:style="${g.priority=='High'} ? 'color:red;' :
+                (${g.priority=='Medium'} ? 'color:orange;' : 'color:green;')">
+</span>
+</td>
+
+<td th:text="${g.status}"></td>
+
+<td>
+<a th:href="@{/admin/leaves/team-goals/view/{id}(id=${g.goalId})}">
+<button class="btn edit">View</button>
+</a>
+</td>
+
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div th:if="${page == 'viewGoal'}">
+
+<h2>Goal Details</h2>
+<hr>
+
+<div class="card">
+
+<p><b>Employee:</b>
+<span th:text="${goal.employee.firstName}"></span></p>
+
+<p><b>Description:</b>
+<span th:text="${goal.goalDescription}"></span></p>
+
+<p><b>Priority:</b>
+<span th:text="${goal.priority}"></span></p>
+
+<p><b>Status:</b>
+<span th:text="${goal.status}"></span></p>
+
+<p><b>Deadline:</b>
+<span th:text="${goal.deadline}"></span></p>
+
+<br>
+
+<a th:href="@{/admin/leaves/team-goals}">
+<button class="btn add">Back</button>
+</a>
+
+</div>
+</div>
+
+
+<div th:if="${page == 'departments'}">
+
+<h2>Departments</h2>
+<hr>
+
+<form th:action="${department.id} != null 
+        ? @{/admin/leaves/departments/update} 
+        : @{/admin/leaves/departments/add}"
+      th:object="${department}"
+      method="post"
+      class="form-box">
+
+<input type="hidden" th:field="*{id}"/>
+
+<label>Department Name</label>
+<input type="text" th:field="*{name}" required>
+
+<br><br>
+
+<button class="btn add"
+        th:text="${department.id} != null ? 'Update Department' : 'Add Department'">
+</button>
+
+</form>
+
+<br>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Department Name</th>
+<th>Number of Employees</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr th:each="d : ${departments}">
+<td th:text="${d.name}"></td>
+<td th:text="${@leaveManagementService.getEmployeeCountByDepartment(d)}"></td>
+<td>
+<a th:href="@{/admin/leaves/departments/edit/{id}(id=${d.id})}">
+    <button class="btn edit">Edit</button>
+</a>
+
+<a th:href="@{/admin/leaves/departments/delete/{id}(id=${d.id})}">
+    <button class="btn delete">Delete</button>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<hr>
+
+<h2>Designations</h2>
+
+<form th:action="@{/admin/leaves/designations/add}"
+      th:object="${designation}"
+      method="post"
+      class="form-box">
+
+<label>Designation Title</label>
+<input type="text" th:field="*{title}" required>
+
+<br><br>
+<button class="btn add">Add Designation</button>
+</form>
+
+<br>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Designation</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr th:each="des : ${designations}">
+<td th:text="${des.title}"></td>
+<td>
+	<a th:href="@{/admin/leaves/designations/edit/{id}(id=${des.id})}">
+	<button class="btn-edit">Edit</button>
+<a th:href="@{/admin/leaves/designations/delete/{id}(id=${des.id})}">
+<button class="btn delete">Delete</button>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+<div th:if="${page == 'reports'}">
+
+<h2>📊 REPORTS</h2>
+<hr><br>
+
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;">
+
+<div class="card">
+<h3>Generate Employee Reports</h3>
+<p>Total Employees: <b th:text="${employees.size()}"></b></p>
+<button class="btn add">Generate</button>
+</div>
+
+<div class="card">
+<h3>Generate Leave Reports</h3>
+<p>Total Leave Requests: <b th:text="${leaveRequests.size()}"></b></p>
+<button class="btn edit">Generate</button>
+</div>
+
+<div class="card">
+<h3>Generate Department-wise Reports</h3>
+<p>Total Departments: <b th:text="${departments.size()}"></b></p>
+<button class="btn activate">Generate</button>
+</div>
+
+<div class="card">
+<h3>Export</h3>
+<button class="btn delete">Export to PDF</button>
+<button class="btn add">Export to Excel</button>
+</div>
+
+</div>
+
+</div>
+
+
+<div th:if="${page == 'activityLogs'}">
+
+    <h2>System Activity Logs</h2>
+    <hr><br>
+
+    <div class="card">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Activity</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="log : ${logs}">
+                    <td th:text="${log}"></td>
+                </tr>
+            </tbody>
+        </table>
 
     </div>
 
 </div>
+
+
+<div th:if="${page == 'notifications'}">
+
+    <h2>Admin Notifications 🔔</h2>
+    <hr><br>
+
+    <div class="card">
+
+        <ul style="list-style:none;padding:0;">
+            <li th:each="note : ${notifications}"
+                style="padding:10px;border-bottom:1px solid #eee;">
+                🔔 <span th:text="${note}"></span>
+            </li>
+        </ul>
+
+    </div>
+
+</div>
+
 
 </div>
 </body>

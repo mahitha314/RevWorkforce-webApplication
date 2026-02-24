@@ -16,7 +16,6 @@ public class GoalController {
         this.goalService = goalService;
     }
 
-    // 1️⃣ Show Goals Page
     @GetMapping("/{employeeId}")
     public String showGoalsPage(@PathVariable Long employeeId, Model model) {
 
@@ -24,10 +23,10 @@ public class GoalController {
         model.addAttribute("goal", new GoalDTO());
         model.addAttribute("goals", goalService.getEmployeeGoals(employeeId));
 
-        return "employee/goals";   // templates/employee/goals.html
+        return "employee/goals";  
     }
 
-    // 2️⃣ Create Goal (Form Submit)
+  
     @PostMapping("/{employeeId}")
     public String createGoal(@PathVariable Long employeeId,
                              @ModelAttribute("goal") GoalDTO goalDTO) {
@@ -37,7 +36,7 @@ public class GoalController {
         return "redirect:/employee/goals/" + employeeId;
     }
 
-    // 3️⃣ Update Goal Status
+   
     @GetMapping("/{employeeId}/status/{goalId}")
     public String updateStatus(@PathVariable Long employeeId,
                                @PathVariable Long goalId,

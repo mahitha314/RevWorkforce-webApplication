@@ -16,7 +16,7 @@ public class PerformanceController {
         this.performanceService = performanceService;
     }
 
-    // 1️⃣ Show Performance Page
+    
     @GetMapping("/{employeeId}")
     public String showPerformancePage(@PathVariable Long employeeId, Model model) {
 
@@ -25,10 +25,10 @@ public class PerformanceController {
         model.addAttribute("reviews",
                 performanceService.getEmployeeReviews(employeeId));
 
-        return "employee/performance";  // templates/employee/performance.html
+        return "employee/performance";  
     }
 
-    // 2️⃣ Create Review (Draft)
+   
     @PostMapping("/{employeeId}")
     public String createReview(@PathVariable Long employeeId,
                                @ModelAttribute("review") PerformanceReviewDTO dto) {
@@ -38,7 +38,7 @@ public class PerformanceController {
         return "redirect:/employee/performance/" + employeeId;
     }
 
-    // 3️⃣ Submit Review
+    
     @GetMapping("/{employeeId}/submit/{reviewId}")
     public String submitReview(@PathVariable Long employeeId,
                                @PathVariable Long reviewId) {
@@ -48,7 +48,7 @@ public class PerformanceController {
         return "redirect:/employee/performance/" + employeeId;
     }
 
-    // 4️⃣ View Feedback Page (Optional Separate Page)
+    
     @GetMapping("/{employeeId}/feedback/{reviewId}")
     public String viewFeedback(@PathVariable Long employeeId,
                                @PathVariable Long reviewId,
@@ -57,6 +57,6 @@ public class PerformanceController {
         model.addAttribute("feedback",
                 performanceService.viewFeedback(reviewId));
 
-        return "employee/feedback"; // if you create feedback.html
+        return "employee/feedback"; 
     }
 }

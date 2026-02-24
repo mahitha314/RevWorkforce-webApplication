@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface PerformanceReviewRepository extends JpaRepository<PerformanceReview, Long> {
 
-    // Custom method to get employee reviews
+   
     List<PerformanceReview> findByEmployeeEmployeeId(Long employeeId);
 }

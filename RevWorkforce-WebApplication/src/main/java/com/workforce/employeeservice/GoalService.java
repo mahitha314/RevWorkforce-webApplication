@@ -24,7 +24,7 @@ public class GoalService {
         this.employeeRepository = employeeRepository;
     }
 
-    // ✅ Create Goal
+    
     public GoalDTO createGoal(Long employeeId, GoalDTO dto) {
 
         Employee employee = employeeRepository.findById(employeeId)
@@ -42,7 +42,7 @@ public class GoalService {
         return mapToDTO(saved);
     }
 
-    // ✅ Update Goal Details
+    
     public GoalDTO updateGoal(Long goalId, GoalDTO dto) {
 
         Goal goal = goalRepository.findById(goalId)
@@ -61,10 +61,10 @@ public class GoalService {
         return mapToDTO(updated);
     }
 
-    // ✅ Get All Goals
+   
     public List<GoalDTO> getEmployeeGoals(Long employeeId) {
 
-        // Validate employee exists
+        
         employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
@@ -74,8 +74,7 @@ public class GoalService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ Update Status with Validation
-    public GoalDTO updateGoalStatus(Long goalId, String status) {
+        public GoalDTO updateGoalStatus(Long goalId, String status) {
 
         List<String> validStatuses =
                 Arrays.asList("Not Started", "In Progress", "Completed");
@@ -94,7 +93,7 @@ public class GoalService {
         return mapToDTO(updated);
     }
 
-    // 🔹 Common Mapper Method
+    
     private GoalDTO mapToDTO(Goal goal) {
 
         GoalDTO dto = new GoalDTO();

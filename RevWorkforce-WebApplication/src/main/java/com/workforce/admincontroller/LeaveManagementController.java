@@ -7,6 +7,10 @@ import com.workforce.repository.EmployeeRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+//import com.workforce.model.Announcement;
+import com.workforce.model.Department;
+import com.workforce.model.Designation;
+
 
 @Controller
 @RequestMapping("/admin/leaves")
@@ -21,11 +25,10 @@ public class LeaveManagementController {
         this.employeeRepository = employeeRepository;
     }
 
-    // ================= MAIN PAGE =================
     @GetMapping
     public String leaveDashboard(Model model) {
 
-        model.addAttribute("page", "leaveManagement");
+        model.addAttribute("page", "leave");
         model.addAttribute("leaveRequests", leaveService.getAllLeaveRequests());
         model.addAttribute("pendingCount", leaveService.getPendingCount());
         model.addAttribute("approvedCount", leaveService.getApprovedCount());
@@ -35,68 +38,254 @@ public class LeaveManagementController {
 
         return "admin/employee_managementt";
     }
-
-    // ================= APPROVE =================
-    @GetMapping("/approve/{id}")
-    public String approve(@PathVariable Long id) {
-        leaveService.approveLeave(id);
-        return "redirect:/admin/leaves";
-    }
-
-    // ================= REJECT =================
-    @GetMapping("/reject/{id}")
-    public String reject(@PathVariable Long id) {
-        leaveService.rejectLeave(id);
-        return "redirect:/admin/leaves";
-    }
-
-    // ================= ADD HOLIDAY =================
-    @PostMapping("/holiday/add")
-    public String addHoliday(@ModelAttribute Holiday holiday) {
-        leaveService.addHoliday(holiday);
-        return "redirect:/admin/leaves";
-    }
-
-    // ================= DELETE HOLIDAY =================
-    @GetMapping("/holiday/delete/{id}")
-    public String deleteHoliday(@PathVariable Long id) {
-        leaveService.deleteHoliday(id);
-        return "redirect:/admin/leaves";
-    }
-
-    // ================= LEAVE BALANCE =================
-    @GetMapping("/balance/{empId}")
-    public String leaveBalance(@PathVariable Long empId, Model model) {
-
-        Employee employee = employeeRepository.findById(empId).orElseThrow();
-
-        model.addAttribute("page", "leaveBalance");
-        model.addAttribute("balances",
-                leaveService.getEmployeeLeaveBalance(employee));
-        model.addAttribute("employee", employee);
-
+    @GetMapping("/types")
+    public String configureLeaveTypes(Model model) {
+        model.addAttribute("page", "leaveTypes");
         return "admin/employee_managementt";
     }
-
-    // ================= LEAVE HISTORY =================
-    @GetMapping("/history/{empId}")
-    public String leaveHistory(@PathVariable Long empId, Model model) {
-
-        Employee employee = employeeRepository.findById(empId).orElseThrow();
-
-        model.addAttribute("page", "leaveHistory");
-        model.addAttribute("history",
-                leaveService.getLeaveHistory(employee));
-
-        return "admin/employee_managementt";
-    }
-
-    // ================= HOLIDAY CALENDAR =================
+    
     @GetMapping("/calendar")
     public String holidayCalendar(Model model) {
 
         model.addAttribute("page", "holidayCalendar");
+        model.addAttribute("holiday", new Holiday());
         model.addAttribute("holidays", leaveService.getAllHolidays());
+
+        return "admin/employee_managementt";
+    }
+    
+    @GetMapping("/approve/{id}")
+    public String approveLeave(@PathVariable Long id) {
+        leaveService.approveLeave(id);
+        return "redirect:/admin/leaves";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectLeave(@PathVariable Long id) {
+        leaveService.rejectLeave(id);
+        return "redirect:/admin/leaves";
+    }
+
+    @PostMapping("/holiday/add")
+    public String addHoliday(@ModelAttribute Holiday holiday) {
+        leaveService.addHoliday(holiday);
+        return "redirect:/admin/leaves/calendar";   
+    }
+
+    @GetMapping("/holiday/delete/{id}")
+    public String deleteHoliday(@PathVariable Long id) {
+        leaveService.deleteHoliday(id);
+        return "redirect:/admin/leaves/calendar";  
+    }
+
+    @GetMapping("/quotas")
+    public String assignLeaveQuotas(Model model) {
+
+        model.addAttribute("page", "leaveQuotas");
+        model.addAttribute("employees", employeeRepository.findAll());
+
+        return "admin/employee_managementt";
+    }
+
+    @PostMapping("/quotas/assign")
+    public String assignQuota(@RequestParam Long empId,
+                              @RequestParam String leaveType,
+                              @RequestParam int totalDays) {
+
+        leaveService.assignLeaveQuota(empId, leaveType, totalDays);
+        return "redirect:/admin/leaves/quotas";
+    }
+    
+    @GetMapping("/balances")
+    public String adjustBalances(Model model) {
+
+        model.addAttribute("page", "leaveBalances");
+        model.addAttribute("balances", leaveService.getAllBalances());
+
+        return "admin/employee_managementt";
+    }
+
+
+    @GetMapping("/performance")
+    public String performanceReviews(Model model) {
+
+        model.addAttribute("page", "performance");
+        model.addAttribute("reviews",
+                leaveService.getAllPerformanceReviews());
+
+        return "admin/employee_managementt";
+    }
+
+    @PostMapping("/performance/review")
+    public String reviewPerformance(@RequestParam Long reviewId,
+                                    @RequestParam int managerRating,
+                                    @RequestParam String managerFeedback) {
+
+        leaveService.reviewPerformance(reviewId, managerRating, managerFeedback);
+
+        return "redirect:/admin/leaves/performance";
+    }
+
+
+    @GetMapping("/team-goals")
+    public String teamGoals(Model model) {
+
+        model.addAttribute("page", "teamGoals");
+        model.addAttribute("goals",
+                leaveService.getAllTeamGoals());
+
+        return "admin/employee_managementt";
+    }
+
+    @GetMapping("/team-goals/view/{id}")
+    public String viewGoal(@PathVariable Long id,
+                           Model model) {
+
+        model.addAttribute("page", "viewGoal");
+        model.addAttribute("goal",
+                leaveService.getGoalById(id));
+
+        return "admin/employee_managementt";
+    }
+
+    @GetMapping("/departments")
+    public String departments(Model model) {
+
+        model.addAttribute("page", "departments");
+        model.addAttribute("department", new Department());
+        model.addAttribute("designation", new Designation());
+
+        model.addAttribute("departments", leaveService.getAllDepartments());
+        model.addAttribute("designations", leaveService.getAllDesignations());
+
+        model.addAttribute("designationCount",
+                leaveService.getDesignationCount());
+
+        return "admin/employee_managementt";
+    }
+
+
+    @PostMapping("/departments/add")
+    public String addDepartment(@ModelAttribute Department department) {
+
+        leaveService.addDepartment(department);
+        return "redirect:/admin/leaves/departments";
+    }
+
+
+    @GetMapping("/departments/delete/{id}")
+    public String deleteDepartment(@PathVariable Long id) {
+
+        leaveService.deleteDepartment(id);
+        return "redirect:/admin/leaves/departments";
+    }
+
+    @GetMapping("/departments/edit/{id}")
+    public String editDepartment(@PathVariable Long id, Model model) {
+
+        model.addAttribute("page", "departments");
+
+        model.addAttribute("department",
+                leaveService.getDepartmentById(id));
+
+        model.addAttribute("designation", new Designation());
+
+        model.addAttribute("departments",
+                leaveService.getAllDepartments());
+
+        model.addAttribute("designations",
+                leaveService.getAllDesignations());
+
+        model.addAttribute("designationCount",
+                leaveService.getDesignationCount());
+
+        return "admin/employee_managementt";
+    }
+
+
+    @PostMapping("/departments/update")
+    public String updateDepartment(@ModelAttribute Department department) {
+
+        leaveService.updateDepartment(department);
+        return "redirect:/admin/leaves/departments";
+    }
+
+    @PostMapping("/designations/add")
+    public String addDesignation(@ModelAttribute Designation designation) {
+
+        leaveService.addDesignation(designation);
+        return "redirect:/admin/leaves/departments";
+    }
+
+    @GetMapping("/designations/edit/{id}")
+    public String editDesignation(@PathVariable Long id, Model model) {
+
+        model.addAttribute("page", "departments");
+
+        model.addAttribute("designation",
+                leaveService.getDesignationById(id));
+
+        model.addAttribute("department", new Department());
+
+        model.addAttribute("departments",
+                leaveService.getAllDepartments());
+
+        model.addAttribute("designations",
+                leaveService.getAllDesignations());
+
+        model.addAttribute("designationCount",
+                leaveService.getDesignationCount());
+
+        return "admin/employee_managementt";   
+    }
+
+    @PostMapping("/designations/update")
+    public String updateDesignation(@ModelAttribute Designation designation) {
+
+        leaveService.saveDesignation(designation);
+
+        return "redirect:/admin/leaves/departments";  
+    }
+
+
+    @GetMapping("/designations/delete/{id}")
+    public String deleteDesignation(@PathVariable Long id) {
+
+        leaveService.deleteDesignation(id);
+        return "redirect:/admin/leaves/departments";
+    }
+
+    @GetMapping("/reports")
+    public String reports(Model model) {
+
+        model.addAttribute("page", "reports");
+
+        model.addAttribute("employees",
+                employeeRepository.findAll());
+
+        model.addAttribute("leaveRequests",
+                leaveService.getAllLeaveRequests());
+
+        model.addAttribute("departments",
+                leaveService.getAllDepartments());
+
+        return "admin/employee_managementt";
+    }
+    @GetMapping("/activity-logs")
+    public String systemActivityLogs(Model model) {
+
+        model.addAttribute("page", "activityLogs");
+        model.addAttribute("logs",
+                leaveService.getSystemActivityLogs());
+
+        return "admin/employee_managementt";
+    }
+    @GetMapping("/notifications")
+    public String notifications(Model model) {
+
+        model.addAttribute("page", "notifications");
+        model.addAttribute("notifications",
+                leaveService.getAdminNotifications());
 
         return "admin/employee_managementt";
     }

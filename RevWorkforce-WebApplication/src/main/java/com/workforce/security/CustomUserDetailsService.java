@@ -3,9 +3,10 @@ package com.workforce.security;
 import com.workforce.model.Employee;
 import com.workforce.repository.EmployeeRepository;
 import org.springframework.security.core.userdetails.*;
+//import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+//import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,16 +23,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return new User(
-                employee.getEmail(),
-                employee.getPassword(),
-                employee.isActive(),
-                true,
-                true,
-                true,
-                Collections.singleton(() ->
-                        "ROLE_" + employee.getRole()
-                )
-        );
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(employee.getEmail())
+                .password(employee.getPassword())
+                .roles(employee.getRole())  
+                .disabled(!employee.isActive())
+                .build();
     }
 }
