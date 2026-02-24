@@ -1,8 +1,9 @@
-package com.workforce.repository;
+package com.revworkforce.repository;
 
-import com.workforce.model.Designation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.revworkforce.model.Designation;
 
 @Repository
 public interface DesignationRepository 

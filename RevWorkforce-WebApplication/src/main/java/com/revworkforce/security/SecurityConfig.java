@@ -1,4 +1,4 @@
-package com.workforce.security;
+package com.revworkforce.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

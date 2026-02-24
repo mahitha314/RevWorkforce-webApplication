@@ -1,4 +1,4 @@
-package com.workforce.model;
+package com.revworkforce.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

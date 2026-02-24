@@ -1,8 +1,9 @@
-package com.workforce.repository;
+package com.revworkforce.repository;
 
-import com.workforce.model.Employee;
-import com.workforce.model.LeaveRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.revworkforce.model.Employee;
+import com.revworkforce.model.LeaveRequest;
 
 import java.util.List;
 

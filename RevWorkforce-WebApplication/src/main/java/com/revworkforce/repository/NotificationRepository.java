@@ -1,8 +1,9 @@
-package com.workforce.repository;
+package com.revworkforce.repository;
 
-import com.workforce.model.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.revworkforce.model.Notification;
 
 import java.util.List;
 

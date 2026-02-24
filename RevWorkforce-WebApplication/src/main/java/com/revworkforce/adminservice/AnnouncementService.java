@@ -1,9 +1,10 @@
-package com.workforce.adminservice;
+package com.revworkforce.adminservice;
 
-import com.workforce.model.Announcement;
-import com.workforce.repository.AnnouncementRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.revworkforce.model.Announcement;
+import com.revworkforce.repository.AnnouncementRepository;
 
 import java.time.LocalDate;
 import java.util.List;

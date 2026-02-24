@@ -1,11 +1,12 @@
-package com.workforce.admincontroller;
+package com.revworkforce.admincontroller;
 
-import com.workforce.adminservice.SystemConfigService;
-import com.workforce.model.Department;
-import com.workforce.model.Designation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.revworkforce.adminservice.SystemConfigService;
+import com.revworkforce.model.Department;
+import com.revworkforce.model.Designation;
 
 @Controller
 @RequestMapping("/admin/system-config")

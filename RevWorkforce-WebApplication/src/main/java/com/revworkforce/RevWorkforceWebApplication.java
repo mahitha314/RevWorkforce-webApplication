@@ -1,4 +1,4 @@
-package com.workforce;
+package com.revworkforce;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

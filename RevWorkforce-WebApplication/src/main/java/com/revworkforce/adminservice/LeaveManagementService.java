@@ -1,9 +1,11 @@
-package com.workforce.adminservice;
+package com.revworkforce.adminservice;
 
-import com.workforce.model.*;
-import com.workforce.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.revworkforce.model.*;
+import com.revworkforce.repository.*;
+
 import java.util.ArrayList;
 import java.util.List;
 

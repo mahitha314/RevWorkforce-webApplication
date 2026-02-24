@@ -1,10 +1,11 @@
-package com.workforce.employeecontroller;
+package com.revworkforce.employeecontroller;
 
-import com.workforce.dto.GoalDTO;
-import com.workforce.employeeservice.GoalService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.revworkforce.dto.GoalDTO;
+import com.revworkforce.employeeservice.GoalService;
 
 @Controller
 @RequestMapping("/employee/goals")

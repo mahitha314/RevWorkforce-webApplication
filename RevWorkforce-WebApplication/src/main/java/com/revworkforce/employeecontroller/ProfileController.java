@@ -1,4 +1,4 @@
-package com.workforce.employeecontroller;
+package com.revworkforce.employeecontroller;
 
 public class ProfileController {
 

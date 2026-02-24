@@ -1,4 +1,4 @@
-package com.workforce.logging;
+package com.revworkforce.logging;
 
 public class AuditLogger {
 

@@ -1,4 +1,4 @@
-package com.workforce.dto;
+package com.revworkforce.dto;
 
 import java.time.LocalDate;
 

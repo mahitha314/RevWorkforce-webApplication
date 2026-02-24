@@ -1,4 +1,4 @@
-package com.workforce.exception;
+package com.revworkforce.exception;
 
 public class LeaveNotAllowedException {
 

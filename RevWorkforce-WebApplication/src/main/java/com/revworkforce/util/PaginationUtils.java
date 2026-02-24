@@ -1,4 +1,4 @@
-package com.workforce.util;
+package com.revworkforce.util;
 
 public class PaginationUtils {
 

@@ -1,10 +1,11 @@
-package com.workforce.security;
+package com.revworkforce.security;
 
-import com.workforce.model.Employee;
-import com.workforce.repository.EmployeeRepository;
 import org.springframework.security.core.userdetails.*;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+
+import com.revworkforce.model.Employee;
+import com.revworkforce.repository.EmployeeRepository;
 
 //import java.util.Collections;
 

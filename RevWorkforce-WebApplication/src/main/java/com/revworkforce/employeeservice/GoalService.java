@@ -1,12 +1,13 @@
-package com.workforce.employeeservice;
+package com.revworkforce.employeeservice;
 
-import com.workforce.dto.GoalDTO;
-import com.workforce.exception.GoalUpdateException;
-import com.workforce.model.Employee;
-import com.workforce.model.Goal;
-import com.workforce.repository.EmployeeRepository;
-import com.workforce.repository.GoalRepository;
 import org.springframework.stereotype.Service;
+
+import com.revworkforce.dto.GoalDTO;
+import com.revworkforce.exception.GoalUpdateException;
+import com.revworkforce.model.Employee;
+import com.revworkforce.model.Goal;
+import com.revworkforce.repository.EmployeeRepository;
+import com.revworkforce.repository.GoalRepository;
 
 import java.util.Arrays;
 import java.util.List;

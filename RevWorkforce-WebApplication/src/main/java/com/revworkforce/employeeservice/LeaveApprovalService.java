@@ -1,4 +1,4 @@
-package com.workforce.employeeservice;
+package com.revworkforce.employeeservice;
 
 public class LeaveApprovalService {
 

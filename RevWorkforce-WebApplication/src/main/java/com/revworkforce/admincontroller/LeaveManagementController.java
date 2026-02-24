@@ -1,15 +1,15 @@
-package com.workforce.admincontroller;
+package com.revworkforce.admincontroller;
 
-import com.workforce.adminservice.LeaveManagementService;
-import com.workforce.model.Employee;
-import com.workforce.model.Holiday;
-import com.workforce.repository.EmployeeRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-//import com.workforce.model.Announcement;
-import com.workforce.model.Department;
-import com.workforce.model.Designation;
+
+import com.revworkforce.adminservice.LeaveManagementService;
+import com.revworkforce.model.Department;
+import com.revworkforce.model.Designation;
+import com.revworkforce.model.Employee;
+import com.revworkforce.model.Holiday;
+import com.revworkforce.repository.EmployeeRepository;
 
 
 @Controller

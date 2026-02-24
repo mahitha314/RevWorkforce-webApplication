@@ -1,10 +1,11 @@
-package com.workforce.employeecontroller;
+package com.revworkforce.employeecontroller;
 
-import com.workforce.dto.PerformanceReviewDTO;
-import com.workforce.employeeservice.PerformanceService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.revworkforce.dto.PerformanceReviewDTO;
+import com.revworkforce.employeeservice.PerformanceService;
 
 @Controller
 @RequestMapping("/employee/performance")

@@ -1,11 +1,12 @@
-package com.workforce.adminservice;
+package com.revworkforce.adminservice;
 
-import com.workforce.model.Department;
-import com.workforce.model.Designation;
-import com.workforce.repository.DepartmentRepository;
-import com.workforce.repository.DesignationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.revworkforce.model.Department;
+import com.revworkforce.model.Designation;
+import com.revworkforce.repository.DepartmentRepository;
+import com.revworkforce.repository.DesignationRepository;
 
 import java.util.List;
 

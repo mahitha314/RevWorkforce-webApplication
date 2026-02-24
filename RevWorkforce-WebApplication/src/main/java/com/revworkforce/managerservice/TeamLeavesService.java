@@ -1,4 +1,4 @@
-package com.workforce.managerservice;
+package com.revworkforce.managerservice;
 
 public class TeamLeavesService {
 

@@ -1,10 +1,12 @@
-package com.workforce.repository;
+package com.revworkforce.repository;
 
-import com.workforce.model.Employee;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
+
+import com.revworkforce.model.Department;
+import com.revworkforce.model.Employee;
+
 import java.util.Optional;
-import com.workforce.model.Department;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 

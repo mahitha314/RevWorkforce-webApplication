@@ -1,4 +1,4 @@
-package com.workforce.model;
+package com.revworkforce.model;
 
 
 import java.time.LocalDate;

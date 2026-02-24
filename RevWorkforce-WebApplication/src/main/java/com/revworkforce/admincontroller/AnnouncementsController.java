@@ -1,10 +1,11 @@
-package com.workforce.admincontroller;
+package com.revworkforce.admincontroller;
 
-import com.workforce.adminservice.AnnouncementService;
-import com.workforce.model.Announcement;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.revworkforce.adminservice.AnnouncementService;
+import com.revworkforce.model.Announcement;
 
 @Controller
 @RequestMapping("/admin/announcements")
