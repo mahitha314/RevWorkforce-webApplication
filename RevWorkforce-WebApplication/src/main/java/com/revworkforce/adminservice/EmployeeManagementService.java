@@ -1,5 +1,6 @@
 package com.revworkforce.adminservice;
 
+<<<<<<< HEAD
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,4 +131,15 @@ public class EmployeeManagementService {
     public long getInactiveEmployeeCount() {
         return employeeRepository.countByActiveFalse();
     }
+=======
+import org.springframework.http.ResponseEntity;
+import com.revworkforce.dto.ApiResponse;
+import com.revworkforce.dto.EmployeeDTO;
+
+public interface EmployeeManagementService {
+
+	ResponseEntity<ApiResponse> addEmployee(EmployeeDTO dto);
+    ResponseEntity<ApiResponse> getAllEmployees();
+	
+>>>>>>> dev
 }

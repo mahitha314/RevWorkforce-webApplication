@@ -1,5 +1,6 @@
 package com.revworkforce.repository;
 
+<<<<<<< HEAD
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.revworkforce.model.Employee;
@@ -13,3 +14,8 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
 
     long countByStatus(String status);
 }
+=======
+public interface LeaveRequestRepository {
+
+}
+>>>>>>> dev

@@ -1,5 +1,6 @@
 package com.revworkforce.admincontroller;
 
+<<<<<<< HEAD
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -290,3 +291,8 @@ public class LeaveManagementController {
         return "admin/employee_managementt";
     }
 }
+=======
+public class LeaveManagementController {
+
+}
+>>>>>>> dev

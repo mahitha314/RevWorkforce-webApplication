@@ -1,5 +1,6 @@
 package com.revworkforce.employeecontroller;
 
+<<<<<<< HEAD
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -61,3 +62,8 @@ public class PerformanceController {
         return "employee/feedback"; 
     }
 }
+=======
+public class PerformanceController {
+
+}
+>>>>>>> dev

@@ -1,5 +1,6 @@
 package com.revworkforce.employeecontroller;
 
+<<<<<<< HEAD
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,3 +49,8 @@ public class GoalController {
         return "redirect:/employee/goals/" + employeeId;
     }
 }
+=======
+public class GoalController {
+
+}
+>>>>>>> dev

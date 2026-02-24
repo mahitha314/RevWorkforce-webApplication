@@ -1,5 +1,6 @@
 package com.revworkforce.employeeservice;
 
+<<<<<<< HEAD
 import org.springframework.stereotype.Service;
 
 import com.revworkforce.dto.GoalDTO;
@@ -107,3 +108,8 @@ public class GoalService {
         return dto;
     }
 }
+=======
+public class GoalService {
+
+}
+>>>>>>> dev

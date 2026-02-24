@@ -1,5 +1,6 @@
 package com.revworkforce.adminservice;
 
+<<<<<<< HEAD
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,3 +44,8 @@ public class AnnouncementService {
         announcementRepository.deleteById(id);
     }
 }
+=======
+public class AnnouncementService {
+
+}
+>>>>>>> dev

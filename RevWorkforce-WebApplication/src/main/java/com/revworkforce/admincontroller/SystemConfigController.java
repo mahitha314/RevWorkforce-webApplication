@@ -1,5 +1,6 @@
 package com.revworkforce.admincontroller;
 
+<<<<<<< HEAD
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -67,3 +68,8 @@ public class SystemConfigController {
         return "redirect:/admin/system-config";
     }
 }
+=======
+public class SystemConfigController {
+
+}
+>>>>>>> dev

@@ -1,5 +1,6 @@
 package com.revworkforce.repository;
 
+<<<<<<< HEAD
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
@@ -23,4 +24,17 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Modifying
     @Query("UPDATE Employee e SET e.active = false WHERE e.id = :id")
     void deactivateEmployeeById(@Param("id") Long id);
+=======
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.revworkforce.model.Employee;
+
+@Repository
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+
+	Optional<Employee> findByEmail(String email);
+	Optional<Employee> findByEmployeeId(String employeeId);
+	
+>>>>>>> dev
 }

@@ -1,5 +1,6 @@
 package com.revworkforce.dto;
 
+<<<<<<< HEAD
 import java.time.LocalDate;
 
 public class GoalDTO {
@@ -25,3 +26,8 @@ public class GoalDTO {
     public LocalDate getDeadline() { return deadline; }
     public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
 }
+=======
+public class GoalDTO {
+
+}
+>>>>>>> dev

@@ -2,6 +2,7 @@ package com.revworkforce.dto;
 
 public class PerformanceReviewDTO {
 
+<<<<<<< HEAD
     private Long reviewId;
     private String deliverables;
     private String accomplishments;
@@ -31,3 +32,6 @@ public class PerformanceReviewDTO {
     public String getManagerFeedback() { return managerFeedback; }
     public void setManagerFeedback(String managerFeedback) { this.managerFeedback = managerFeedback; }
 }
+=======
+}
+>>>>>>> dev

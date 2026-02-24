@@ -1,5 +1,6 @@
 package com.revworkforce.employeeservice;
 
+<<<<<<< HEAD
 import org.springframework.stereotype.Service;
 
 import com.revworkforce.dto.PerformanceReviewDTO;
@@ -101,3 +102,8 @@ public class PerformanceService {
         return dto;
     }
 }
+=======
+public class PerformanceService {
+
+}
+>>>>>>> dev

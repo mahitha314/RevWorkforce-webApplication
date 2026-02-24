@@ -1,5 +1,6 @@
 package com.revworkforce.adminservice;
 
+<<<<<<< HEAD
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -246,3 +247,8 @@ public List<String> getAdminNotifications() {
     return notes;
 }
 }
+=======
+public class LeaveManagementService {
+
+}
+>>>>>>> dev

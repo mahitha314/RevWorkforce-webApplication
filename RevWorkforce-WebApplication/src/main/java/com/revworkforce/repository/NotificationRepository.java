@@ -1,5 +1,6 @@
 package com.revworkforce.repository;
 
+<<<<<<< HEAD
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,3 +18,8 @@ public interface NotificationRepository
     // Get unread notifications
     List<Notification> findByEmployeeIdAndIsReadFalse(Long employeeId);
 }
+=======
+public interface NotificationRepository {
+
+}
+>>>>>>> dev

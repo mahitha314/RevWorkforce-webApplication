@@ -1,5 +1,6 @@
 package com.revworkforce.repository;
 
+<<<<<<< HEAD
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,3 +14,8 @@ public interface PerformanceReviewRepository extends JpaRepository<PerformanceRe
    
     List<PerformanceReview> findByEmployeeEmployeeId(Long employeeId);
 }
+=======
+public interface PerformanceReviewRepository {
+
+}
+>>>>>>> dev

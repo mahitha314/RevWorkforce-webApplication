@@ -1,4 +1,5 @@
 package com.revworkforce.repository;
+<<<<<<< HEAD
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,3 +11,9 @@ public interface LeaveBalanceRepository
 
     List<LeaveBalance> findByEmployee(Employee employee);
 }
+=======
+
+public interface LeaveBalanceRepository {
+
+}
+>>>>>>> dev

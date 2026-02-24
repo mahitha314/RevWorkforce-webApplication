@@ -1,5 +1,6 @@
 package com.revworkforce.repository;
 
+<<<<<<< HEAD
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,3 +13,8 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
 
     List<Goal> findByEmployeeEmployeeId(Long employeeId);
 }
+=======
+public interface GoalRepository {
+
+}
+>>>>>>> dev
