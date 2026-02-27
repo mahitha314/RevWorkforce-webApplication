@@ -1,5 +1,6 @@
 package com.revworkforce.admincontroller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revworkforce.adminservice.EmployeeManagementService;
 import com.revworkforce.dto.ApiResponse;
 import com.revworkforce.dto.EmployeeDTO;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/admin")
@@ -22,13 +25,15 @@ public class EmployeeManagementController {
 	}
 
 	@PostMapping("/add-employee")
-	public ResponseEntity<ApiResponse> addEmployee(@Validated @RequestBody EmployeeDTO dto) {
-		return employeeManagementService.addEmployee(dto);
+	public ResponseEntity<ApiResponse> addEmployee(@Valid @RequestBody EmployeeDTO dto){
+	    ApiResponse response = employeeManagementService.addEmployee(dto);
+	    return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 	}
 
 	@GetMapping("/all-employees")
-	public ResponseEntity<ResponseEntity<ApiResponse>> getAllEmployees() {
-		return ResponseEntity.ok(employeeManagementService.getAllEmployees());
+	public ResponseEntity<ApiResponse> getAllEmployees(){
+	    ApiResponse response = employeeManagementService.getAllEmployees();
+	    return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 }

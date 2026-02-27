@@ -1,5 +1,7 @@
 package com.revworkforce.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -21,10 +23,12 @@ public class LeaveBalance {
 
 	@ManyToOne
 	@JoinColumn(name = "employee_id", nullable = false)
+	@JsonBackReference(value = "employee-leavebalance")
 	private Employee employee;
 
 	@ManyToOne
 	@JoinColumn(name = "leave_type_id", nullable = false)
+	@JsonBackReference(value = "leavetype-leavebalance")
 	private LeaveType leaveType;
 
 	public LeaveBalance() {}

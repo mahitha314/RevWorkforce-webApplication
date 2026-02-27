@@ -33,14 +33,14 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse> addEmployee(EmployeeDTO dto) {
+	public ApiResponse addEmployee(EmployeeDTO dto) {
 
 		if (employeeRepository.findByEmail(dto.getEmail()).isPresent()) {
-			return new ResponseEntity<>(new ApiResponse(409, "Email already exists", null), HttpStatus.CONFLICT);
+			return new ApiResponse(409, "Email already exists", null);
 		}
 
 		if (employeeRepository.findByEmployeeId(dto.getEmployeeId()).isPresent()) {
-			return new ResponseEntity<>(new ApiResponse(409, "Employee ID already exists", null), HttpStatus.CONFLICT);
+			return new ApiResponse(409, "Employee ID already exists", null);
 		}
 
 		Department department = departmentRepository.findById(dto.getDepartmentId())
@@ -77,15 +77,13 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 
 		employeeRepository.save(employee);
 
-		return new ResponseEntity<>(new ApiResponse(201, "Employee added successfully", null), HttpStatus.CREATED);
+		return new ApiResponse(201, "Employee added successfully", null);
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse> getAllEmployees() {
-
+	public ApiResponse getAllEmployees() {
 		List<Employee> employees = employeeRepository.findAll();
-
-		return new ResponseEntity<>(new ApiResponse(200, "Employees fetched successfully", employees), HttpStatus.OK);
+		return new ApiResponse(200, "Employees fetched successfully", employees);
 	}
 
 }
