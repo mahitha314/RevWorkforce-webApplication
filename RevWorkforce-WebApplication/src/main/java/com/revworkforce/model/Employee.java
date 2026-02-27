@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 
@@ -53,7 +54,6 @@ public class Employee {
 
 	@ManyToOne
 	@JoinColumn(name = "department_id", nullable = false)
-	@JsonBackReference
 	private Department department;
 
 	@ManyToOne
@@ -62,18 +62,22 @@ public class Employee {
 
 	@ManyToOne
 	@JoinColumn(name = "manager_id")
-	@JsonBackReference(value="manager")
+	@JsonBackReference(value = "manager")
 	private Employee manager;
 
 	@OneToMany(mappedBy = "employee")
+	@JsonManagedReference(value = "employee-leaverequest")
 	private List<LeaveRequest> leaveRequests;
+	
+    @OneToMany(mappedBy = "employee")
+	@JsonManagedReference(value = "employee-leavebalance")
+    private List<LeaveBalance> leaveBalances;
 
 	public Employee() {}
 
 	public Employee(Long id, String employeeId, String firstName, String lastName, String email, String password,
 			String phoneNumber, String address, String emergencyContact, String role, String status,
-			LocalDate joiningDate, double salary, Department department, Designation designation,
-			Employee manager) {
+			LocalDate joiningDate, double salary, Department department, Designation designation, Employee manager) {
 
 		this.id = id;
 		this.employeeId = employeeId;
@@ -228,5 +232,13 @@ public class Employee {
 	public void setLeaveRequests(List<LeaveRequest> leaveRequests) {
 		this.leaveRequests = leaveRequests;
 	}
+	
+	public List<LeaveBalance> getLeaveBalances() {
+		return leaveBalances;
+	}
 
+	public void setLeaveBalances(List<LeaveBalance> leaveBalances) {
+		this.leaveBalances = leaveBalances;
+	}
+	
 }

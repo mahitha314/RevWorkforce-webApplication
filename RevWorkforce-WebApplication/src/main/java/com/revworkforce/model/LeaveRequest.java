@@ -1,6 +1,10 @@
 package com.revworkforce.model;
 
 import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -22,14 +26,17 @@ public class LeaveRequest {
 
 	@ManyToOne
 	@JoinColumn(name = "employee_id", nullable = false)
+	@JsonBackReference(value = "employee-leaverequest")
 	private Employee employee;
 
 	@ManyToOne
 	@JoinColumn(name = "leave_type_id", nullable = false)
+	@JsonBackReference(value = "leavetype-leaverequest")
 	private LeaveType leaveType;
 
 	@OneToOne
 	@JoinColumn(name = "approval_id")
+	@JsonManagedReference(value="request-approval")
 	private LeaveApproval leaveApproval;
 
 	public LeaveRequest() {}
