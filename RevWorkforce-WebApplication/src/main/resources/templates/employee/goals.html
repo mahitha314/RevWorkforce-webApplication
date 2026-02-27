@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('My Goals')"></head>
+
+<body>
+
+<div th:replace="fragments/header :: topbar"></div>
+<div th:replace="fragments/sidebar :: employeeSidebar('goals')"></div>
+
+<div class="content">
+
+    <div class="card-box">
+
+        <h3>🎯 My Goals</h3>
+
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <form th:action="@{/employee/goals}" method="post" th:object="${goal}">
+
+            <div class="mb-3">
+                <label>Description</label>
+                <input type="text" class="form-control"
+                       th:field="*{goalDescription}" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Priority</label>
+                <select class="form-control" th:field="*{priority}">
+                    <option value="LOW">LOW</option>
+                    <option value="MEDIUM">MEDIUM</option>
+                    <option value="HIGH">HIGH</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label>Deadline</label>
+                <input type="date" class="form-control"
+                       th:field="*{deadline}" required>
+            </div>
+
+            <button class="btn btn-success">Add Goal</button>
+            <a th:href="@{/employee/goals}" class="btn btn-danger ms-2">
+                Cancel
+            </a>
+
+        </form>
+
+        <hr>
+
+        <table class="table table-bordered table-hover">
+
+            <thead class="table-dark">
+            <tr>
+                <th>Description</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Deadline</th>
+                <th>Action</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="goal : ${goals}">
+                <td th:text="${goal.goalDescription}"></td>
+                <td th:text="${goal.priority}"></td>
+                <td th:text="${goal.status}"></td>
+                <td th:text="${goal.deadline}"></td>
+
+                <td>
+                    <a th:if="${goal.status == 'Not Started'}"
+                       th:href="@{/employee/goals/status/{gid}(gid=${goal.goalId},status='In Progress')}"
+                       class="text-primary fw-bold">
+                        Start
+                    </a>
+
+                    <a th:if="${goal.status == 'In Progress'}"
+                       th:href="@{/employee/goals/status/{gid}(gid=${goal.goalId},status='Completed')}"
+                       class="text-success fw-bold">
+                        Complete
+                    </a>
+
+                    <span th:if="${goal.status == 'Completed'}"
+                          class="text-muted fw-bold">
+                        Completed ✔
+                    </span>
+                </td>
+
+                <td>
+                    <a th:if="${goal.status != 'Completed'}"
+                       th:href="@{/employee/goals/delete/{gid}(gid=${goal.goalId})}"
+                       class="text-danger fw-bold">
+                        Delete
+                    </a>
+
+                    <span th:if="${goal.status == 'Completed'}"
+                          class="text-muted">—</span>
+                </td>
+
+            </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

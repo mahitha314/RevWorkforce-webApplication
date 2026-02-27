@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('Performance Review')"></head>
+
+<body>
+
+<div th:replace="fragments/header :: topbar"></div>
+<div th:replace="fragments/sidebar :: employeeSidebar('performance')"></div>
+
+<div class="content">
+
+    <div class="card-box">
+
+        <h3>📊 Self Performance Review</h3>
+
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <form th:action="@{/employee/performance}"
+              method="post"
+              th:object="${review}">
+
+            <div class="mb-3">
+                <label>Deliverables</label>
+                <textarea class="form-control"
+                          th:field="*{deliverables}" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label>Accomplishments</label>
+                <textarea class="form-control"
+                          th:field="*{accomplishments}" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label>Areas Of Improvement</label>
+                <textarea class="form-control"
+                          th:field="*{areasOfImprovement}" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label>Self Rating (1-5)</label>
+                <input type="number" min="1" max="5"
+                       class="form-control"
+                       th:field="*{selfRating}">
+            </div>
+
+            <button class="btn btn-primary">Save Self Review</button>
+            <a th:href="@{/employee/performance}"
+               class="btn btn-danger ms-2">Cancel</a>
+
+        </form>
+
+        <hr>
+
+        <table class="table table-bordered table-hover">
+
+            <thead class="table-dark">
+            <tr>
+                <th>Deliverables</th>
+                <th>Accomplishments</th>
+                <th>Improvement</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Submit</th>
+                <th>Feedback</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="review : ${reviews}">
+                <td th:text="${review.deliverables}"></td>
+                <td th:text="${review.accomplishments}"></td>
+                <td th:text="${review.areasOfImprovement}"></td>
+                <td th:text="${review.selfRating}"></td>
+
+				<td>
+				    <span th:if="${#strings.equalsIgnoreCase(review.status,'Draft')}"
+				          class="text-warning fw-bold">
+				        Draft
+				    </span>
+
+				    <span th:if="${#strings.equalsIgnoreCase(review.status,'Submitted')}"
+				          class="text-success fw-bold">
+				        Submitted
+				    </span>
+				</td>
+
+				<td>
+				    <a th:if="${#strings.equalsIgnoreCase(review.status,'Draft')}"
+				       th:href="@{/employee/performance/submit/{rid}(rid=${review.reviewId})}"
+				       class="text-primary fw-bold">
+				        Submit
+				    </a>
+
+				    <span th:if="${#strings.equalsIgnoreCase(review.status,'Submitted')}"
+				          class="text-muted fw-bold">
+				        Already Submitted
+				    </span>
+				</td>
+
+				<td>
+				    <a th:if="${#strings.equalsIgnoreCase(review.status,'Submitted')}"
+				       th:href="@{/employee/performance/feedback/{rid}(rid=${review.reviewId})}"
+				       class="text-success fw-bold">
+				        View
+				    </a>
+
+				    <span th:if="${#strings.equalsIgnoreCase(review.status,'Draft')}"
+				          class="text-muted">
+				        Not Available
+				    </span>
+				</td>
+            </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

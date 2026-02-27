@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('Employee Dashboard')"></head>
+
+<body>
+
+<!-- TOPBAR -->
+<div th:replace="fragments/header :: topbar"></div>
+
+<!-- SIDEBAR -->
+<div th:replace="fragments/sidebar :: employeeSidebar('dashboard')"></div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+    <div class="card-box">
+
+        <h2>📊 Employee Dashboard</h2>
+        <hr>
+
+        <p>Welcome to your dashboard.</p>
+
+        <div class="row mt-4">
+
+            <div class="col-md-4">
+                <div class="alert alert-primary text-center">
+                    <h5>My Leaves</h5>
+                    <p>View leave status</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="alert alert-success text-center">
+                    <h5>My Goals</h5>
+                    <p>Track your goals</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="alert alert-warning text-center">
+                    <h5>Performance</h5>
+                    <p>Submit self review</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
