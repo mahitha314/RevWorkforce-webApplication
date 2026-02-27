@@ -1,7 +1,7 @@
 package com.revworkforce.model;
 
-import java.util.List;
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "leave_types")
@@ -17,21 +17,21 @@ public class LeaveType {
 	@Column(nullable = false)
 	private int totalDays;
 
-	@OneToMany(mappedBy = "leaveType")
-	private List<LeaveBalance> leaveBalances;
+    @OneToMany(mappedBy = "leaveType")
+    private List<LeaveBalance> leaveBalances;
 
-	@OneToMany(mappedBy = "leaveType")
-	private List<LeaveRequest> leaveRequests;
+    @OneToMany(mappedBy = "leaveType")
+    private List<LeaveRequest> leaveRequests;
 
-	public LeaveType() {}
+    public LeaveType() {}
 
-	public LeaveType(Long id, String typeName, int totalDays) {
-		this.id = id;
-		this.typeName = typeName;
-		this.totalDays = totalDays;
-	}
-
-	public Long getId() {
+    public LeaveType(Long id, String typeName, int totalDays) {
+        this.id = id;
+        this.typeName = typeName;
+        this.totalDays = totalDays;
+    }
+    
+    public Long getId() {
 		return id;
 	}
 
@@ -70,5 +70,5 @@ public class LeaveType {
 	public void setLeaveRequests(List<LeaveRequest> leaveRequests) {
 		this.leaveRequests = leaveRequests;
 	}
-
+    
 }

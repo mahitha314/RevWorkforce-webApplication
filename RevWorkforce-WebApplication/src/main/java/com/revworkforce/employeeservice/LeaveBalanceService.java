@@ -1,5 +1,9 @@
 package com.revworkforce.employeeservice;
 
-public class LeaveBalanceService {
+import com.revworkforce.dto.ApiResponse;
+
+public interface LeaveBalanceService {
+
+    ApiResponse getEmployeeBalances(Long employeeId);
 
 }

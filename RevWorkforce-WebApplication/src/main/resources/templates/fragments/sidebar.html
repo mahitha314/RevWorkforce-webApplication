@@ -1,0 +1,52 @@
+<div th:fragment="sidebar" class="sidebar">
+
+    <h4 class="text-center mb-4">RevWorkForce</h4>
+
+    <!-- Dashboard -->
+    <a th:href="@{/employee/dashboard}"
+       th:classappend="${view == 'dashboard'} ? ' active' : ''">
+        <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+
+    <!-- My Profile -->
+    <a th:href="@{/employee/profile}"
+       th:classappend="${view == 'profile'} ? ' active' : ''">
+        <i class="bi bi-person-circle"></i> My Profile
+    </a>
+
+    <!-- Apply Leave -->
+    <a th:href="@{/employee/apply-leave}"
+       th:classappend="${view == 'apply-leave'} ? ' active' : ''">
+        <i class="bi bi-pencil-square"></i> Apply Leave
+    </a>
+
+    <!-- Leave Balance -->
+    <a th:href="@{/employee/leave-balance}"
+       th:classappend="${view == 'leave-balance'} ? ' active' : ''">
+        <i class="bi bi-calendar-check"></i> Leave Balance
+    </a>
+
+    <!-- Leave History -->
+    <a th:href="@{/employee/leave-history}"
+       th:classappend="${view == 'leave-history'} ? ' active' : ''">
+        <i class="bi bi-clock-history"></i> Leave History
+    </a>
+
+    <!-- Leave Status -->
+    <a th:href="@{/employee/leave-status}"
+       th:classappend="${view == 'leave-status'} ? ' active' : ''">
+        <i class="bi bi-info-circle"></i> Leave Status
+    </a>
+
+    <!-- Announcements -->
+    <a th:href="@{/employee/announcements}"
+       th:classappend="${view == 'announcement'} ? ' active' : ''">
+        <i class="bi bi-megaphone"></i> Announcements
+    </a>
+
+    <!-- Logout -->
+    <a th:href="@{/logout}">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
+
+</div>

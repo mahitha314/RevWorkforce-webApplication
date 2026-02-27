@@ -31,6 +31,8 @@ public class LeaveRequest {
 	@OneToOne
 	@JoinColumn(name = "approval_id")
 	private LeaveApproval leaveApproval;
+	@Column(name = "status")
+	private String status;
 
 	public LeaveRequest() {}
 
@@ -100,5 +102,11 @@ public class LeaveRequest {
 	public void setLeaveApproval(LeaveApproval leaveApproval) {
 		this.leaveApproval = leaveApproval;
 	}
-	
+	public String getStatus() {
+	    return status;
+	}
+
+	public void setStatus(String status) {
+	    this.status = status;
+	}
 }

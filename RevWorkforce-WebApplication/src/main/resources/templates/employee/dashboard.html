@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('Employee Dashboard')"></head>
+
+<body>
+
+<div th:replace="fragments/sidebar :: sidebar"></div>
+<div th:replace="fragments/header :: topbar"></div>
+
+<div class="content">
+
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="mb-4">
+            <h3 class="fw-bold">Dashboard Overview</h3>
+            <p class="text-muted">Summary of your leave details</p>
+        </div>
+
+        <!-- Leave Summary Cards -->
+        <div class="row g-4">
+
+            <!-- Sick Leave -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-4 text-center">
+                    <h5>Sick Leave</h5>
+                    <h2 class="text-primary"
+                        th:text="${sickTotal}">10</h2>
+                    <p class="text-muted">Total Allocated</p>
+                </div>
+            </div>
+
+            <!-- Casual Leave -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-4 text-center">
+                    <h5>Casual Leave</h5>
+                    <h2 class="text-success"
+                        th:text="${casualTotal}">10</h2>
+                    <p class="text-muted">Total Allocated</p>
+                </div>
+            </div>
+
+            <!-- Earned Leave -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 p-4 text-center">
+                    <h5>Earned Leave</h5>
+                    <h2 class="text-warning"
+                        th:text="${earnedTotal}">15</h2>
+                    <p class="text-muted">Total Allocated</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Used & Remaining Section -->
+        <div class="row mt-5">
+
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 p-4">
+                    <h5>Total Leaves Used</h5>
+                    <h3 class="text-danger"
+                        th:text="${totalUsed}">5</h3>
+                </div>
+            </div>
+			<div class="card p-4 mt-4">
+			    <h4 class="mb-3">Leave Balance</h4>
+
+			    <table class="table table-bordered">
+			        <thead class="table-dark">
+			        <tr>
+			            <th>Leave Type</th>
+			            <th>Total</th>
+			            <th>Used</th>
+			            <th>Remaining</th>
+			        </tr>
+			        </thead>
+
+			        <tbody>
+			        <tr th:each="balance : ${balances}">
+			            <td th:text="${balance.leaveType.typeName}"></td>
+			            <td th:text="${balance.totalLeaves}"></td>
+			            <td th:text="${balance.usedLeaves}"></td>
+			            <td th:text="${balance.remainingLeaves}"></td>
+			        </tr>
+
+			        <tr th:if="${balances == null or #lists.isEmpty(balances)}">
+			            <td colspan="4" class="text-center text-muted">
+			                No leave balance records found
+			            </td>
+			        </tr>
+			        </tbody>
+			    </table>
+			</div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 p-4">
+                    <h5>Total Leaves Remaining</h5>
+                    <h3 class="text-success"
+                        th:text="${totalRemaining}">25</h3>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

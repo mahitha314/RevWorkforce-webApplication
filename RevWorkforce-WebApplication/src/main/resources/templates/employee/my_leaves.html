@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Leaves</title>
+    <link rel="stylesheet" href="/css/employee-leave.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>My Leaves</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Leave Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="leave : ${leaves}">
+            <td th:text="${leave.leaveType.typeName}"></td>
+            <td th:text="${leave.startDate}"></td>
+            <td th:text="${leave.endDate}"></td>
+            <td th:text="${leave.reason}"></td>
+
+            <!-- STATUS -->
+            <td>
+                <span th:if="${leave.leaveApproval == null}"
+                      class="pending">Pending</span>
+
+                <span th:if="${leave.leaveApproval != null 
+                              and leave.leaveApproval.status == 'APPROVED'}"
+                      class="approved">Approved</span>
+
+                <span th:if="${leave.leaveApproval != null 
+                              and leave.leaveApproval.status == 'REJECTED'}"
+                      class="rejected">Rejected</span>
+            </td>
+
+            <!-- CANCEL BUTTON -->
+            <td>
+                <form th:if="${leave.leaveApproval == null}"
+                      th:action="@{'/employee/cancel/' + ${leave.id}}"
+                      method="post">
+                    <button type="submit" class="cancel-btn">
+                        Cancel
+                    </button>
+                </form>
+
+                <span th:if="${leave.leaveApproval != null}">
+                    -
+                </span>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="back-link">
+        <a th:href="@{/employee/apply}">Apply New Leave</a>
+    </div>
+</div>
+
+</body>
+</html>
