@@ -3,26 +3,111 @@
 
 <head>
 	<title>Team Structure</title>
+	<link rel="stylesheet" th:href="@{/css/manager.css}">
 </head>
 
 <body>
 
-	<h2>Team Members</h2>
 
-	<table border="1">
-		<tr>
-			<th>Name</th>
-			<th>Email</th>
-			<th>Designation</th>
-		</tr>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-		<tr th:each="emp : ${team}">
-			<td th:text="${emp.firstName} + ' ' + ${emp.lastName}"></td>
-			<td th:text="${emp.email}"></td>
-			<td th:text="${emp.designation.title}"></td>
-		</tr>
+	<div class="main-content">
 
-	</table>
+
+		<div class="card">
+			<h2>Team Overview</h2>
+			<p><strong>Manager:</strong> Ravi Kumar</p>
+			<p><strong>Department:</strong> IT</p>
+			<p><strong>Total Team Members:</strong> <span id="teamCount">0</span></p>
+		</div>
+
+
+		<div class="card">
+			<input type="text" id="searchInput" placeholder="Search by name or email">
+			<button class="primary-btn" onclick="filterTable()">Search</button>
+		</div>
+
+
+		<div class="card">
+			<h3>Team Members</h3>
+
+			<table id="teamTable">
+				<thead>
+					<tr>
+						<th>Emp ID</th>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+
+
+		<div class="card">
+			<h3>Organization Structure</h3>
+
+			<div id="orgChart">
+				<p><strong>Ravi Kumar (Manager)</strong></p>
+				<ul id="orgList"></ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script>
+
+		const token = localStorage.getItem("token");
+		const managerId = 1;
+
+		fetch(`/manager/team/${managerId}`, {
+			headers: {
+				"Authorization": "Bearer " + token
+			}
+		})
+			.then(res => res.json())
+			.then(data => {
+
+				const tableBody = document.querySelector("#teamTable tbody");
+				const orgList = document.getElementById("orgList");
+
+				tableBody.innerHTML = "";
+				orgList.innerHTML = "";
+
+				document.getElementById("teamCount").innerText = data.length;
+
+				data.forEach(emp => {
+
+					tableBody.innerHTML += `
+        <tr>
+            <td>${emp.employeeId}</td>
+            <td>${emp.firstName} ${emp.lastName}</td>
+            <td>${emp.email}</td>
+            <td>Active</td>
+            <td>
+                <button class="primary-btn">View Profile</button>
+            </td>
+        </tr>`;
+
+					orgList.innerHTML += `
+        <li>${emp.firstName} ${emp.lastName}</li>`;
+				});
+			});
+
+		function filterTable() {
+			const input = document.getElementById("searchInput").value.toLowerCase();
+			const rows = document.querySelectorAll("#teamTable tbody tr");
+
+			rows.forEach(row => {
+				const text = row.innerText.toLowerCase();
+				row.style.display = text.includes(input) ? "" : "none";
+			});
+		}
+
+	</script>
 
 </body>
 

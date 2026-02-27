@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="header">
+
+		<div class="header">
+			<div style="background:#111827;color:white;padding:15px;">
+				<h2>RevWorkForce HRM</h2>
+			</div>
+
+			<div class="right-section">
+
+				
+				<div class="notification-wrapper">
+					<div class="notification-icon" onclick="toggleDropdown()">
+						🔔
+						<span class="badge" id="notificationCount">0</span>
+					</div>
+
+					<div class="notification-dropdown" id="notificationDropdown">
+						<ul id="notificationList"></ul>
+					</div>
+				</div>
+
+				<div class="profile">
+					Ravi Kumar (Manager)
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+	<script>
+
+		const token = localStorage.getItem("token");
+		const managerId = 1; 
+
+		function loadNotifications() {
+
+			fetch(`/manager/notifications/${managerId}`, {
+				headers: {"Authorization": "Bearer " + token}
+			})
+				.then(res => res.json())
+				.then(data => {
+
+					const list = document.getElementById("notificationList");
+					const badge = document.getElementById("notificationCount");
+
+					list.innerHTML = "";
+					badge.innerText = data.length;
+
+					if (data.length === 0) {
+						list.innerHTML = "<li>No Notifications</li>";
+						return;
+					}
+
+					data.forEach(n => {
+						list.innerHTML += `
+                <li>
+                    ${n.message}
+                    <br>
+                    <small>${n.createdAt}</small>
+                </li>
+            `;
+					});
+				});
+		}
+
+		function toggleDropdown() {
+			const dropdown = document.getElementById("notificationDropdown");
+			dropdown.style.display =
+				dropdown.style.display === "block" ? "none" : "block";
+		}
+
+		document.addEventListener("DOMContentLoaded", loadNotifications);
+
+	</script>
+
+</body>
+
+</html>

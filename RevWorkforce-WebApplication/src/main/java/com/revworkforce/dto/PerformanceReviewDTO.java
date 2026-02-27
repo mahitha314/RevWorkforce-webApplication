@@ -1,16 +1,43 @@
 package com.revworkforce.dto;
 
+import java.time.LocalDate;
+
 public class PerformanceReviewDTO {
 
 	private Long reviewId;
 	private Long employeeId;
 	private String employeeName;
 
-	private int selfRating;
-	private int managerRating;
+	private String accomplishments;
+	private String deliverables;
+	private String areasOfImprovement;
+
+	private Integer selfRating;
+	private Integer managerRating;
 
 	private String managerFeedback;
 	private String status;
+	private LocalDate submittedDate;
+
+	public PerformanceReviewDTO() {
+	}
+
+	public PerformanceReviewDTO(Long reviewId, Long employeeId, String employeeName, String accomplishments,
+			String deliverables, String areasOfImprovement, Integer selfRating, Integer managerRating,
+			String managerFeedback, String status, LocalDate submittedDate) {
+
+		this.reviewId = reviewId;
+		this.employeeId = employeeId;
+		this.employeeName = employeeName;
+		this.accomplishments = accomplishments;
+		this.deliverables = deliverables;
+		this.areasOfImprovement = areasOfImprovement;
+		this.selfRating = selfRating;
+		this.managerRating = managerRating;
+		this.managerFeedback = managerFeedback;
+		this.status = status;
+		this.submittedDate = submittedDate;
+	}
 
 	public Long getReviewId() {
 		return reviewId;
@@ -36,19 +63,43 @@ public class PerformanceReviewDTO {
 		this.employeeName = employeeName;
 	}
 
-	public int getSelfRating() {
+	public String getAccomplishments() {
+		return accomplishments;
+	}
+
+	public void setAccomplishments(String accomplishments) {
+		this.accomplishments = accomplishments;
+	}
+
+	public String getDeliverables() {
+		return deliverables;
+	}
+
+	public void setDeliverables(String deliverables) {
+		this.deliverables = deliverables;
+	}
+
+	public String getAreasOfImprovement() {
+		return areasOfImprovement;
+	}
+
+	public void setAreasOfImprovement(String areasOfImprovement) {
+		this.areasOfImprovement = areasOfImprovement;
+	}
+
+	public Integer getSelfRating() {
 		return selfRating;
 	}
 
-	public void setSelfRating(int selfRating) {
+	public void setSelfRating(Integer selfRating) {
 		this.selfRating = selfRating;
 	}
 
-	public int getManagerRating() {
+	public Integer getManagerRating() {
 		return managerRating;
 	}
 
-	public void setManagerRating(int managerRating) {
+	public void setManagerRating(Integer managerRating) {
 		this.managerRating = managerRating;
 	}
 
@@ -66,5 +117,13 @@ public class PerformanceReviewDTO {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public LocalDate getSubmittedDate() {
+		return submittedDate;
+	}
+
+	public void setSubmittedDate(LocalDate submittedDate) {
+		this.submittedDate = submittedDate;
 	}
 }

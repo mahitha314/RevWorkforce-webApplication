@@ -3,41 +3,122 @@
 
 <head>
 	<title>Performance Reviews</title>
+	<link rel="stylesheet" th:href="@{/css/manager.css}">
 </head>
 
 <body>
 
-	<h2>Performance Reviews</h2>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-	<table border="1">
-		<tr>
-			<th>Employee</th>
-			<th>Self Rating</th>
-			<th>Status</th>
-			<th>Action</th>
-		</tr>
+	<div class="main-content">
 
-		<tr th:each="review : ${reviews}">
-			<td th:text="${review.employeeName}"></td>
-			<td th:text="${review.selfRating}"></td>
-			<td th:text="${review.status}"></td>
+		<div class="card">
+			<h2>Performance Reviews – 2026</h2>
 
-			<td>
-				<form th:action="@{/manager/performance-reviews/submit}" method="post">
-					<input type="hidden" name="reviewId" th:value="${review.reviewId}" />
+			<table id="reviewTable">
+				<thead>
+					<tr>
+						<th>Employee</th>
+						<th>Self Rating</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
 
-					Rating:
-					<input type="number" name="rating" min="1" max="5" required />
 
-					Feedback:
-					<input type="text" name="feedback" required />
+		<div id="reviewModal" class="modal">
+			<div class="modal-content">
+				<h3>Manager Review</h3>
 
-					<button type="submit">Submit</button>
-				</form>
-			</td>
-		</tr>
+				<label>Manager Rating:</label>
+				<select id="managerRating">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+				</select>
 
-	</table>
+				<br><br>
+
+				<label>Manager Feedback:</label>
+				<textarea id="managerFeedback" rows="4"></textarea>
+
+				<br><br>
+
+				<button onclick="submitReview()" class="primary-btn">
+					Submit Review
+				</button>
+				<button onclick="closeModal()">Cancel</button>
+			</div>
+		</div>
+
+	</div>
+
+	<script>
+
+		const token = localStorage.getItem("token");
+		const managerId = 1;
+
+		let selectedReviewId = null;
+
+		fetch(`/manager/performance/pending/${managerId}`, {
+			headers: {"Authorization": "Bearer " + token}
+		})
+			.then(res => res.json())
+			.then(data => {
+
+				const table = document.querySelector("#reviewTable tbody");
+				table.innerHTML = "";
+
+				data.forEach(review => {
+					table.innerHTML += `
+        <tr>
+            <td>${review.employeeName}</td>
+            <td>${review.selfRating}/5</td>
+            <td>${review.status}</td>
+            <td>
+                <button class="primary-btn" onclick="openReview(${review.reviewId})">
+                    Review
+                </button>
+            </td>
+        </tr>`;
+				});
+			});
+
+		function openReview(reviewId) {
+			selectedReviewId = reviewId;
+			document.getElementById("reviewModal").style.display = "block";
+		}
+
+		function closeModal() {
+			document.getElementById("reviewModal").style.display = "none";
+		}
+
+		function submitReview() {
+
+			const rating = document.getElementById("managerRating").value;
+			const feedback = document.getElementById("managerFeedback").value;
+
+			fetch(`/manager/performance/review/${selectedReviewId}?rating=${rating}&feedback=${feedback}&managerId=${managerId}`, {
+				method: "PUT",
+				headers: {"Authorization": "Bearer " + token}
+			})
+				.then(res => {
+					if (res.ok) {
+						alert("Review Submitted Successfully");
+						location.reload();
+					} else {
+						alert("Error submitting review");
+					}
+				});
+		}
+
+	</script>
 
 </body>
 

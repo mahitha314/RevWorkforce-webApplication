@@ -7,133 +7,144 @@ import jakarta.persistence.*;
 @Table(name = "performance_reviews")
 public class PerformanceReview {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @Column(name = "REVIEW_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "accomplishments")
-	private String accomplishments;
+    @Column(name = "accomplishments")
+    private String accomplishments;
 
-	@Column(name = "deliverables")
-	private String deliverables;
+    @Column(name = "deliverables")
+    private String deliverables;
 
-	@Column(name = "areas_of_improvement")
-	private String areasOfImprovement;
+    @Column(name = "areas_of_improvement")
+    private String areasOfImprovement;
 
-	@Column(name = "self_rating", nullable = false)
-	private int selfRating;
+    @Column(name = "self_rating", nullable = false)
+    private int selfRating;
 
-	@Column(name = "manager_rating", nullable = false)
-	private int managerRating;
+    @Column(name = "manager_rating", nullable = false)
+    private int managerRating;
 
-	@Column(name = "manager_feedback")
-	private String managerFeedback;
+    @Column(name = "manager_feedback")
+    private String managerFeedback;
 
-	@Column(name = "status")
-	private String status;
+    @Column(name = "status")
+    private String status;
 
-	@Column(name = "submitted_date")
-	private LocalDate submittedDate;
+    @Column(name = "submitted_date")
+    private LocalDate submittedDate;
 
-	@ManyToOne
-	@JoinColumn(name = "employee_id", nullable = false)
-	private Employee employee;
+    @ManyToOne
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee employee;
 
-	public PerformanceReview() {}
+    public PerformanceReview() {}
 
-	public PerformanceReview(Long id, String accomplishments, String deliverables, String areasOfImprovement,
-			int selfRating, int managerRating, String managerFeedback, String status, LocalDate submittedDate,
-			Employee employee) {
-		this.id = id;
-		this.accomplishments = accomplishments;
-		this.deliverables = deliverables;
-		this.areasOfImprovement = areasOfImprovement;
-		this.selfRating = selfRating;
-		this.managerRating = managerRating;
-		this.managerFeedback = managerFeedback;
-		this.status = status;
-		this.submittedDate = submittedDate;
-		this.employee = employee;
-	}
+    public PerformanceReview(Long id,
+                             String accomplishments,
+                             String deliverables,
+                             String areasOfImprovement,
+                             int selfRating,
+                             int managerRating,
+                             String managerFeedback,
+                             String status,
+                             LocalDate submittedDate,
+                             Employee employee) {
 
-	public Long getId() {
-		return id;
-	}
+        this.id = id;
+        this.accomplishments = accomplishments;
+        this.deliverables = deliverables;
+        this.areasOfImprovement = areasOfImprovement;
+        this.selfRating = selfRating;
+        this.managerRating = managerRating;
+        this.managerFeedback = managerFeedback;
+        this.status = status;
+        this.submittedDate = submittedDate;
+        this.employee = employee;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    // ✅ Correct getter
+    public Long getId() {
+        return id;
+    }
 
-	public String getAccomplishments() {
-		return accomplishments;
-	}
+    // ✅ Correct setter
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setAccomplishments(String accomplishments) {
-		this.accomplishments = accomplishments;
-	}
+    public String getAccomplishments() {
+        return accomplishments;
+    }
 
-	public String getDeliverables() {
-		return deliverables;
-	}
+    public void setAccomplishments(String accomplishments) {
+        this.accomplishments = accomplishments;
+    }
 
-	public void setDeliverables(String deliverables) {
-		this.deliverables = deliverables;
-	}
+    public String getDeliverables() {
+        return deliverables;
+    }
 
-	public String getAreasOfImprovement() {
-		return areasOfImprovement;
-	}
+    public void setDeliverables(String deliverables) {
+        this.deliverables = deliverables;
+    }
 
-	public void setAreasOfImprovement(String areasOfImprovement) {
-		this.areasOfImprovement = areasOfImprovement;
-	}
+    public String getAreasOfImprovement() {
+        return areasOfImprovement;
+    }
 
-	public int getSelfRating() {
-		return selfRating;
-	}
+    public void setAreasOfImprovement(String areasOfImprovement) {
+        this.areasOfImprovement = areasOfImprovement;
+    }
 
-	public void setSelfRating(int selfRating) {
-		this.selfRating = selfRating;
-	}
+    public int getSelfRating() {
+        return selfRating;
+    }
 
-	public int getManagerRating() {
-		return managerRating;
-	}
+    public void setSelfRating(int selfRating) {
+        this.selfRating = selfRating;
+    }
 
-	public void setManagerRating(int managerRating) {
-		this.managerRating = managerRating;
-	}
+    public int getManagerRating() {
+        return managerRating;
+    }
 
-	public String getManagerFeedback() {
-		return managerFeedback;
-	}
+    public void setManagerRating(int managerRating) {
+        this.managerRating = managerRating;
+    }
 
-	public void setManagerFeedback(String managerFeedback) {
-		this.managerFeedback = managerFeedback;
-	}
+    public String getManagerFeedback() {
+        return managerFeedback;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public void setManagerFeedback(String managerFeedback) {
+        this.managerFeedback = managerFeedback;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public LocalDate getSubmittedDate() {
-		return submittedDate;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setSubmittedDate(LocalDate submittedDate) {
-		this.submittedDate = submittedDate;
-	}
+    public LocalDate getSubmittedDate() {
+        return submittedDate;
+    }
 
-	public Employee getEmployee() {
-		return employee;
-	}
+    public void setSubmittedDate(LocalDate submittedDate) {
+        this.submittedDate = submittedDate;
+    }
 
-	public void setEmployee(Employee employee) {
-		this.employee = employee;
-	}
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 
 }
