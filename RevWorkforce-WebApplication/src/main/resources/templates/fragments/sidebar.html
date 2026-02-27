@@ -1,16 +1,67 @@
-<!-- fragments/sidebar.html -->
-<div th:fragment="sidebar">
-    <div class="bg-secondary text-white vh-100 p-3">
-        <a th:href="@{/admin/dashboard}" class="text-white d-block mb-2">Dashboard</a>
-        <a href="#" class="text-white d-block mb-2">My Profile</a>
-        <a href="#" class="text-white d-block mb-2">Employee Management</a>
-        <a href="#" class="text-white d-block mb-2">Leave Management</a>
-        <a href="#" class="text-white d-block mb-2">Performance Reviews</a>
-        <a href="#" class="text-white d-block mb-2">Team Goals Management</a>
-        <a href="#" class="text-white d-block mb-2">Announcements</a>
-        <a href="#" class="text-white d-block mb-2">Departments & Designations</a>
-        <a href="#" class="text-white d-block mb-2">Reports</a>
-        <a href="#" class="text-white d-block mb-2">System Activity Logs</a>
-        <a th:href="@{/logout}" class="text-white d-block mt-3">Logout</a>
-    </div>
+<div th:fragment="employeeSidebar(activePage)" class="sidebar">
+
+<style>
+.sidebar {
+    position: fixed;
+    width: 240px;
+    height: 100vh;
+    background: black;
+    padding-top: 20px;
+    color: white;
+}
+
+.sidebar h4 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar a:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.sidebar .active {
+    background: #0d6efd;
+}
+</style>
+
+<h4>RevWorkForce</h4>
+
+<a th:href="@{/employee/dashboard}"
+   th:classappend="${activePage=='dashboard'} ? 'active'">
+   <i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+
+<a th:href="@{/employee/profile}"
+   th:classappend="${activePage=='profile'} ? 'active'">
+   <i class="bi bi-person-circle me-2"></i>My Profile</a>
+
+<a th:href="@{/employee/apply-leave}"
+   th:classappend="${activePage=='leave'} ? 'active'">
+   <i class="bi bi-calendar-plus me-2"></i>Apply Leave</a>
+
+<a th:href="@{/employee/my-leaves}"
+   th:classappend="${activePage=='myleaves'} ? 'active'">
+   <i class="bi bi-calendar-check me-2"></i>My Leaves</a>
+
+<a th:href="@{/employee/performance}"
+   th:classappend="${activePage=='performance'} ? 'active'">
+   <i class="bi bi-graph-up-arrow me-2"></i>Performance Review</a>
+
+<a th:href="@{/employee/goals}"
+   th:classappend="${activePage=='goals'} ? 'active'">
+   <i class="bi bi-bullseye me-2"></i>My Goals</a>
+
+<a th:href="@{/employee/announcements}"
+   th:classappend="${activePage=='announcements'} ? 'active'">
+   <i class="bi bi-megaphone me-2"></i>Announcements</a>
+
+<a th:href="@{/logout}">
+	<i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+
 </div>

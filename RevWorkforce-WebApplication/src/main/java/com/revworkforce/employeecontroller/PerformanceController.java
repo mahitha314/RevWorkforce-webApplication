@@ -1,69 +1,104 @@
 package com.revworkforce.employeecontroller;
 
-<<<<<<< HEAD
+import java.security.Principal;
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.revworkforce.dto.PerformanceReviewDTO;
 import com.revworkforce.employeeservice.PerformanceService;
+import com.revworkforce.model.Employee;
+import com.revworkforce.repository.EmployeeRepository;
 
 @Controller
 @RequestMapping("/employee/performance")
 public class PerformanceController {
 
     private final PerformanceService performanceService;
+    private final EmployeeRepository employeeRepository;
 
-    public PerformanceController(PerformanceService performanceService) {
+    public PerformanceController(PerformanceService performanceService,
+                                 EmployeeRepository employeeRepository) {
         this.performanceService = performanceService;
+        this.employeeRepository = employeeRepository;
     }
 
-    
-    @GetMapping("/{employeeId}")
-    public String showPerformancePage(@PathVariable Long employeeId, Model model) {
+    // ================== LOAD PAGE ==================
+    @GetMapping
+    public String showPerformancePage(Model model, Principal principal) {
 
-        model.addAttribute("employeeId", employeeId);
+        Employee employee = employeeRepository
+                .findByEmail(principal.getName())
+                .orElseThrow();
+
+        model.addAttribute("employee", employee);
         model.addAttribute("review", new PerformanceReviewDTO());
         model.addAttribute("reviews",
-                performanceService.getEmployeeReviews(employeeId));
+                performanceService.getEmployeeReviews(employee.getId()));
+        model.addAttribute("showFeedback", false);
 
-        return "employee/performance";  
+        return "employee/performance";
     }
 
-   
-    @PostMapping("/{employeeId}")
-    public String createReview(@PathVariable Long employeeId,
-                               @ModelAttribute("review") PerformanceReviewDTO dto) {
+    // ================== SAVE REVIEW (DRAFT) ==================
+    @PostMapping
+    public String createReview(@ModelAttribute("review") PerformanceReviewDTO dto,
+                               Principal principal) {
 
-        performanceService.createReview(employeeId, dto);
+        Employee employee = employeeRepository
+                .findByEmail(principal.getName())
+                .orElseThrow();
 
-        return "redirect:/employee/performance/" + employeeId;
+        performanceService.createReview(employee.getId(), dto);
+
+        return "redirect:/employee/performance";
     }
 
-    
-    @GetMapping("/{employeeId}/submit/{reviewId}")
-    public String submitReview(@PathVariable Long employeeId,
-                               @PathVariable Long reviewId) {
+    // ================== SUBMIT REVIEW ==================
+    @GetMapping("/submit/{reviewId}")
+    public String submitReview(@PathVariable Long reviewId,
+                               RedirectAttributes redirectAttributes) {
 
-        performanceService.submitReview(reviewId);
+        try {
+            performanceService.submitReview(reviewId);
 
-        return "redirect:/employee/performance/" + employeeId;
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Performance review submitted to manager successfully");
+
+        } catch (IllegalStateException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Already submitted");
+        }
+
+        return "redirect:/employee/performance";
     }
 
-    
-    @GetMapping("/{employeeId}/feedback/{reviewId}")
-    public String viewFeedback(@PathVariable Long employeeId,
-                               @PathVariable Long reviewId,
-                               Model model) {
+    // ================== VIEW FEEDBACK ==================
+    @GetMapping("/feedback/{reviewId}")
+    public String viewFeedback(@PathVariable Long reviewId,
+                               Model model,
+                               Principal principal) {
 
-        model.addAttribute("feedback",
+        Employee employee = employeeRepository
+                .findByEmail(principal.getName())
+                .orElseThrow();
+
+        model.addAttribute("employee", employee);
+        model.addAttribute("review", new PerformanceReviewDTO());
+        model.addAttribute("reviews",
+                performanceService.getEmployeeReviews(employee.getId()));
+
+        model.addAttribute("selectedFeedback",
                 performanceService.viewFeedback(reviewId));
+        model.addAttribute("showFeedback", true);
 
-        return "employee/feedback"; 
+        return "employee/performance";
     }
 }
-=======
-public class PerformanceController {
-
-}
->>>>>>> dev

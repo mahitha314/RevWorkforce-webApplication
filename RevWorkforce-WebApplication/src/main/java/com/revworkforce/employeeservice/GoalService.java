@@ -1,6 +1,9 @@
 package com.revworkforce.employeeservice;
 
-<<<<<<< HEAD
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.revworkforce.dto.GoalDTO;
@@ -9,10 +12,6 @@ import com.revworkforce.model.Employee;
 import com.revworkforce.model.Goal;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.GoalRepository;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class GoalService {
@@ -26,11 +25,14 @@ public class GoalService {
         this.employeeRepository = employeeRepository;
     }
 
-    
+    // =============================
+    // ✅ CREATE GOAL
+    // =============================
     public GoalDTO createGoal(Long employeeId, GoalDTO dto) {
 
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Employee not found"));
 
         Goal goal = new Goal();
         goal.setEmployee(employee);
@@ -38,78 +40,106 @@ public class GoalService {
         goal.setPriority(dto.getPriority());
         goal.setStatus("Not Started");
         goal.setDeadline(dto.getDeadline());
+        goal.setProgress(0);
 
         Goal saved = goalRepository.save(goal);
 
         return mapToDTO(saved);
     }
 
-    
+    // =============================
+    // ✅ UPDATE GOAL DETAILS
+    // =============================
     public GoalDTO updateGoal(Long goalId, GoalDTO dto) {
 
         Goal goal = goalRepository.findById(goalId)
-                .orElseThrow(() -> new GoalUpdateException("Goal not found"));
+                .orElseThrow(() ->
+                        new GoalUpdateException("Goal not found"));
 
         if ("Completed".equals(goal.getStatus())) {
-            throw new GoalUpdateException("Cannot update completed goal");
+            throw new GoalUpdateException(
+                    "Cannot update completed goal");
         }
 
         goal.setGoalDescription(dto.getGoalDescription());
         goal.setPriority(dto.getPriority());
         goal.setDeadline(dto.getDeadline());
 
-        Goal updated = goalRepository.save(goal);
-
-        return mapToDTO(updated);
+        return mapToDTO(goalRepository.save(goal));
     }
 
-   
+    // =============================
+    // ✅ GET EMPLOYEE GOALS
+    // =============================
     public List<GoalDTO> getEmployeeGoals(Long employeeId) {
 
-        
         employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Employee not found"));
 
-        return goalRepository.findByEmployeeEmployeeId(employeeId)
+        return goalRepository.findByEmployeeId(employeeId)
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-        public GoalDTO updateGoalStatus(Long goalId, String status) {
+    // =============================
+    // ✅ UPDATE GOAL STATUS
+    // =============================
+    public GoalDTO updateGoalStatus(Long goalId, String status) {
 
-        List<String> validStatuses =
-                Arrays.asList("Not Started", "In Progress", "Completed");
+        List<String> validStatus =
+                Arrays.asList(
+                        "Not Started",
+                        "In Progress",
+                        "Completed"
+                );
 
-        if (!validStatuses.contains(status)) {
-            throw new GoalUpdateException("Invalid goal status");
+        if (!validStatus.contains(status)) {
+            throw new GoalUpdateException("Invalid status");
         }
 
         Goal goal = goalRepository.findById(goalId)
-                .orElseThrow(() -> new GoalUpdateException("Goal not found"));
+                .orElseThrow(() ->
+                        new GoalUpdateException("Goal not found"));
 
         goal.setStatus(status);
 
-        Goal updated = goalRepository.save(goal);
-
-        return mapToDTO(updated);
+        return mapToDTO(goalRepository.save(goal));
     }
 
-    
+    // =============================
+    // ✅ DELETE GOAL (EMPLOYEE)
+    // =============================
+    public void deleteGoal(Long goalId) {
+
+        Goal goal = goalRepository.findById(goalId)
+                .orElseThrow(() ->
+                        new GoalUpdateException("Goal not found"));
+
+        // Optional rule
+        if ("Completed".equals(goal.getStatus())) {
+            throw new GoalUpdateException(
+                    "Completed goal cannot be deleted");
+        }
+
+        goalRepository.delete(goal);
+    }
+
+    // =============================
+    // DTO MAPPING
+    // =============================
     private GoalDTO mapToDTO(Goal goal) {
 
         GoalDTO dto = new GoalDTO();
-        dto.setGoalId(goal.getGoalId());
+
+        dto.setGoalId(goal.getId());
         dto.setGoalDescription(goal.getGoalDescription());
         dto.setPriority(goal.getPriority());
         dto.setStatus(goal.getStatus());
         dto.setDeadline(goal.getDeadline());
+        //dto.setProgress(goal.getProgress());
 
         return dto;
     }
 }
-=======
-public class GoalService {
-
-}
->>>>>>> dev
