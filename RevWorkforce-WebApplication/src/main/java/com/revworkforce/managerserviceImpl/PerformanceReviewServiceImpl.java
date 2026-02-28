@@ -4,12 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.revworkforce.dto.ApiResponse;
+import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.dto.PerformanceReviewDTO;
 import com.revworkforce.managerservice.PerformanceReviewService;
 import com.revworkforce.model.Notification;
 import com.revworkforce.model.PerformanceReview;
+import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
-import com.revworkforce.repository.NotificationRepository;
 import com.revworkforce.repository.PerformanceReviewRepository;
 
 @Service
@@ -17,16 +18,16 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 
     private final PerformanceReviewRepository reviewRepo;
     private final EmployeeRepository employeeRepo;
-    private final NotificationRepository notificationRepo;
+    private final NotificationService notificationService;
 
     public PerformanceReviewServiceImpl(
             PerformanceReviewRepository reviewRepo,
             EmployeeRepository employeeRepo,
-            NotificationRepository notificationRepo) {
+            NotificationService notificationService) {
 
         this.reviewRepo = reviewRepo;
         this.employeeRepo = employeeRepo;
-        this.notificationRepo = notificationRepo;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
                 reviewRepo.findByEmployee_Manager_Id(managerId);
 
         return new ApiResponse(200,
-                "Team performance reviews fetched",
+                "Team performance reviews fetched Successfully",
                 reviews);
     }
 
@@ -89,15 +90,17 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
         review.setStatus("REVIEWED");
         reviewRepo.save(review);
 
-        Notification notification = new Notification();
-        notification.setEmployee(review.getEmployee());
+        NotificationDTO notification = new NotificationDTO();
+        notification.setEmployeeId(review.getEmployee().getEmployeeId());
         notification.setTitle("Performance Reviewed");
-        notification.setMessage("Your performance review has been evaluated.");
-        notification.setStatus("ACTIVE");
+        notification.setMessage("Your performance review has been evaluated by manager.");
         notification.setType("PERFORMANCE");
+        notification.setStatus("REVIEWED");
         notification.setIsRead(false);
         notification.setCreatedAt(LocalDateTime.now());
-        notificationRepo.save(notification);
+        notification.setReferenceId(review.getId());
+
+        notificationService.createNotification(notification);
 
         return new ApiResponse(200,
                 "Performance review submitted successfully",

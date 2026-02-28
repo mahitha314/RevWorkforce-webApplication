@@ -7,26 +7,26 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import com.revworkforce.dto.ApiResponse;
 import com.revworkforce.dto.GoalDTO;
+import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.exception.ResourceNotFoundException;
 import com.revworkforce.managerservice.TeamGoalsService;
 import com.revworkforce.model.Goal;
-import com.revworkforce.model.Notification;
+import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.GoalRepository;
-import com.revworkforce.repository.NotificationRepository;
 
 @Service
 public class TeamGoalsServiceImpl implements TeamGoalsService {
 
 	private final GoalRepository goalRepo;
 	private final EmployeeRepository employeeRepo;
-	private final NotificationRepository notificationRepo;
+	private final NotificationService notificationService;
 
 	public TeamGoalsServiceImpl(GoalRepository goalRepo, EmployeeRepository employeeRepo,
-			NotificationRepository notificationRepo) {
+			NotificationService notificationService) {
 		this.goalRepo = goalRepo;
 		this.employeeRepo = employeeRepo;
-		this.notificationRepo = notificationRepo;
+		this.notificationService = notificationService;
 	}
 
 	@Override
@@ -72,16 +72,17 @@ public class TeamGoalsServiceImpl implements TeamGoalsService {
 
 		goalRepo.save(goal);
 
-		Notification notification = new Notification();
-		notification.setEmployee(goal.getEmployee());
-		notification.setTitle("Goal Updated");
+		NotificationDTO notification = new NotificationDTO();
+		notification.setEmployeeId(goal.getEmployee().getEmployeeId());
+		notification.setTitle("Goal Progress Updated");
 		notification.setMessage("Your goal progress has been updated to " + dto.getProgress() + "%.");
 		notification.setStatus("ACTIVE");
 		notification.setType("GOAL");
 		notification.setIsRead(false);
 		notification.setCreatedAt(LocalDateTime.now());
+		notification.setReferenceId(goal.getId());
 
-		notificationRepo.save(notification);
+		notificationService.createNotification(notification);
 
 		return new ApiResponse(200, "Goal progress updated successfully", goal);
 	}

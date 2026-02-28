@@ -16,7 +16,6 @@ public class PerformanceReviewController {
         this.service = service;
     }
 
- // 🔹 Get team reviews
     @GetMapping("/{managerId}")
     public ResponseEntity<ApiResponse> getReviews(
             @PathVariable Long managerId) {
@@ -29,7 +28,6 @@ public class PerformanceReviewController {
                 .body(response);
     }
 
-    // 🔹 Submit manager feedback using DTO
     @PostMapping("/review/{managerId}")
     public ResponseEntity<ApiResponse> submitReview(
             @PathVariable Long managerId,

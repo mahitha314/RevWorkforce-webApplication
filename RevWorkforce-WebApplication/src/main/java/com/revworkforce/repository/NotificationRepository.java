@@ -6,14 +6,14 @@ import org.springframework.stereotype.Repository;
 import com.revworkforce.model.Notification;
 
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, Long>{
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-	List<Notification> findByEmployeeIdOrderByCreatedAtDesc(Long employeeId);
+	List<Notification> findByEmployeeEmployeeIdOrderByCreatedAtDesc(String employeeId);
 
-    List<Notification> findByEmployeeIdAndIsRead(Long employeeId, Boolean isRead);
-    
-    List<Notification> findAllByOrderByCreatedAtDesc();
+	List<Notification> findByEmployeeEmployeeIdAndIsRead(String employeeId, Boolean isRead);
 
-    long countByEmployeeIdAndIsRead(Long employeeId, Boolean isRead);
-	
+	List<Notification> findAllByOrderByCreatedAtDesc();
+
+	long countByEmployeeEmployeeIdAndIsRead(String employeeId, Boolean isRead);
+
 }

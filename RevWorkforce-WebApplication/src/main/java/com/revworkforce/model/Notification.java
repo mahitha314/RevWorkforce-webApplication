@@ -40,7 +40,6 @@ public class Notification {
 
 	public Notification(Long notificationId, String title, String message, String type, String status, Boolean isRead,
 			LocalDateTime createdAt, Employee employee, Long referenceId) {
-		super();
 		this.notificationId = notificationId;
 		this.title = title;
 		this.message = message;
@@ -54,6 +53,10 @@ public class Notification {
 
 	public Long getNotificationId() {
 		return notificationId;
+	}
+	
+	public void setNotificationId(Long notificationId) {
+		this.notificationId = notificationId;
 	}
 
 	public String getTitle() {
@@ -118,10 +121,6 @@ public class Notification {
 
 	public void setReferenceId(Long referenceId) {
 		this.referenceId = referenceId;
-	}
-
-	public void setNotificationId(Long notificationId) {
-		this.notificationId = notificationId;
 	}
 
 }

@@ -1,9 +1,7 @@
 package com.revworkforce.model;
 
 import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.*;
 
 @Entity
