@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ================= HEADER FRAGMENT ================= -->
+<head th:fragment="header(title)">
+
+    <title th:text="${title}">RevWorkForce</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            height: 100vh;
+            width: 240px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: black;
+            color: white;
+            padding-top: 25px;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin: 6px 12px;
+            transition: 0.25s;
+            opacity: 0.92;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255,255,255,0.20);
+            transform: translateX(3px);
+        }
+
+        .sidebar a.active {
+            background-color: rgba(255,255,255,0.28);
+        }
+
+        /* ================= TOPBAR ================= */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 240px;
+            right: 0;
+            height: 90px;
+            background: black;
+            padding: 20px 30px;
+            z-index: 1100;
+            color: white;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-weight: 700;
+            font-size: 20px;
+            margin: 0;
+            color: white;
+        }
+
+        .brand-subtitle {
+            font-size: 13px;
+            margin: 0;
+            opacity: 0.85;
+            color: white;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .notify-dot {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background: red;
+            border-radius: 50%;
+        }
+
+        /* ================= CONTENT ================= */
+        .content {
+            margin-left: 240px;
+            margin-top: 90px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .footer {
+            background-color: #d9dde2;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+            margin-left: 240px;
+        }
+
+    </style>
+
+</head>
+
+
+<!-- ================= TOPBAR FRAGMENT ================= -->
+<body th:fragment="topbar(pageTitle)">
+
+<div class="topbar d-flex justify-content-between align-items-center">
+
+    <!-- Left: Logo + Title -->
+    <a href="/admin/dashboard" class="text-decoration-none">
+        <div class="brand-left">
+            <img class="brand-logo" src="/images/rwflogo.png" alt="RevWorkForce Logo">
+            <div>
+                <p class="brand-title">RevWorkForce</p>
+                <p class="brand-subtitle" th:text="${pageTitle}">Dashboard</p>
+            </div>
+        </div>
+    </a>
+
+    <!-- Right: Notification + Logged in Name -->
+    <div class="topbar-actions">
+        <button class="icon-btn" type="button" onclick="openNotifications()" title="Notifications">
+            <i class="bi bi-bell"></i>
+            <span class="notify-dot"></span>
+        </button>
+
+		<span>
+		    Welcome.
+		    <strong th:text="${employeeName}">User</strong>
+		</span>
+    </div>
+
+</div>
+
+</body>
+
+</html>

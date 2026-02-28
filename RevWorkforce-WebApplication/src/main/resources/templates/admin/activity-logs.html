@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Activity Logs</title>
+   
+	
+	 <th:block th:replace="~{fragments/header :: header('Activity Logs')}"></th:block>
+
+	 <style>
+	 .sidebar-link {
+	     display: flex;
+	     align-items: center;
+	     gap: 10px;
+	     padding: 12px 18px;
+	     color: #c2c7d0;
+	     text-decoration: none;
+	     font-size: 14px;
+	     font-weight: 500;
+	     border-left: 4px solid transparent;
+	     transition: all 0.3s ease;
+	 }
+
+	 /* Hover Effect */
+	 .sidebar-link:hover {
+	     background-color: #2c3e50;
+	     color: #ffffff;
+	     padding-left: 22px;
+	 }
+
+	 /* Icon Styling */
+	 .sidebar-link i {
+	     font-size: 16px;
+	 }
+
+	 /* Active Menu */
+	 .sidebar-link.active {
+	     background-color: #1a252f;
+	     color: #ffffff;
+	     border-left: 4px solid #4e73df;
+	     font-weight: 600;
+	 }
+
+	 /* Active Hover (keep consistent) */
+	 .sidebar-link.active:hover {
+	     background-color: #1a252f;
+	     padding-left: 18px;
+	 }</style>
+ 
+ </head>
+
+<body>
+
+<!-- TOPBAR -->
+<th:block th:replace="~{fragments/header :: header('activity logs')}"></th:block>
+
+<!-- SIDEBAR -->
+<th:block th:replace="~{fragments/sidebar :: sidebar('logs')}"></th:block>
+<div class="content" style="margin-left:250px; padding:30px; background-color:#f8f9fc; min-height:100vh;">
+
+    <div class="container-fluid">
+
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold mb-1">Activity Logs</h4>
+                <small class="text-muted">Monitor all system activities and actions</small>
+            </div>
+        </div>
+
+        <!-- Search + Filter Card -->
+        <div class="card border-0 shadow-sm mb-4 rounded-3">
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <!-- Search -->
+                    <div class="col-md-4">
+                        <form th:action="@{/admin/logs/search}" method="get">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text"
+                                       name="keyword"
+                                       class="form-control"
+                                       placeholder="Search by user name">
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Date Filter -->
+                    <div class="col-md-6">
+                        <form th:action="@{/admin/logs/filter}" method="get">
+                            <div class="row g-2">
+                                <div class="col">
+                                    <input type="date"
+                                           name="from"
+                                           class="form-control">
+                                </div>
+                                <div class="col">
+                                    <input type="date"
+                                           name="to"
+                                           class="form-control">
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-dark w-100">
+                                        Filter
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Logs Table -->
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-body p-0 table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">User</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>Module</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>IP</th>
+                            <th class="pe-4">Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:if="${#lists.isEmpty(logs)}">
+                            <td colspan="8" class="text-center text-muted py-4">
+                                No logs available
+                            </td>
+                        </tr>
+
+                        <tr th:each="log : ${logs}">
+                            <td class="ps-4 fw-semibold" th:text="${log.userName}"></td>
+                            <td th:text="${log.role}"></td>
+                            <td th:text="${log.action}"></td>
+                            <td th:text="${log.module}"></td>
+                            <td th:text="${log.description}"></td>
+
+                            <td>
+                                <span th:class="'badge rounded-pill px-3 py-2 ' +
+                                    (log.status == 'SUCCESS'
+                                    ? 'bg-success-subtle text-success'
+                                    : 'bg-danger-subtle text-danger')"
+                                      th:text="${log.status}">
+                                </span>
+                            </td>
+
+                            <td th:text="${log.ipAddress}"></td>
+
+                            <td class="pe-4 text-muted"
+                                th:text="${#temporals.format(log.createdAt,'dd MMM yyyy HH:mm')}">
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- FOOTER -->
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+</body>
+</html>

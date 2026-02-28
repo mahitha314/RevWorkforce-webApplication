@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Leave Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Header Fragment -->
+    <th:block th:replace="~{fragments/header :: header('Leave Management')}"></th:block>
+
+    <!-- YOUR ORIGINAL STYLES (UNCHANGED) -->
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #f4f6f9;
+        }
+
+        .content {
+            flex: 1;
+            margin-left: 250px; /* adjust if sidebar width different */
+            padding: 30px;
+        }
+
+        .card {
+            border-radius: 12px;
+        }
+
+        .nav-tabs .nav-link.active {
+            font-weight: 600;
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            margin-left: 250px;
+        }
+		
+		
+		
+    </style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<th:block th:replace="~{fragments/header :: header('announcements')}"></th:block>
+
+<!-- SIDEBAR -->
+<th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
+
+<div class="content"
+     style="margin-left:240px; margin-top:70px; padding:30px; background:#f4f6f9; min-height:100vh;">
+
+    <!-- Page Title -->
+    <h2 style="font-weight:600;">Announcement Management</h2>
+    <p style="color:gray;">Create and manage company announcements</p>
+
+    <!-- Main Card -->
+    <div style="background:white; padding:25px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+
+        <!-- Add Announcement -->
+        <h4 style="margin-bottom:20px;">Add New Announcement</h4>
+
+        <form th:action="@{/admin/announcement/save}"
+              th:object="${announcement}"
+              method="post">
+
+            <div style="display:flex; gap:20px; align-items:end;">
+
+                <div style="flex:1;">
+                    <label>Title</label>
+                    <input type="text"
+                           th:field="*{title}"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div style="flex:2;">
+                    <label>Message</label>
+                    <input type="text"
+                           th:field="*{message}"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div>
+                    <button type="submit"
+                            style="background:#2563eb; color:white; border:none; padding:10px 20px; border-radius:6px;">
+                        Add Announcement
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+        <!-- Announcement List -->
+        <h4 style="margin-top:30px;">Announcement List</h4>
+
+        <table class="table" style="margin-top:15px;">
+            <thead style="background:#1f2937; color:white;">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Message</th>
+                    <th style="width:150px;">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="a : ${announcements}">
+                    <td th:text="${a.id}"></td>
+                    <td th:text="${a.title}"></td>
+                    <td th:text="${a.message}"></td>
+                    <td>
+                        <a th:href="@{'/admin/announcement/edit/' + ${a.id}}"
+                           style="background:#facc15; padding:5px 10px; border-radius:4px; text-decoration:none; color:black;">
+                            Edit
+                        </a>
+
+                        <a th:href="@{'/admin/announcement/delete/' + ${a.id}}"
+                           onclick="return confirm('Delete this announcement?')"
+                           style="background:#ef4444; padding:5px 10px; border-radius:4px; text-decoration:none; color:white;">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(announcements)}">
+                    <td colspan="4" style="text-align:center; padding:20px;">
+                        No announcements available
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<!-- Footer 
+<div th:replace="~{fragments/footer :: footer}"></div>-->
+</body>
+</html>

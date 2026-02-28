@@ -1,0 +1,130 @@
+<div th:fragment="sidebar(view)" class="sidebar">
+
+    <h4 class="text-center mb-4">RevWorkForce</h4>
+
+    <!-- Dashboard -->
+    <a th:href="@{/admin/dashboard}"
+       th:classappend="${view == null} ? ' active' : ''">
+        <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+
+    <!-- My Profile -->
+    <a th:href="@{/admin/dashboard(view='profile')}"
+       th:classappend="${view == 'profile'} ? ' active' : ''">
+        <i class="bi bi-person-circle"></i> My Profile
+    </a>
+
+    <!-- Employee Management -->
+    <a th:href="@{/admin/employee-management}"
+       th:classappend="${view == 'employee'} ? ' active' : ''">
+        <i class="bi bi-people"></i> Employee Management
+    </a>
+
+    <!-- Leave Management -->
+    <a th:href="@{/admin/leave-management}"
+       th:classappend="${view == 'leave'} ? ' active' : ''">
+        <i class="bi bi-calendar-check"></i> Leave Management
+    </a>
+
+    <!-- Holiday Calendar -->
+    <a th:href="@{/admin/holiday}"
+       th:classappend="${view == 'holiday'} ? ' active' : ''">
+        <i class="bi bi-calendar-event"></i> Holiday Calendar
+    </a>
+
+    <!-- Announcements (FIXED) -->
+	<a th:href="@{/admin/announcement}"
+	   
+	   th:classappend="${view == 'announcement'} ? ' active' : ''">
+	    <i class="bi bi-megaphone"></i>
+	    <span>Announcements</span>
+	</a>
+
+    <!-- Departments -->
+	<a th:href="@{/admin/system-config}"
+	   class="sidebar-link"
+	   th:classappend="${view == 'system-config'} ? ' active' : ''">
+	    <i class="bi bi-gear"></i>
+	    Departments
+	</a>
+	<div th:fragment="sidebar(view)" class="sidebar">
+
+	    <h4 class="text-center mb-4">RevWorkForce</h4>
+
+	    <!-- Dashboard -->
+	    <a th:href="@{/admin/dashboard}"
+	       th:classappend="${view == null} ? ' active' : ''">
+	        <i class="bi bi-speedometer2"></i> Dashboard
+	    </a>
+
+	    <!-- My Profile -->
+	    <a th:href="@{/admin/dashboard(view='profile')}"
+	       th:classappend="${view == 'profile'} ? ' active' : ''">
+	        <i class="bi bi-person-circle"></i> My Profile
+	    </a>
+
+	    <!-- Employee Management -->
+	    <a th:href="@{/admin/employee-management}"
+	       th:classappend="${view == 'employee'} ? ' active' : ''">
+	        <i class="bi bi-people"></i> Employee Management
+	    </a>
+
+	    <!-- Leave Management -->
+	    <a th:href="@{/admin/leave-management}"
+	       th:classappend="${view == 'leave'} ? ' active' : ''">
+	        <i class="bi bi-calendar-check"></i> Leave Management
+	    </a>
+
+	    <!-- Holiday Calendar -->
+	    <a th:href="@{/admin/holiday}"
+	       th:classappend="${view == 'holiday'} ? ' active' : ''">
+	        <i class="bi bi-calendar-event"></i> Holiday Calendar
+	    </a>
+
+	    <!-- Announcements (FIXED) -->
+		<a th:href="@{/admin/announcement}"
+		   
+		   th:classappend="${view == 'announcement'} ? ' active' : ''">
+		    <i class="bi bi-megaphone"></i>
+		    <span>Announcements</span>
+		</a>
+
+	    <!-- Departments -->
+		<a th:href="@{/admin/system-config}"
+		   class="sidebar-link"
+		   th:classappend="${view == 'system-config'} ? ' active' : ''">
+		    <i class="bi bi-gear"></i>
+		    Departments
+		</a>
+		<a 
+			   th:classappend="${view == 'system-config'} ? ' active' : ''">
+			    <i class="bi bi-building"></i> Notifications
+			</a>
+			<!-- Activity Logs -->
+			<a th:href="@{/admin/logs}"
+			   class="sidebar-link"
+			   th:classappend="${view == 'logs'} ? ' active' : ''">
+			    <i class="bi bi-bar-chart-line"></i>
+			    <span>Activity Logs</span>
+			</a>
+
+	    <!-- Logout -->
+	    <a th:href="@{/logout}">
+	        <i class="bi bi-box-arrow-right"></i> Logout
+	    </a>
+
+	</div>
+		<!-- Activity Logs -->
+		<a th:href="@{/admin/logs}"
+		   class="sidebar-link"
+		   th:classappend="${view == 'logs'} ? ' active' : ''">
+		    <i class="bi bi-bar-chart-line"></i>
+		    <span>Activity Logs</span>
+		</a>
+
+    <!-- Logout -->
+    <a th:href="@{/logout}">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
+
+</div>

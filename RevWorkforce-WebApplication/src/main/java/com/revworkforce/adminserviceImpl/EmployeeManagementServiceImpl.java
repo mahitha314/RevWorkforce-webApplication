@@ -1,0 +1,251 @@
+package com.revworkforce.adminserviceImpl;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.revworkforce.adminservice.ActivityLogService;
+import com.revworkforce.adminservice.EmployeeManagementService;
+import com.revworkforce.dto.ApiResponse;
+import com.revworkforce.dto.EmployeeDTO;
+import com.revworkforce.model.Department;
+import com.revworkforce.model.Designation;
+import com.revworkforce.model.Employee;
+import com.revworkforce.repository.DepartmentRepository;
+import com.revworkforce.repository.DesignationRepository;
+import com.revworkforce.repository.EmployeeRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+@Service
+public class EmployeeManagementServiceImpl implements EmployeeManagementService {
+
+	@Autowired
+    private HttpServletRequest request; 
+	
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
+    private final DesignationRepository designationRepository;
+    private final PasswordEncoder passwordEncoder;
+    private ActivityLogService activityLogService;
+
+    public EmployeeManagementServiceImpl(
+            EmployeeRepository employeeRepository,
+            DepartmentRepository departmentRepository,
+            DesignationRepository designationRepository,ActivityLogService activityLogService,
+            PasswordEncoder passwordEncoder) {
+
+        this.employeeRepository = employeeRepository;
+        this.departmentRepository = departmentRepository;
+        this.designationRepository = designationRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.activityLogService=activityLogService;
+    }
+
+    // ================= ADD EMPLOYEE =================
+    @Override
+    public ResponseEntity<ApiResponse> addEmployee(EmployeeDTO dto) {
+
+        if (employeeRepository.findByEmail(dto.getEmail()).isPresent()) {
+            return new ResponseEntity<>(
+                    new ApiResponse(409, "Email already exists", null),
+                    HttpStatus.CONFLICT);
+        }
+
+        if (employeeRepository.findByEmployeeId(dto.getEmployeeId()).isPresent()) {
+            return new ResponseEntity<>(
+                    new ApiResponse(409, "Employee ID already exists", null),
+                    HttpStatus.CONFLICT);
+        }
+
+        Department department = departmentRepository.findById(dto.getDepartmentId())
+                .orElseThrow(() -> new RuntimeException("Department not found"));
+
+        Designation designation = designationRepository.findById(dto.getDesignationId())
+                .orElseThrow(() -> new RuntimeException("Designation not found"));
+
+        Employee manager = null;
+        if (dto.getManagerId() != null) {
+            manager = employeeRepository.findById(dto.getManagerId())
+                    .orElseThrow(() -> new RuntimeException("Manager not found"));
+        }
+
+        Employee employee = new Employee();
+        employee.setEmployeeId(dto.getEmployeeId());
+        employee.setFirstName(dto.getFirstName());
+        employee.setLastName(dto.getLastName());
+        employee.setEmail(dto.getEmail());
+        employee.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        employee.setPhoneNumber(dto.getPhoneNumber());
+        employee.setAddress(dto.getAddress());
+        employee.setEmergencyContact(dto.getEmergencyContact());
+
+        employee.setRole(dto.getRole());
+        employee.setStatus("ACTIVE");
+        employee.setSalary(dto.getSalary());
+        employee.setJoiningDate(LocalDate.now());
+
+        employee.setDepartment(department);
+        employee.setDesignation(designation);
+        employee.setManager(manager);
+
+        employeeRepository.save(employee);
+        activityLogService.log(
+                "Added Employee",
+                "Employee Management",
+                "Added employee " + employee.getFirstName(),
+                "SUCCESS",
+                request
+        );
+
+        return new ResponseEntity<>(
+                new ApiResponse(201, "Employee added successfully", employee),
+                HttpStatus.CREATED);
+    }
+
+    // ================= GET ALL =================
+    @Override
+    public ResponseEntity<ApiResponse> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+        return new ResponseEntity<>(
+                new ApiResponse(200, "Employees fetched successfully", employees),
+                HttpStatus.OK);
+    }
+
+    // ================= GET BY EMPLOYEE ID =================
+    @Override
+    public ResponseEntity<ApiResponse> getByEmployeeId(String employeeId) {
+
+        Employee employee = employeeRepository.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        return new ResponseEntity<>(
+                new ApiResponse(200, "Employee fetched successfully", employee),
+                HttpStatus.OK);
+    }
+
+    // ================= SEARCH =================
+    @Override
+    public ResponseEntity<ApiResponse> searchEmployees(String q) {
+        List<Employee> employees = employeeRepository.search(q);
+        return new ResponseEntity<>(
+                new ApiResponse(200, "Search results", employees),
+                HttpStatus.OK);
+    }
+
+    // ================= UPDATE =================
+    @Override
+    public ResponseEntity<ApiResponse> updateEmployee(String employeeId, EmployeeDTO dto) {
+
+        Employee existing = employeeRepository.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // 🔹 Update fields
+        existing.setFirstName(dto.getFirstName());
+        existing.setLastName(dto.getLastName());
+        existing.setEmail(dto.getEmail());
+        existing.setPhoneNumber(dto.getPhoneNumber());
+        existing.setAddress(dto.getAddress());
+        existing.setEmergencyContact(dto.getEmergencyContact());
+        existing.setSalary(dto.getSalary());
+        existing.setRole(dto.getRole());
+
+        // 🔹 Update department
+        Department dept = departmentRepository.findById(dto.getDepartmentId())
+                .orElseThrow(() -> new RuntimeException("Department not found"));
+        existing.setDepartment(dept);
+
+        // 🔹 Update designation
+        Designation des = designationRepository.findById(dto.getDesignationId())
+                .orElseThrow(() -> new RuntimeException("Designation not found"));
+        existing.setDesignation(des);
+
+        employeeRepository.save(existing);
+
+        return ResponseEntity.ok(
+                new ApiResponse(200, "Employee updated successfully", null)
+        );
+    }
+
+    // ================= DELETE =================
+    @Override
+    public ResponseEntity<ApiResponse> deleteEmployee(String employeeId) {
+
+        Employee existing = employeeRepository.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        employeeRepository.delete(existing);
+
+        return ResponseEntity.ok(
+                new ApiResponse(200, "Employee deleted successfully", null)
+        );
+    }
+    // ================= DEACTIVATE =================
+    @Override
+    public ResponseEntity<ApiResponse> reactivateEmployee(String employeeId, String reason) {
+
+        Employee employee = employeeRepository.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        employee.setStatus("ACTIVE");
+        employeeRepository.save(employee);
+
+        return ResponseEntity.ok(
+                new ApiResponse(200, "Employee reactivated successfully", null)
+        );
+    }
+    @Override
+    public ResponseEntity<ApiResponse> deactivateEmployee(String employeeId, String reason) {
+
+        Employee employee = employeeRepository.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        employee.setStatus("INACTIVE");
+        employeeRepository.save(employee);
+
+        return ResponseEntity.ok(
+                new ApiResponse(200, "Employee deactivated successfully", null)
+        );
+    }
+
+    // ================= CHANGE MANAGER =================
+    @Override
+    public ResponseEntity<ApiResponse> changeManager(String employeeId, Long managerId) {
+
+        Employee employee = employeeRepository.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        Employee manager = employeeRepository.findById(managerId)
+                .orElseThrow(() -> new RuntimeException("Manager not found"));
+
+        employee.setManager(manager);
+        employeeRepository.save(employee);
+
+        return new ResponseEntity<>(
+                new ApiResponse(200, "Manager updated successfully", employee),
+                HttpStatus.OK);
+    }
+
+    // ================= GET MANAGERS =================
+    @Override
+    public List<Employee> getManagers() {
+        return employeeRepository.findByRole("MANAGER");
+    }
+ // ================= DASHBOARD COUNTS =================
+
+    @Override
+    public long countEmployees() {
+        return employeeRepository.count();
+    }
+
+    @Override
+    public long countManagers() {
+        return employeeRepository.countByRole("MANAGER");
+    }
+}
