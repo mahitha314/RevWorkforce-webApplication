@@ -10,6 +10,7 @@ public class LeaveBalanceDTO {
 
     public LeaveBalanceDTO() {
     }
+    
 
     public LeaveBalanceDTO(Long leaveTypeId,
                            String leaveTypeName,

@@ -1,130 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<!-- HEADER -->
 <head th:replace="fragments/header :: header('Leave History')"></head>
 
 <body>
 
-<!-- TOPBAR -->
 <div th:replace="fragments/header :: topbar"></div>
 
-<div class="layout">
-
-    <!-- SIDEBAR -->
+<div class="wrapper">
     <div th:replace="fragments/sidebar :: sidebar"></div>
 
-    <!-- CONTENT -->
-    <div class="content p-4">
+    <div class="main-content">
 
-        <h2 class="mb-4">Leave History</h2>
+        <h3 class="mb-4">Leave History</h3>
 
-        <!-- APPROVED -->
-        <div class="accordion mb-3">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button bg-success text-white"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#approvedCollapse">
-                        Approved Leaves
-                    </button>
-                </h2>
+        <div class="card shadow-sm p-4">
 
-                <div id="approvedCollapse"
-                     class="accordion-collapse collapse show">
-                    <div class="accordion-body">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>Leave Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+				<tbody>
 
-                        <div th:if="${approvedLeaves == null or approvedLeaves.isEmpty()}">
-                            No approved leaves.
-                        </div>
+				<tr th:each="leave : ${history}"
+				    th:if="${!#strings.equalsIgnoreCase(leave.status,'PENDING')}">
 
-                        <table class="table table-bordered"
-                               th:if="${approvedLeaves != null and !approvedLeaves.isEmpty()}">
-                            <tr th:each="leave : ${approvedLeaves}">
-                                <td th:text="${leave.leaveType.typeName}"></td>
-                                <td th:text="${leave.startDate}"></td>
-                                <td th:text="${leave.endDate}"></td>
-                            </tr>
-                        </table>
+				    <td th:text="${leave.leaveType.typeName}"></td>
+				    <td th:text="${leave.startDate}"></td>
+				    <td th:text="${leave.endDate}"></td>
+				    <td th:text="${leave.status}"></td>
 
-                    </div>
-                </div>
-            </div>
-        </div>
+				</tr>
 
-        <!-- REJECTED -->
-        <div class="accordion mb-3">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button bg-danger text-white"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#rejectedCollapse">
-                        Rejected Leaves
-                    </button>
-                </h2>
+				<tr th:if="${#lists.isEmpty(history)}">
+				    <td colspan="4" class="text-center text-muted">
+				        No Leave History Available
+				    </td>
+				</tr>
 
-                <div id="rejectedCollapse"
-                     class="accordion-collapse collapse">
-                    <div class="accordion-body">
+				</tbody>
+            </table>
 
-                        <div th:if="${rejectedLeaves == null or rejectedLeaves.isEmpty()}">
-                            No rejected leaves.
-                        </div>
-
-                        <table class="table table-bordered"
-                               th:if="${rejectedLeaves != null and !rejectedLeaves.isEmpty()}">
-                            <tr th:each="leave : ${rejectedLeaves}">
-                                <td th:text="${leave.leaveType.typeName}"></td>
-                                <td th:text="${leave.startDate}"></td>
-                                <td th:text="${leave.endDate}"></td>
-                            </tr>
-                        </table>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CANCELLED -->
-        <div class="accordion mb-3">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button bg-secondary text-white"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#cancelledCollapse">
-                        Cancelled Leaves
-                    </button>
-                </h2>
-
-                <div id="cancelledCollapse"
-                     class="accordion-collapse collapse">
-                    <div class="accordion-body">
-
-                        <div th:if="${cancelledLeaves == null or cancelledLeaves.isEmpty()}">
-                            No cancelled leaves.
-                        </div>
-
-                        <table class="table table-bordered"
-                               th:if="${cancelledLeaves != null and !cancelledLeaves.isEmpty()}">
-                            <tr th:each="leave : ${cancelledLeaves}">
-                                <td th:text="${leave.leaveType.typeName}"></td>
-                                <td th:text="${leave.startDate}"></td>
-                                <td th:text="${leave.endDate}"></td>
-                            </tr>
-                        </table>
-
-                    </div>
-                </div>
-            </div>
         </div>
 
     </div>
 </div>
 
+<div th:replace="fragments/footer :: footer"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

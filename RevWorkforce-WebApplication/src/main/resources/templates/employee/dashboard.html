@@ -1,113 +1,137 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="fragments/header :: header('Employee Dashboard')"></head>
+<head th:replace="fragments/header :: header('Dashboard')"></head>
 
 <body>
 
-<div th:replace="fragments/sidebar :: sidebar"></div>
 <div th:replace="fragments/header :: topbar"></div>
 
-<div class="content">
+<div class="wrapper">
 
-    <div class="container-fluid">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
 
-        <!-- Page Heading -->
-        <div class="mb-4">
-            <h3 class="fw-bold">Dashboard Overview</h3>
-            <p class="text-muted">Summary of your leave details</p>
+    <div class="main-content">
+
+        <h3 class="fw-bold mb-4">Dashboard Overview</h3>
+
+        <!-- ================= SUMMARY CARDS ================= -->
+        <div class="row g-4 mb-4">
+
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3 border-0">
+                    <h6>Total Allocated</h6>
+                    <h2 th:text="${totalAllocated}">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3 border-0">
+                    <h6>Leaves Used</h6>
+                    <h2 class="text-success"
+                        th:text="${totalUsed}">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3 border-0">
+                    <h6>Pending Requests</h6>
+                    <h2 class="text-warning"
+                        th:text="${pendingCount}">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3 border-0">
+                    <h6>Remaining Leaves</h6>
+                    <h2 class="text-primary"
+                        th:text="${totalRemaining}">0</h2>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Leave Summary Cards -->
+        <!-- ================= VISUAL SECTION ================= -->
         <div class="row g-4">
 
-            <!-- Sick Leave -->
+            <!-- Leave Usage Progress -->
             <div class="col-md-4">
-                <div class="card shadow-sm border-0 p-4 text-center">
-                    <h5>Sick Leave</h5>
-                    <h2 class="text-primary"
-                        th:text="${sickTotal}">10</h2>
-                    <p class="text-muted">Total Allocated</p>
+                <div class="card shadow-sm p-4 border-0">
+                    <h6 class="fw-bold mb-3">Leave Usage</h6>
+
+                    <p class="small text-muted">
+                        Used 
+                        <strong th:text="${totalUsed}"></strong> /
+                        <strong th:text="${totalAllocated}"></strong>
+                    </p>
+
+                    <!-- SAFE VERSION -->
+                    <div class="progress" style="height:10px;">
+                        <div class="progress-bar bg-danger"
+                             th:style="'width:' + ${totalAllocated > 0 ? totalUsed * 100 / totalAllocated : 0} + '%'">
+                        </div>
+                    </div>
+
+                    <p class="small mt-2">
+                        Remaining:
+                        <strong th:text="${totalRemaining}"></strong>
+                    </p>
                 </div>
             </div>
 
-            <!-- Casual Leave -->
+            <!-- Goals Progress -->
             <div class="col-md-4">
-                <div class="card shadow-sm border-0 p-4 text-center">
-                    <h5>Casual Leave</h5>
-                    <h2 class="text-success"
-                        th:text="${casualTotal}">10</h2>
-                    <p class="text-muted">Total Allocated</p>
+                <div class="card shadow-sm p-4 border-0">
+                    <h6 class="fw-bold mb-3">Goals Progress</h6>
+
+                    <div th:if="${goals != null and !#lists.isEmpty(goals)}">
+
+                        <div th:each="goal : ${goals}">
+                            <small th:text="${goal.goalDescription}"></small>
+
+                            <div class="progress mb-2" style="height:8px;">
+                                <div class="progress-bar bg-success"
+                                     th:style="'width:' + ${goal.progress} + '%'">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div th:if="${goals == null or #lists.isEmpty(goals)}"
+                         class="text-muted small">
+                        No goals assigned.
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Earned Leave -->
+            <!-- Performance Overview -->
             <div class="col-md-4">
-                <div class="card shadow-sm border-0 p-4 text-center">
-                    <h5>Earned Leave</h5>
-                    <h2 class="text-warning"
-                        th:text="${earnedTotal}">15</h2>
-                    <p class="text-muted">Total Allocated</p>
-                </div>
-            </div>
+                <div class="card shadow-sm p-4 border-0 text-center">
+                    <h6 class="fw-bold mb-3">Performance Rating</h6>
 
-        </div>
+                    <h2 class="text-primary">4/5</h2>
 
-        <!-- Used & Remaining Section -->
-        <div class="row mt-5">
+                    <div class="progress mt-2" style="height:8px;">
+                        <div class="progress-bar bg-primary"
+                             style="width:80%;">
+                        </div>
+                    </div>
 
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 p-4">
-                    <h5>Total Leaves Used</h5>
-                    <h3 class="text-danger"
-                        th:text="${totalUsed}">5</h3>
-                </div>
-            </div>
-			<div class="card p-4 mt-4">
-			    <h4 class="mb-3">Leave Balance</h4>
-
-			    <table class="table table-bordered">
-			        <thead class="table-dark">
-			        <tr>
-			            <th>Leave Type</th>
-			            <th>Total</th>
-			            <th>Used</th>
-			            <th>Remaining</th>
-			        </tr>
-			        </thead>
-
-			        <tbody>
-			        <tr th:each="balance : ${balances}">
-			            <td th:text="${balance.leaveType.typeName}"></td>
-			            <td th:text="${balance.totalLeaves}"></td>
-			            <td th:text="${balance.usedLeaves}"></td>
-			            <td th:text="${balance.remainingLeaves}"></td>
-			        </tr>
-
-			        <tr th:if="${balances == null or #lists.isEmpty(balances)}">
-			            <td colspan="4" class="text-center text-muted">
-			                No leave balance records found
-			            </td>
-			        </tr>
-			        </tbody>
-			    </table>
-			</div>
-
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 p-4">
-                    <h5>Total Leaves Remaining</h5>
-                    <h3 class="text-success"
-                        th:text="${totalRemaining}">25</h3>
+                    <small class="text-muted d-block mt-2">
+                        Based on recent activity
+                    </small>
                 </div>
             </div>
 
         </div>
 
     </div>
-
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

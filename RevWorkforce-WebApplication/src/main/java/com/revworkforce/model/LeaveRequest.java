@@ -19,6 +19,9 @@ public class LeaveRequest {
 
 	@Column(nullable = false)
 	private String reason;
+	
+	@Column(name = "notification_read")
+	private Boolean notificationRead = false;
 
 	@ManyToOne
 	@JoinColumn(name = "employee_id", nullable = false)
@@ -27,6 +30,7 @@ public class LeaveRequest {
 	@ManyToOne
 	@JoinColumn(name = "leave_type_id", nullable = false)
 	private LeaveType leaveType;
+
 
 	@OneToOne
 	@JoinColumn(name = "approval_id")
@@ -109,4 +113,16 @@ public class LeaveRequest {
 	public void setStatus(String status) {
 	    this.status = status;
 	}
+	public Boolean getNotificationRead() {
+	    return notificationRead;
+	}
+
+	public void setNotificationRead(Boolean notificationRead) {
+	    this.notificationRead = notificationRead;
+	}
+	
+	public boolean isNotificationRead() {
+	    return notificationRead;
+	}
+
 }

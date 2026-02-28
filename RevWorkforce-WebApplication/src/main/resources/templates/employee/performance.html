@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('Performance Review')"></head>
+
+<body>
+
+<!-- TOPBAR -->
+<div th:replace="fragments/header :: topbar"></div>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <div class="container-fluid">
+
+            <div class="mb-4">
+                <h3 class="fw-bold">Performance Review</h3>
+                <p class="text-muted">
+                    Submit and track your self performance reviews
+                </p>
+            </div>
+
+            <!-- Success / Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <span th:text="${successMessage}"></span>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- FORM -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white fw-bold">
+                    Submit Self Review
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{/employee/performance}"
+                          method="post"
+                          th:object="${review}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Deliverables</label>
+                            <textarea class="form-control"
+                                      th:field="*{deliverables}" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Accomplishments</label>
+                            <textarea class="form-control"
+                                      th:field="*{accomplishments}" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Areas Of Improvement</label>
+                            <textarea class="form-control"
+                                      th:field="*{areasOfImprovement}" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Self Rating (1-5)</label>
+                            <input type="number"
+                                   min="1"
+                                   max="5"
+                                   class="form-control"
+                                   th:field="*{selfRating}">
+                        </div>
+
+                        <button class="btn btn-primary">
+                            Save Self Review
+                        </button>
+
+                        <a th:href="@{/employee/performance}"
+                           class="btn btn-secondary ms-2">
+                            Cancel
+                        </a>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white fw-bold">
+                    Previous Reviews
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead class="table-light">
+                        <tr>
+                            <th>Deliverables</th>
+                            <th>Accomplishments</th>
+                            <th>Improvement</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Submit</th>
+                            <th>Feedback</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr th:each="review : ${reviews}">
+
+                            <td th:text="${review.deliverables}"></td>
+                            <td th:text="${review.accomplishments}"></td>
+                            <td th:text="${review.areasOfImprovement}"></td>
+                            <td th:text="${review.selfRating}"></td>
+
+                            <td>
+                                <span th:if="${#strings.equalsIgnoreCase(review.status,'Draft')}"
+                                      class="text-warning fw-bold">
+                                    Draft
+                                </span>
+
+                                <span th:if="${#strings.equalsIgnoreCase(review.status,'Submitted')}"
+                                      class="text-success fw-bold">
+                                    Submitted
+                                </span>
+                            </td>
+
+                            <td>
+                                <a th:if="${#strings.equalsIgnoreCase(review.status,'Draft')}"
+                                   th:href="@{/employee/performance/submit/{rid}(rid=${review.reviewId})}"
+                                   class="text-primary fw-bold">
+                                    Submit
+                                </a>
+
+                                <span th:if="${#strings.equalsIgnoreCase(review.status,'Submitted')}"
+                                      class="text-muted fw-bold">
+                                    Already Submitted
+                                </span>
+                            </td>
+
+                            <td>
+                                <a th:if="${#strings.equalsIgnoreCase(review.status,'Submitted')}"
+                                   th:href="@{/employee/performance/feedback/{rid}(rid=${review.reviewId})}"
+                                   class="text-success fw-bold">
+                                    View
+                                </a>
+
+                                <span th:if="${#strings.equalsIgnoreCase(review.status,'Draft')}"
+                                      class="text-muted">
+                                    Not Available
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(reviews)}">
+                            <td colspan="7" class="text-center text-muted">
+                                No performance reviews available.
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

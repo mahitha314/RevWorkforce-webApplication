@@ -1,81 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<!-- ================= HEADER ================= -->
 <head th:replace="fragments/header :: header('My Profile')"></head>
 
 <body>
 
-<!-- ================= SIDEBAR ================= -->
-<div th:replace="fragments/sidebar :: sidebar"></div>
-
-<!-- ================= TOPBAR ================= -->
 <div th:replace="fragments/header :: topbar"></div>
 
-<!-- ================= MAIN CONTENT ================= -->
-<div class="content">
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
 
-    <div class="container-fluid">
+    <div class="main-content">
 
-        <!-- Page Title -->
-        <div class="mb-4">
-            <h3 class="fw-bold">My Profile</h3>
-            <p class="text-muted">View your personal and employment details</p>
-        </div>
+        <h3 class="fw-bold mb-4">My Profile</h3>
 
         <div class="row">
 
-            <!-- Profile Card -->
             <div class="col-md-8">
-
                 <div class="card shadow-sm border-0">
-
                     <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">
-                            <i class="bi bi-person-circle"></i>
-                            Employee Information
-                        </h5>
+                        Employee Information
                     </div>
 
                     <div class="card-body">
-
-                        <table class="table table-bordered align-middle">
-
+                        <table class="table table-bordered">
                             <tr>
-                                <th width="35%">Employee ID</th>
+                                <th>Employee ID</th>
                                 <td th:text="${employee.employeeId}"></td>
                             </tr>
-
                             <tr>
                                 <th>Full Name</th>
                                 <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
                             </tr>
-
                             <tr>
                                 <th>Email</th>
                                 <td th:text="${employee.email}"></td>
                             </tr>
-
                             <tr>
                                 <th>Phone</th>
                                 <td th:text="${employee.phoneNumber}"></td>
                             </tr>
-
                             <tr>
                                 <th>Department</th>
                                 <td th:text="${employee.department.name}"></td>
                             </tr>
-
                             <tr>
                                 <th>Designation</th>
                                 <td th:text="${employee.designation.title}"></td>
                             </tr>
-
                             <tr>
                                 <th>Joining Date</th>
                                 <td th:text="${employee.joiningDate}"></td>
                             </tr>
-
                             <tr>
                                 <th>Status</th>
                                 <td>
@@ -84,42 +59,17 @@
                                     </span>
                                 </td>
                             </tr>
-
                         </table>
-
                     </div>
-
                 </div>
-
-            </div>
-
-            <!-- Right Side Summary -->
-            <div class="col-md-4">
-
-                <div class="card shadow-sm border-0 p-4 text-center">
-
-                    <i class="bi bi-person-circle fs-1 text-primary mb-3"></i>
-
-                    <h5 th:text="${employee.firstName + ' ' + employee.lastName}"></h5>
-
-                    <p class="text-muted mb-1"
-                       th:text="${employee.designation.title}"></p>
-
-                    <p class="text-muted"
-                       th:text="${employee.department.name}"></p>
-
-                </div>
-
             </div>
 
         </div>
 
     </div>
-
 </div>
 
-<!-- ================= FOOTER ================= -->
 <div th:replace="fragments/footer :: footer"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

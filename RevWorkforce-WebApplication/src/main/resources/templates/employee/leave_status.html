@@ -1,83 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="fragments/header :: header('Leave Status')"></head>
 
 <body>
 
-<div th:replace="fragments/sidebar :: sidebar"></div>
 <div th:replace="fragments/header :: topbar"></div>
 
-<div class="content">
-    <div class="container-fluid">
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <div class="main-content">
 
         <h3 class="mb-4">Leave Status</h3>
 
         <div class="card shadow-sm p-4">
 
+            <div th:if="${successMessage}"
+                 class="alert alert-success alert-dismissible fade show">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="alert"></button>
+            </div>
+
             <table class="table table-bordered table-hover">
+
                 <thead class="table-dark">
                 <tr>
                     <th>Leave Type</th>
                     <th>From</th>
                     <th>To</th>
                     <th>Status</th>
-                    <th>Action</th>
                 </tr>
                 </thead>
 
-                <tbody>
+                <tbody th:if="${leaveRequests != null and !#lists.isEmpty(leaveRequests)}">
                 <tr th:each="leave : ${leaveRequests}">
-
-                    <td th:text="${leave.leaveType.typeName}"></td>
+                    <td th:text="${leave.leaveType != null ? leave.leaveType.typeName : 'N/A'}"></td>
                     <td th:text="${leave.startDate}"></td>
                     <td th:text="${leave.endDate}"></td>
-
                     <td>
-                        <span th:if="${leave.status == 'PENDING'}"
-                              class="badge bg-warning text-dark">Pending</span>
-
-                        <span th:if="${leave.status == 'APPROVED'}"
-                              class="badge bg-success">Approved</span>
-
-                        <span th:if="${leave.status == 'REJECTED'}"
-                              class="badge bg-danger">Rejected</span>
-
-                        <span th:if="${leave.status == 'CANCELLED'}"
-                              class="badge bg-secondary">Cancelled</span>
+                        <span th:text="${leave.status}"
+                              th:classappend="
+                                ${leave.status == 'APPROVED'} ? 'badge bg-success' :
+                                (${leave.status == 'REJECTED'} ? 'badge bg-danger' :
+                                (${leave.status == 'CANCELLED'} ? 'badge bg-secondary' :
+                                'badge bg-warning text-dark'))">
+                        </span>
                     </td>
-
-                    <td>
-						<form th:if="${leave.status == 'PENDING'}"
-						      th:action="@{/employee/cancel-leave/{id}(id=${leave.id})}"
-						      method="post">
-
-						    <button type="submit"
-						            class="btn btn-sm btn-danger">
-						        Cancel
-						    </button>
-
-						</form>
-
-                        <span th:if="${leave.status != 'PENDING'}">-</span>
-                    </td>
-
                 </tr>
+                </tbody>
 
-                <tr th:if="${#lists.isEmpty(leaveRequests)}">
-                    <td colspan="5" class="text-center text-muted">
+                <tbody th:if="${leaveRequests == null or #lists.isEmpty(leaveRequests)}">
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
                         No Leave Requests Found
                     </td>
                 </tr>
-
                 </tbody>
+
             </table>
 
         </div>
+
     </div>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
