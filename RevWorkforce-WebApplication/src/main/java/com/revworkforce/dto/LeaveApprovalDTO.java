@@ -5,13 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 
 public class LeaveApprovalDTO {
 
-    @NotNull(message = "Leave Request ID is required")
+    @NotNull
     private Long leaveRequestId;
 
-    @NotNull(message = "Manager ID is required")
+    @NotNull
     private Long managerId;
 
-    @NotBlank(message = "Status is required")
+    @NotBlank
     private String status; 
 
     private String comments;
