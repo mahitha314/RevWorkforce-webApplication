@@ -2,7 +2,6 @@ package com.revworkforce.employeecontroller;
 
 import com.revworkforce.model.*;
 import com.revworkforce.repository.*;
-import com.revworkforce.employeeservice.GoalService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @Controller
 @RequestMapping("/employee")
 public class EmployeePageController {
@@ -23,27 +23,30 @@ public class EmployeePageController {
     private final LeaveTypeRepository leaveTypeRepo;
     private final LeaveRequestRepository leaveRequestRepo;
     private final GoalRepository goalRepository;
-    private final GoalService goalService;
     private final AnnouncementRepository announcementRepo;
     private final NotificationRepository notificationRepo;
+    private final PerformanceReviewRepository performanceReviewRepo;
+    private final HolidayRepository holidayRepository;
 
     public EmployeePageController(EmployeeRepository employeeRepo,
                                   LeaveBalanceRepository leaveBalanceRepo,
                                   LeaveTypeRepository leaveTypeRepo,
                                   LeaveRequestRepository leaveRequestRepo,
                                   GoalRepository goalRepository,
-                                  GoalService goalService,
-                                  AnnouncementRepository announcementRepo, 
-                                  NotificationRepository notificationRepo) {
+                                  AnnouncementRepository announcementRepo,
+                                  NotificationRepository notificationRepo,
+                                  PerformanceReviewRepository performanceReviewRepo,
+                                  HolidayRepository holidayRepository) {
 
         this.employeeRepo = employeeRepo;
         this.leaveBalanceRepo = leaveBalanceRepo;
         this.leaveTypeRepo = leaveTypeRepo;
         this.leaveRequestRepo = leaveRequestRepo;
         this.goalRepository = goalRepository;
-        this.goalService = goalService;
         this.announcementRepo = announcementRepo;
         this.notificationRepo = notificationRepo;
+        this.performanceReviewRepo = performanceReviewRepo;
+        this.holidayRepository = holidayRepository;
     }
 
     // ================= GET LOGGED EMPLOYEE =================
@@ -54,9 +57,6 @@ public class EmployeePageController {
         return employeeRepo.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
     }
-
-    // ================= GLOBAL UNREAD COUNT (FOR BELL) =================
-
 
     // ================= DASHBOARD =================
     @GetMapping("/dashboard")
@@ -73,6 +73,9 @@ public class EmployeePageController {
         List<Goal> goals =
                 goalRepository.findByEmployee_Id(employee.getId());
 
+        List<PerformanceReview> reviews =
+                performanceReviewRepo.findByEmployee_Id(employee.getId());
+
         int totalAllocated = 0;
         int totalUsed = 0;
         int totalRemaining = 0;
@@ -84,39 +87,68 @@ public class EmployeePageController {
             totalRemaining += b.getRemainingLeaves();
         }
 
+        // Pending = Not yet approved
         for (LeaveRequest r : leaveRequests) {
-            if ("PENDING".equalsIgnoreCase(r.getStatus())) {
+            if (r.getLeaveApproval() == null) {
                 pendingCount++;
             }
         }
 
+        int totalProgress = goals.stream()
+                .mapToInt(Goal::getProgress)
+                .sum();
+
+        int goalPercentage =
+                goals.isEmpty() ? 0 : totalProgress / goals.size();
+
+        double finalRating = reviews.stream()
+                .mapToDouble(r -> {
+                    double manager = r.getManagerRating();
+                    double self = r.getSelfRating();
+                    return manager == 0 ? self : (manager * 0.6) + (self * 0.4);
+                })
+                .average()
+                .orElse(0);
+
         model.addAttribute("employee", employee);
-        model.addAttribute("balances", balances);
-        model.addAttribute("leaveRequests", leaveRequests);
-        model.addAttribute("goals", goals);
         model.addAttribute("totalAllocated", totalAllocated);
         model.addAttribute("totalUsed", totalUsed);
         model.addAttribute("totalRemaining", totalRemaining);
         model.addAttribute("pendingCount", pendingCount);
+        model.addAttribute("goalPercentage", goalPercentage);
+        model.addAttribute("avgRating", finalRating);
+        model.addAttribute("goals", goals);
 
         return "employee/dashboard";
     }
 
-    // ================= PROFILE =================
+    // ================= PROFILE PAGE =================
     @GetMapping("/profile")
-    public String profile(Model model) {
-        model.addAttribute("employee", getEmployee());
+    public String profilePage(Model model) {
+
+        Employee employee = getEmployee();
+        model.addAttribute("employee", employee);
+
         return "employee/profile";
     }
 
-    // ================= APPLY LEAVE =================
-    @GetMapping("/apply-leave")
-    public String applyLeavePage(Model model) {
-        model.addAttribute("employee", getEmployee());
+    // ================= LEAVE PAGE =================
+    @GetMapping("/leave")
+    public String leavePage(Model model) {
+
+        Employee employee = getEmployee();
+
+        model.addAttribute("employee", employee);
+        model.addAttribute("leaveBalances",
+                leaveBalanceRepo.findByEmployee_Id(employee.getId()));
         model.addAttribute("leaveTypes", leaveTypeRepo.findAll());
-        return "employee/apply_leave";
+        model.addAttribute("leaves",
+                leaveRequestRepo.findByEmployee_Id(employee.getId()));
+
+        return "employee/my_leaves";
     }
 
+    // ================= APPLY LEAVE =================
     @PostMapping("/apply-leave")
     public String applyLeave(@RequestParam Long leaveTypeId,
                              @RequestParam String startDate,
@@ -126,9 +158,8 @@ public class EmployeePageController {
 
         Employee employee = getEmployee();
 
-        LeaveType leaveType =
-                leaveTypeRepo.findById(leaveTypeId)
-                        .orElseThrow(() -> new RuntimeException("Leave type not found"));
+        LeaveType leaveType = leaveTypeRepo.findById(leaveTypeId)
+                .orElseThrow(() -> new RuntimeException("Leave type not found"));
 
         LeaveRequest request = new LeaveRequest();
         request.setEmployee(employee);
@@ -136,161 +167,181 @@ public class EmployeePageController {
         request.setStartDate(LocalDate.parse(startDate));
         request.setEndDate(LocalDate.parse(endDate));
         request.setReason(reason);
-        request.setStatus("PENDING");
-        request.setNotificationRead(false);
 
         leaveRequestRepo.save(request);
 
         redirectAttributes.addFlashAttribute("successMessage",
                 "Leave Applied Successfully!");
 
-        return "redirect:/employee/leave-status";
-    }
-
-    // ================= LEAVE STATUS =================
-    @GetMapping("/leave-status")
-    public String leaveStatus(Model model) {
-
-        Employee employee = getEmployee();
-
-        model.addAttribute("employee", employee);
-        model.addAttribute("leaveRequests",
-                leaveRequestRepo.findByEmployee_Id(employee.getId()));
-
-        return "employee/leave_status";
-    }
-
-    // ================= LEAVE BALANCE =================
-    @GetMapping("/leave-balance")
-    public String leaveBalance(Model model) {
-
-        Employee employee = getEmployee();
-
-        model.addAttribute("employee", employee);
-        model.addAttribute("balances",
-                leaveBalanceRepo.findByEmployee_Id(employee.getId()));
-
-        return "employee/leave_balance";
-    }
-
-    @GetMapping("/leave-history")
-    public String leaveHistory(Model model) {
-
-        Employee employee = getEmployee();
-
-        List<LeaveRequest> history =
-                leaveRequestRepo.findByEmployee_Id(employee.getId());
-
-        model.addAttribute("employee", employee);
-        model.addAttribute("history", history);
-
-        return "employee/leave_history";
-    }
-
-    // ================= ANNOUNCEMENTS =================
-    @GetMapping("/announcements")
-    public String announcements(Model model) {
-
-        model.addAttribute("employee", getEmployee());
-        model.addAttribute("announcements",
-                announcementRepo.findAllByOrderByPostedDateDesc());
-
-        return "employee/announcements";
-    }
-
-    // ================= NOTIFICATIONS =================
-    @GetMapping("/notifications")
-    public String notifications(Model model) {
-
-        Employee employee = getEmployee();
-
-        model.addAttribute("employee", employee);
-        model.addAttribute("leaveRequests",
-                leaveRequestRepo
-                        .findByEmployee_IdOrderByStartDateDesc(employee.getId()));
-
-        return "employee/notifications";
-    }
-
-    // ================= MARK NOTIFICATION AS READ =================
-    @PostMapping("/notifications/read/{id}")
-    public String markNotificationRead(@PathVariable Long id) {
-
-        LeaveRequest leave =
-                leaveRequestRepo.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Leave not found"));
-
-        leave.setNotificationRead(true);
-        leaveRequestRepo.save(leave);
-
-        return "redirect:/employee/notifications";
+        return "redirect:/employee/leave";
     }
 
     // ================= CANCEL LEAVE =================
-    @PostMapping("/cancel-leave/{id}")
+    @PostMapping("/cancel/{id}")
     public String cancelLeave(@PathVariable Long id,
                               RedirectAttributes redirectAttributes) {
 
-        Employee employee = getEmployee();
+        LeaveRequest leave = leaveRequestRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Leave not found"));
 
-        LeaveRequest leave =
-                leaveRequestRepo.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Leave not found"));
-
-        if (!leave.getEmployee().getId().equals(employee.getId())) {
-            throw new RuntimeException("Unauthorized action");
-        }
-
-        if ("PENDING".equalsIgnoreCase(leave.getStatus())) {
-            leave.setStatus("CANCELLED");
-            leave.setNotificationRead(false);
-            leaveRequestRepo.save(leave);
-
+        if (leave.getLeaveApproval() == null) {
+            leaveRequestRepo.delete(leave);
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Leave Cancelled Successfully!");
+                    "Leave Cancelled Successfully");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Cannot cancel approved/rejected leave");
         }
 
-        return "redirect:/employee/leave-status";
+        return "redirect:/employee/leave";
     }
-    @ModelAttribute("unreadCount")
-    public long unreadCount() {
 
-        Employee emp = getEmployee();
-
-        return notificationRepo
-                .countByEmployee_IdAndStatus(emp.getId(), "UNREAD");
-    }
+ // ================= EMPLOYEE DIRECTORY =================
     @GetMapping("/directory")
-    public String employeeDirectory(@RequestParam(required = false) String keyword,
-                                    Model model) {
+    public String employeeDirectory(
+            @RequestParam(required = false) String keyword,
+            Model model) {
 
-        Employee loggedEmployee = getEmployee();
         List<Employee> employees;
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-
-            String[] parts = keyword.trim().split(" ");
-
-            if (parts.length == 2) {
-                // If user typed first + last name
-                employees = employeeRepo
-                        .findByFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(
-                                parts[0], parts[1]);
-            } else {
-                // Single word search
-                employees = employeeRepo
-                        .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                                keyword, keyword, keyword);
-            }
-
+        if (keyword != null && !keyword.isEmpty()) {
+            employees = employeeRepo
+                    .findByFirstNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                            keyword, keyword);
         } else {
             employees = employeeRepo.findAll();
         }
 
-        model.addAttribute("employee", loggedEmployee);
         model.addAttribute("employees", employees);
         model.addAttribute("keyword", keyword);
 
         return "employee/directory";
     }
-}
+ // ================= GOALS PAGE =================
+    @GetMapping("/goals")
+    public String goalsPage(Model model) {
+
+        Employee employee = getEmployee();
+
+        List<Goal> goals =
+                goalRepository.findByEmployee_Id(employee.getId());
+
+        model.addAttribute("goal", new Goal()); // for form binding
+        model.addAttribute("goals", goals);
+
+        return "employee/goals";
+    }
+ // ================= ADD GOAL =================
+    @PostMapping("/goals")
+    public String addGoal(@ModelAttribute Goal goal,
+                          RedirectAttributes redirectAttributes) {
+
+        Employee employee = getEmployee();
+
+        goal.setEmployee(employee);
+        goal.setProgress(0);
+
+        // 🔥 IMPORTANT FIX
+        goal.setStatus("NOT_STARTED");
+
+        goalRepository.save(goal);
+
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Goal Added Successfully!");
+
+        return "redirect:/employee/goals";
+    }
+ // ================= UPDATE PROGRESS =================
+    @PostMapping("/goals/update-progress/{id}")
+    public String updateProgress(@PathVariable Long id,
+                                 @RequestParam int progress,
+                                 RedirectAttributes redirectAttributes) {
+
+        Goal goal = goalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Goal not found"));
+
+        // validation
+        if (progress < 0) progress = 0;
+        if (progress > 100) progress = 100;
+
+        goal.setProgress(progress);
+
+        goalRepository.save(goal);
+
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Progress Updated Successfully!");
+
+        return "redirect:/employee/goals";
+    }
+ // ================= PERFORMANCE PAGE =================
+    @GetMapping("/performance")
+    public String performancePage(Model model) {
+
+        Employee employee = getEmployee();
+
+        List<PerformanceReview> reviews =
+                performanceReviewRepo.findByEmployee_Id(employee.getId());
+
+        model.addAttribute("reviews", reviews);
+
+        // 🔥 ADD THIS LINE (VERY IMPORTANT)
+        model.addAttribute("review", new PerformanceReview());
+
+        return "employee/performance";
+    }
+    @PostMapping("/performance")
+    public String submitReview(@ModelAttribute PerformanceReview review,
+                               RedirectAttributes redirectAttributes) {
+
+        Employee employee = getEmployee();
+
+        review.setEmployee(employee);
+        performanceReviewRepo.save(review);
+
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Performance Review Submitted!");
+
+        return "redirect:/employee/performance";
+    }
+ // ================= ANNOUNCEMENTS PAGE =================
+    @GetMapping("/announcements")
+    public String announcementsPage(Model model) {
+
+        List<Announcement> announcements = announcementRepo.findAll();
+
+        model.addAttribute("announcements", announcements);
+
+        return "employee/announcements";
+    }
+    @GetMapping("/notifications")
+    public String notificationsPage(Model model) {
+
+        Employee employee = getEmployee();
+
+        List<Notification> notifications =
+                notificationRepo.findByEmployee_IdOrderByCreatedAtDesc(employee.getId());
+
+        long unreadCount =
+                notificationRepo.countByEmployee_IdAndStatus(employee.getId(), "UNREAD");
+
+        model.addAttribute("notifications", notifications);
+        model.addAttribute("unreadCount", unreadCount);
+
+        return "employee/notifications";
+    }
+   
+
+        @GetMapping("/holidays")
+        public String holidaysPage(Model model) {
+
+            LocalDate today = LocalDate.now();
+
+            List<Holiday> holidays =
+                    holidayRepository
+                            .findByHolidayDateGreaterThanEqualOrderByHolidayDateAsc(today);
+
+            model.addAttribute("holidays", holidays);
+
+            return "employee/holidays";
+        }
+    }

@@ -42,12 +42,10 @@ public class LeaveController {
 
     @GetMapping("/leave/history/{employeeId}")
     public ResponseEntity<ApiResponse> getHistory(
-            @PathVariable Long employeeId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @PathVariable Long employeeId) {
 
         ApiResponse response =
-                leaveRequestService.getLeaveHistory(employeeId, page, size);
+                leaveRequestService.getLeaveHistory(employeeId);
 
         return ResponseEntity.ok(response);
     }

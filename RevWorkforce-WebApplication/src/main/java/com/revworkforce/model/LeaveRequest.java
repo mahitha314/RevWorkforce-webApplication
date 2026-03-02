@@ -1,6 +1,8 @@
 package com.revworkforce.model;
 
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,24 +21,21 @@ public class LeaveRequest {
 
 	@Column(nullable = false)
 	private String reason;
-	
-	@Column(name = "notification_read")
-	private Boolean notificationRead = false;
 
 	@ManyToOne
 	@JoinColumn(name = "employee_id", nullable = false)
+	@JsonBackReference(value = "employee-leaverequest")
 	private Employee employee;
 
 	@ManyToOne
 	@JoinColumn(name = "leave_type_id", nullable = false)
+	@JsonBackReference(value = "leavetype-leaverequest")
 	private LeaveType leaveType;
-
 
 	@OneToOne
 	@JoinColumn(name = "approval_id")
+	@JsonManagedReference(value="request-approval")
 	private LeaveApproval leaveApproval;
-	@Column(name = "status")
-	private String status;
 
 	public LeaveRequest() {}
 
@@ -106,23 +105,5 @@ public class LeaveRequest {
 	public void setLeaveApproval(LeaveApproval leaveApproval) {
 		this.leaveApproval = leaveApproval;
 	}
-	public String getStatus() {
-	    return status;
-	}
-
-	public void setStatus(String status) {
-	    this.status = status;
-	}
-	public Boolean getNotificationRead() {
-	    return notificationRead;
-	}
-
-	public void setNotificationRead(Boolean notificationRead) {
-	    this.notificationRead = notificationRead;
-	}
 	
-	public boolean isNotificationRead() {
-	    return notificationRead;
-	}
-
 }

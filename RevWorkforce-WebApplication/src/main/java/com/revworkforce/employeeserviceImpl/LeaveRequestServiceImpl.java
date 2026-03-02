@@ -3,73 +3,38 @@ package com.revworkforce.employeeserviceImpl;
 import com.revworkforce.dto.ApiResponse;
 import com.revworkforce.dto.LeaveRequestDTO;
 import com.revworkforce.employeeservice.LeaveRequestService;
-import com.revworkforce.exception.EmployeeNotFoundException;
-import com.revworkforce.exception.LeaveNotAllowedException;
-import com.revworkforce.model.Employee;
-import com.revworkforce.model.LeaveBalance;
-import com.revworkforce.model.LeaveRequest;
-import com.revworkforce.model.LeaveType;
-import com.revworkforce.repository.EmployeeRepository;
-import com.revworkforce.repository.LeaveBalanceRepository;
-import com.revworkforce.repository.LeaveRequestRepository;
-import com.revworkforce.repository.LeaveTypeRepository;
+import com.revworkforce.model.*;
+import com.revworkforce.repository.*;
 
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LeaveRequestServiceImpl implements LeaveRequestService {
 
-    private final LeaveRequestRepository leaveRequestRepo;
-    private final LeaveBalanceRepository leaveBalanceRepo;
-    private final LeaveTypeRepository leaveTypeRepo;
-    private final EmployeeRepository employeeRepo;
+    @Autowired
+    private LeaveRequestRepository leaveRequestRepo;
 
-    public LeaveRequestServiceImpl(
-            LeaveRequestRepository leaveRequestRepo,
-            LeaveBalanceRepository leaveBalanceRepo,
-            LeaveTypeRepository leaveTypeRepo,
-            EmployeeRepository employeeRepo) {
+    @Autowired
+    private EmployeeRepository employeeRepo;
 
-        this.leaveRequestRepo = leaveRequestRepo;
-        this.leaveBalanceRepo = leaveBalanceRepo;
-        this.leaveTypeRepo = leaveTypeRepo;
-        this.employeeRepo = employeeRepo;
-    }
+    @Autowired
+    private LeaveTypeRepository leaveTypeRepo;
 
-    // ===================================================
-    // APPLY LEAVE
-    // ===================================================
+    // ================= APPLY LEAVE =================
     @Override
     public ApiResponse applyLeave(LeaveRequestDTO dto) {
 
-        if (dto.getEndDate().isBefore(dto.getStartDate())) {
-            throw new LeaveNotAllowedException("End date cannot be before start date");
-        }
-
         Employee employee = employeeRepo.findById(dto.getEmployeeId())
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         LeaveType leaveType = leaveTypeRepo.findById(dto.getLeaveTypeId())
-                .orElseThrow(() ->
-                        new LeaveNotAllowedException("Leave type not found"));
-
-        LeaveBalance balance = leaveBalanceRepo
-                .findByEmployee_IdAndLeaveType_Id(dto.getEmployeeId(), dto.getLeaveTypeId())
-                .orElseThrow(() ->
-                        new LeaveNotAllowedException("Leave balance not found"));
-
-        long days = ChronoUnit.DAYS.between(
-                dto.getStartDate(),
-                dto.getEndDate()
-        ) + 1;
-
-        if (balance.getRemainingLeaves() < days) {
-            throw new LeaveNotAllowedException("Insufficient leave balance");
-        }
+                .orElseThrow(() -> new RuntimeException("Leave type not found"));
 
         LeaveRequest request = new LeaveRequest();
         request.setEmployee(employee);
@@ -77,88 +42,121 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         request.setStartDate(dto.getStartDate());
         request.setEndDate(dto.getEndDate());
         request.setReason(dto.getReason());
-        request.setStatus("PENDING");
+
+        // 🔥 Create Approval with PENDING
+        LeaveApproval approval = new LeaveApproval();
+        approval.setStatus("PENDING");
+        approval.setLeaveRequest(request);
+
+        request.setLeaveApproval(approval);
 
         leaveRequestRepo.save(request);
 
-        return new ApiResponse(
-                200,
-                "Leave applied successfully",
-                request.getId()
-        );
+        return new ApiResponse(201, "Leave Applied Successfully", null);
     }
 
-    // ===================================================
-    // CANCEL LEAVE
-    // ===================================================
+    // ================= CANCEL LEAVE =================
     @Override
     public ApiResponse cancelLeave(Long leaveId) {
 
         LeaveRequest request = leaveRequestRepo.findById(leaveId)
-                .orElseThrow(() ->
-                        new LeaveNotAllowedException("Leave not found"));
+                .orElseThrow(() -> new RuntimeException("Leave not found"));
 
-        if (!"PENDING".equalsIgnoreCase(request.getStatus())) {
-            throw new LeaveNotAllowedException("Only pending leave can be cancelled");
+        if (request.getLeaveApproval() != null &&
+                !request.getLeaveApproval().getStatus().equalsIgnoreCase("PENDING")) {
+
+            return new ApiResponse(400,
+                    "Only Pending Leave Can Be Cancelled",
+                    null);
         }
 
-        request.setStatus("CANCELLED");
+        if (request.getLeaveApproval() != null) {
+            request.getLeaveApproval().setStatus("CANCELLED");
+        }
+
         leaveRequestRepo.save(request);
 
-        return new ApiResponse(
-                200,
-                "Leave cancelled successfully",
-                null
-        );
+        return new ApiResponse(200,
+                "Leave Cancelled Successfully",
+                null);
     }
 
-    // ===================================================
-    // LEAVE HISTORY → ALL LEAVES
-    // ===================================================
+    // ================= LEAVE HISTORY =================
     @Override
-    public ApiResponse getLeaveHistory(Long employeeId, int page, int size) {
+    public ApiResponse getLeaveHistory(Long employeeId) {
 
-        Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+    	List<LeaveRequest> leaves =
+                leaveRequestRepo.findByEmployee_IdOrderByStartDateDesc(employeeId);
 
-        Pageable pageable =
-                PageRequest.of(page, size, Sort.by("startDate").descending());
+        List<LeaveRequestDTO> dtoList =
+                leaves.stream()
+                        .map(this::convertToDTO)
+                        .collect(Collectors.toList());
 
-        Page<LeaveRequest> history =
-                leaveRequestRepo.findByEmployee(employee, pageable);
-
-        return new ApiResponse(
-                200,
-                "Leave history fetched successfully",
-                history
-        );
+        return new ApiResponse(200,
+                "Leave History Fetched Successfully",
+                dtoList);
     }
 
-    // ===================================================
-    // LEAVE STATUS → ONLY PENDING
-    // ===================================================
+    // ================= GET ONLY PENDING =================
     @Override
-    public ApiResponse getLeaveStatus(Long employeeId, int page, int size) {
+    public ApiResponse getPendingLeaves(Long employeeId) {
 
-        Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+        List<LeaveRequest> leaves =
+                leaveRequestRepo.findByEmployee_Id(employeeId);
 
-        Pageable pageable =
-                PageRequest.of(page, size, Sort.by("startDate").descending());
+        List<LeaveRequestDTO> dtoList =
+                leaves.stream()
+                        .map(this::convertToDTO)
+                        .filter(dto -> dto.getStatus().equalsIgnoreCase("PENDING"))
+                        .collect(Collectors.toList());
 
-        Page<LeaveRequest> pendingLeaves =
-                leaveRequestRepo.findByEmployeeAndStatus(
-                        employee,
-                        "PENDING",
-                        pageable
-                );
+        return new ApiResponse(200,
+                "Pending Leaves Fetched Successfully",
+                dtoList);
+    }
 
-        return new ApiResponse(
-                200,
-                "Leave status fetched successfully",
-                pendingLeaves
+    // ================= GET SINGLE LEAVE =================
+    @Override
+    public ApiResponse getLeaveById(Long leaveId) {
+
+        LeaveRequest leave = leaveRequestRepo.findById(leaveId)
+                .orElseThrow(() -> new RuntimeException("Leave not found"));
+
+        LeaveRequestDTO dto = convertToDTO(leave);
+
+        return new ApiResponse(200,
+                "Leave Details Fetched Successfully",
+                dto);
+    }
+
+    // ================= ENTITY → DTO =================
+    private LeaveRequestDTO convertToDTO(LeaveRequest leave) {
+
+        long days = ChronoUnit.DAYS.between(
+                leave.getStartDate(),
+                leave.getEndDate()) + 1;
+
+        String status = "PENDING";
+
+        if (leave.getLeaveApproval() != null &&
+                leave.getLeaveApproval().getStatus() != null) {
+
+            status = leave.getLeaveApproval().getStatus();
+        }
+
+        return new LeaveRequestDTO(
+                leave.getId(),
+                leave.getEmployee().getId(),
+                leave.getEmployee().getFirstName() + " " +
+                        leave.getEmployee().getLastName(),
+                leave.getLeaveType().getId(),
+                leave.getLeaveType().getTypeName(),   // change if field name differs
+                leave.getStartDate(),
+                leave.getEndDate(),
+                (int) days,
+                leave.getReason(),
+                status
         );
     }
 }

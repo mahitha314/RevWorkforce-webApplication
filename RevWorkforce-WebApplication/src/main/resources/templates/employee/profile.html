@@ -1,7 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header('My Profile')"></head>
+	<head>
+	    <th:block th:replace="~{fragments/header :: header('My Profile')}"></th:block>
 
+	    <style>
+	        body {
+	            margin: 0;
+	        }
+
+	        .wrapper {
+	            margin-top: 60px;
+	        }
+
+	        .main-content {
+	            margin-left: 250px;
+	            padding: 30px;
+	        }
+	    </style>
+	</head>
 <body>
 
 <div th:replace="fragments/header :: topbar"></div>

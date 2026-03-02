@@ -1,9 +1,7 @@
 package com.revworkforce.model;
 
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,7 +16,7 @@ public class Department {
 	private String name;
 
 	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
-	@JsonManagedReference
+	@JsonIgnore
 	private List<Employee> employees;
 
 	public Department() {}

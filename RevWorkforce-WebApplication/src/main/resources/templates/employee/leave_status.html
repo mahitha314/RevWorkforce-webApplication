@@ -11,8 +11,8 @@
 
     <div class="main-content">
 
-        <h3 class="mb-4">Leave Status</h3>
-
+		<h3 class="fw-bold mb-4">Leave Status</h3>
+		<div th:replace="fragments/leave-tabs :: leaveTabs('status')"></div>
         <div class="card shadow-sm p-4">
 
             <div th:if="${successMessage}"

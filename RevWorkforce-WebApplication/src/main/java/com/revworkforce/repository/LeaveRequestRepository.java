@@ -9,30 +9,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LeaveRequestRepository
-        extends JpaRepository<LeaveRequest, Long> {
+public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long> {
 
-    // ================= PAGINATION =================
-    Page<LeaveRequest> findByEmployee(
-            Employee employee,
-            Pageable pageable
-    );
+	// ================= NORMAL LIST =================
+	List<LeaveRequest> findByEmployee_Id(Long employeeId);
 
-    Page<LeaveRequest> findByEmployeeAndStatus(
-            Employee employee,
-            String status,
-            Pageable pageable
-    );
+	// ================= SORT NEWEST FIRST =================
+	List<LeaveRequest> findByEmployee_IdOrderByStartDateDesc(Long employeeId);
 
-    // ================= NORMAL LIST =================
-    List<LeaveRequest> findByEmployee_Id(Long employeeId);
-
-    // ================= SORT NEWEST FIRST =================
-    List<LeaveRequest> findByEmployee_IdOrderByStartDateDesc(Long employeeId);
-
-    // ================= UNREAD NOTIFICATIONS COUNT =================
-    long countByEmployee_IdAndNotificationReadFalseAndStatusNot(
-            Long employeeId,
-            String status
-    );
+	// ================= UNREAD NOTIFICATIONS COUNT =================
+//    long countByEmployee_IdAndNotificationReadFalseAndStatusNot(
+//            Long employeeId,
+//            String status
+//    );
 }

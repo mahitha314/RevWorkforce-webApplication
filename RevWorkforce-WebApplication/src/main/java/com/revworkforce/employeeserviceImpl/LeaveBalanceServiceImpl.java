@@ -29,20 +29,24 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
     @Override
     public ApiResponse getEmployeeBalances(Long employeeId) {
 
-        // Validate employee
-        employeeRepo.findById(employeeId)
+        // ✅ Validate Employee
+        var employee = employeeRepo.findById(employeeId)
                 .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+                        new EmployeeNotFoundException("Employee not found with id: " + employeeId));
 
+        // ✅ Fetch Leave Balances
         List<LeaveBalanceDTO> balances =
                 leaveBalanceRepo.findByEmployee_Id(employeeId)
                         .stream()
                         .map(balance -> new LeaveBalanceDTO(
-                                balance.getLeaveType().getId(),
-                                balance.getLeaveType().getTypeName(),
-                                balance.getTotalLeaves(),
-                                balance.getUsedLeaves(),
-                                balance.getRemainingLeaves()
+                                balance.getId(),                                // LeaveBalance ID
+                                employee.getId(),                               // Employee ID
+                                employee.getFirstName(),                             // Employee Name
+                                balance.getLeaveType().getId(),                 // LeaveType ID
+                                balance.getLeaveType().getTypeName(),           // LeaveType Name
+                                balance.getTotalLeaves(),                       // Total Leaves
+                                balance.getUsedLeaves(),                        // Used Leaves
+                                balance.getRemainingLeaves()                    // Remaining Leaves
                         ))
                         .collect(Collectors.toList());
 

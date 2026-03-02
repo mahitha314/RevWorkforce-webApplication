@@ -2,65 +2,115 @@ package com.revworkforce.dto;
 
 public class LeaveBalanceDTO {
 
-    private Long leaveTypeId;
-    private String leaveTypeName;
-    private int totalLeaves;
-    private int usedLeaves;
-    private int remainingLeaves;
+	private Long id;
 
-    public LeaveBalanceDTO() {
-    }
-    
+	private Long employeeId;
+	private String employeeName;
 
-    public LeaveBalanceDTO(Long leaveTypeId,
-                           String leaveTypeName,
-                           int totalLeaves,
-                           int usedLeaves,
-                           int remainingLeaves) {
-        this.leaveTypeId = leaveTypeId;
-        this.leaveTypeName = leaveTypeName;
-        this.totalLeaves = totalLeaves;
-        this.usedLeaves = usedLeaves;
-        this.remainingLeaves = remainingLeaves;
-    }
+	private Long leaveTypeId;
+	private String leaveTypeName;
 
-    public Long getLeaveTypeId() {
-        return leaveTypeId;
-    }
+	private Integer totalLeaves;
+	private Integer usedLeaves;
+	private Integer remainingLeaves;
 
-    public void setLeaveTypeId(Long leaveTypeId) {
-        this.leaveTypeId = leaveTypeId;
-    }
+	private Integer days;
+	private String reason;
 
-    public String getLeaveTypeName() {
-        return leaveTypeName;
-    }
+	public LeaveBalanceDTO() {
+	}
 
-    public void setLeaveTypeName(String leaveTypeName) {
-        this.leaveTypeName = leaveTypeName;
-    }
+	public LeaveBalanceDTO(Long id, Long employeeId, String employeeName, Long leaveTypeId, String leaveTypeName,
+			Integer totalLeaves, Integer usedLeaves, Integer remainingLeaves) {
 
-    public int getTotalLeaves() {
-        return totalLeaves;
-    }
+		this.id = id;
+		this.employeeId = employeeId;
+		this.employeeName = employeeName;
+		this.leaveTypeId = leaveTypeId;
+		this.leaveTypeName = leaveTypeName;
+		this.totalLeaves = totalLeaves;
+		this.usedLeaves = usedLeaves;
+		this.remainingLeaves = remainingLeaves;
+	}
 
-    public void setTotalLeaves(int totalLeaves) {
-        this.totalLeaves = totalLeaves;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public int getUsedLeaves() {
-        return usedLeaves;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setUsedLeaves(int usedLeaves) {
-        this.usedLeaves = usedLeaves;
-    }
+	public Long getEmployeeId() {
+		return employeeId;
+	}
 
-    public int getRemainingLeaves() {
-        return remainingLeaves;
-    }
+	public void setEmployeeId(Long employeeId) {
+		this.employeeId = employeeId;
+	}
 
-    public void setRemainingLeaves(int remainingLeaves) {
-        this.remainingLeaves = remainingLeaves;
-    }
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public Long getLeaveTypeId() {
+		return leaveTypeId;
+	}
+
+	public void setLeaveTypeId(Long leaveTypeId) {
+		this.leaveTypeId = leaveTypeId;
+	}
+
+	public String getLeaveTypeName() {
+		return leaveTypeName;
+	}
+
+	public void setLeaveTypeName(String leaveTypeName) {
+		this.leaveTypeName = leaveTypeName;
+	}
+
+	public Integer getTotalLeaves() {
+		return totalLeaves;
+	}
+
+	public void setTotalLeaves(Integer totalLeaves) {
+		this.totalLeaves = totalLeaves;
+	}
+
+	public Integer getUsedLeaves() {
+		return usedLeaves;
+	}
+
+	public void setUsedLeaves(Integer usedLeaves) {
+		this.usedLeaves = usedLeaves;
+	}
+
+	public Integer getRemainingLeaves() {
+		return remainingLeaves;
+	}
+
+	public void setRemainingLeaves(Integer remainingLeaves) {
+		this.remainingLeaves = remainingLeaves;
+	}
+
+	public Integer getDays() {
+		return days;
+	}
+
+	public void setDays(Integer days) {
+		this.days = days;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+	
 }

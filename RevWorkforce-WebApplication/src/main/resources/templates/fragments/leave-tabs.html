@@ -1,0 +1,39 @@
+<div th:fragment="leaveTabs(activeTab)">
+
+    <ul class="nav nav-pills mb-4">
+
+        <li class="nav-item">
+            <a th:href="@{/employee/apply-leave}"
+               th:classappend="${activeTab == 'apply'} ? ' active' : ''"
+               class="nav-link">
+                Apply Leave
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a th:href="@{/employee/leave-status}"
+               th:classappend="${activeTab == 'status'} ? ' active' : ''"
+               class="nav-link">
+                Leave Status
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a th:href="@{/employee/leave-balance}"
+               th:classappend="${activeTab == 'balance'} ? ' active' : ''"
+               class="nav-link">
+                Leave Balance
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a th:href="@{/employee/leave-history}"
+               th:classappend="${activeTab == 'history'} ? ' active' : ''"
+               class="nav-link">
+                Leave History
+            </a>
+        </li>
+
+    </ul>
+
+</div>

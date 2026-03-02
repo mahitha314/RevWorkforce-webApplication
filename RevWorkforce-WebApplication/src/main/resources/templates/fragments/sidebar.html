@@ -1,103 +1,61 @@
 <div th:fragment="sidebar"
-     class="sidebar bg-dark text-white d-flex flex-column"
-     style="width:260px; min-height:100vh;">
+     class="sidebar d-flex flex-column">
 
-    <div class="p-3">
+    <div class="p-3 flex-grow-1">
 
-        <h5 class="fw-bold text-center mb-4">RevWorkForce</h5>
+        <h5 class="fw-bold text-center mb-4 text-white">RevWorkForce</h5>
 
-        <!-- Dashboard -->
-        <a th:href="@{/employee/dashboard}"
-           class="nav-link text-white sidebar-link">
-            <i class="bi bi-speedometer2 me-2"></i>
-            Dashboard
+        <a th:href="@{/employee/dashboard}" class="sidebar-link">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
         </a>
 
-        <!-- Profile -->
-        <a th:href="@{/employee/profile}"
-           class="nav-link text-white sidebar-link mt-2">
-            <i class="bi bi-person-circle me-2"></i>
-            Profile
+        <a th:href="@{/employee/profile}" class="sidebar-link">
+            <i class="bi bi-person-circle"></i>
+            <span>Profile</span>
         </a>
 
-        <!-- Leave Management Dropdown -->
-        <a class="nav-link text-white sidebar-link d-flex justify-content-between align-items-center mt-2"
-           data-bs-toggle="collapse"
-           href="#leaveMenu"
-           role="button">
-
-            <span>
-                <i class="bi bi-calendar-event me-2"></i>
-                Leave Management
-            </span>
-
-            <i class="bi bi-chevron-down small"></i>
+        <a th:href="@{/employee/leave}" class="sidebar-link">
+            <i class="bi bi-calendar-event"></i>
+            <span>Leave Management</span>
         </a>
 
-        <div class="collapse ps-3" id="leaveMenu">
-
-            <a th:href="@{/employee/apply-leave}"
-               class="nav-link text-white-50 small py-1">
-                Apply Leave
-            </a>
-
-            <a th:href="@{/employee/leave-status}"
-               class="nav-link text-white-50 small py-1">
-                Leave Status
-            </a>
-
-            <a th:href="@{/employee/leave-balance}"
-               class="nav-link text-white-50 small py-1">
-                Leave Balance
-            </a>
-
-            <a th:href="@{/employee/leave-history}"
-               class="nav-link text-white-50 small py-1">
-                Leave History
-            </a>
-
-        </div>
-		<a th:href="@{/employee/directory}"
-		   class="nav-link text-white sidebar-link">
-		    <i class="bi bi-people me-2"></i>
-		    Employee Directory
-		</a>
-        <!-- Goals -->
-        <a th:href="@{/employee/goals}"
-           class="nav-link text-white sidebar-link mt-2">
-            <i class="bi bi-bullseye me-2"></i>
-            Goals
+        <a th:href="@{/employee/directory}" class="sidebar-link">
+            <i class="bi bi-people"></i>
+            <span>Employee Directory</span>
         </a>
 
-        <!-- Performance -->
-        <a th:href="@{/employee/performance}"
-           class="nav-link text-white sidebar-link">
-            <i class="bi bi-bar-chart-line me-2"></i>
-            Performance
+        <a th:href="@{/employee/goals}" class="sidebar-link">
+            <i class="bi bi-bullseye"></i>
+            <span>Goals</span>
         </a>
 
-        <!-- Announcements -->
-        <a th:href="@{/employee/announcements}"
-           class="nav-link text-white sidebar-link">
-            <i class="bi bi-megaphone me-2"></i>
-            Announcements
+        <a th:href="@{/employee/performance}" class="sidebar-link">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Performance</span>
+        </a>
+
+        <a th:href="@{/employee/announcements}" class="sidebar-link">
+            <i class="bi bi-megaphone"></i>
+            <span>Announcements</span>
         </a>
 
         <!-- Notifications -->
-        <a th:href="@{/employee/notifications}"
-           class="nav-link text-white sidebar-link">
-            <i class="bi bi-bell me-2"></i>
-            Notifications
+        <a th:href="@{/employee/notifications}" class="sidebar-link">
+            <i class="bi bi-bell"></i>
+            <span>Notifications</span>
+        </a>
+		
+		    <a th:href="@{/employee/holidays}">
+		        <i class="bi bi-calendar-event"></i> Holiday Calendar
+		    </a>
+		
+        <!-- Logout (Immediately After Notifications) -->
+        <a th:href="@{/logout}" class="sidebar-link text-danger">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
         </a>
 
-    </div>
-
-    <!-- Logout -->
-	<div class="sidebar-logout">
-	        <hr class="text-white-50">
-	        <a th:href="@{/logout}" class="sidebar-link">
-	            <i class="bi bi-box-arrow-right me-2"></i> Logout
-	        </a>
     </div>
 
 </div>

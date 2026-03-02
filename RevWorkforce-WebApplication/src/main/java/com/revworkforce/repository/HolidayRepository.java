@@ -8,8 +8,7 @@ import java.util.List;
 
 public interface HolidayRepository extends JpaRepository<Holiday, Long> {
 
-    List<Holiday> findByHolidayDate(LocalDate holidayDate);
+    List<Holiday> findAllByOrderByHolidayDateAsc();
 
-    List<Holiday> findByHolidayDateBetween(LocalDate startDate,
-                                           LocalDate endDate);
+    List<Holiday> findByHolidayDateGreaterThanEqualOrderByHolidayDateAsc(LocalDate date);
 }
