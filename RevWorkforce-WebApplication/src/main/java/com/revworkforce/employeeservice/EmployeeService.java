@@ -1,5 +1,5 @@
 package com.revworkforce.employeeservice;
 
-public class EmployeeService {
+public interface EmployeeService {
 
 }

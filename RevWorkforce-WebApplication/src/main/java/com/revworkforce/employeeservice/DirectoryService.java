@@ -1,5 +1,5 @@
 package com.revworkforce.employeeservice;
 
-public class DirectoryService {
+public interface DirectoryService {
 
 }

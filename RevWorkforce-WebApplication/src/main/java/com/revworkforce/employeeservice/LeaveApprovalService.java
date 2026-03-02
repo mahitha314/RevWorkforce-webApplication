@@ -1,5 +1,5 @@
 package com.revworkforce.employeeservice;
 
-public class LeaveApprovalService {
+public interface LeaveApprovalService {
 
 }
