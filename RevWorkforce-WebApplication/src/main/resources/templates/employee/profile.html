@@ -1,91 +1,163 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head>
-	    <th:block th:replace="~{fragments/header :: header('My Profile')}"></th:block>
 
-	    <style>
-	        body {
-	            margin: 0;
-	        }
+<head th:replace="fragments/header :: header('My Profile')"></head>
 
-	        .wrapper {
-	            margin-top: 60px;
-	        }
-
-	        .main-content {
-	            margin-left: 250px;
-	            padding: 30px;
-	        }
-	    </style>
-	</head>
 <body>
 
+<div th:replace="fragments/sidebar :: sidebar"></div>
 <div th:replace="fragments/header :: topbar"></div>
 
-<div class="wrapper">
-    <div th:replace="fragments/sidebar :: sidebar"></div>
+<div class="content">
 
-    <div class="main-content">
+    <!-- Header + Update Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">👤 My Profile</h3>
 
-        <h3 class="fw-bold mb-4">My Profile</h3>
+        <a th:href="@{/employee/profile/edit}"
+           class="btn btn-primary">
+            Update Profile
+        </a>
+    </div>
 
-        <div class="row">
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
 
-            <div class="col-md-8">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-dark text-white">
-                        Employee Information
-                    </div>
+    <div class="card shadow-sm border-0 p-4">
 
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Employee ID</th>
-                                <td th:text="${employee.employeeId}"></td>
-                            </tr>
-                            <tr>
-                                <th>Full Name</th>
-                                <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
-                            </tr>
-                            <tr>
-                                <th>Email</th>
-                                <td th:text="${employee.email}"></td>
-                            </tr>
-                            <tr>
-                                <th>Phone</th>
-                                <td th:text="${employee.phoneNumber}"></td>
-                            </tr>
-                            <tr>
-                                <th>Department</th>
-                                <td th:text="${employee.department.name}"></td>
-                            </tr>
-                            <tr>
-                                <th>Designation</th>
-                                <td th:text="${employee.designation.title}"></td>
-                            </tr>
-                            <tr>
-                                <th>Joining Date</th>
-                                <td th:text="${employee.joiningDate}"></td>
-                            </tr>
-                            <tr>
-                                <th>Status</th>
-                                <td>
-                                    <span class="badge bg-success"
-                                          th:text="${employee.status}">
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="fw-bold">First Name</label>
+                <p th:text="${employee.firstName}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Last Name</label>
+                <p th:text="${employee.lastName}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Email</label>
+                <p th:text="${employee.email}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Phone Number</label>
+                <p th:text="${employee.phoneNumber}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Address</label>
+                <p th:text="${employee.address}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Emergency Contact</label>
+                <p th:text="${employee.emergencyContact}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Department</label>
+                <p th:text="${employee.department.name}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Designation</label>
+                <p th:text="${employee.designation.title}"></p>
             </div>
 
         </div>
 
     </div>
+
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('My Profile')"></head>
+
+<body>
+
+<div th:replace="fragments/sidebar :: sidebar"></div>
+<div th:replace="fragments/header :: topbar"></div>
+
+<div class="content">
+
+    <!-- Header + Update Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">👤 My Profile</h3>
+
+        <a th:href="@{/employee/profile/edit}"
+           class="btn btn-primary">
+            Update Profile
+        </a>
+    </div>
+
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <div class="card shadow-sm border-0 p-4">
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="fw-bold">First Name</label>
+                <p th:text="${employee.firstName}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Last Name</label>
+                <p th:text="${employee.lastName}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Email</label>
+                <p th:text="${employee.email}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Phone Number</label>
+                <p th:text="${employee.phoneNumber}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Address</label>
+                <p th:text="${employee.address}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Emergency Contact</label>
+                <p th:text="${employee.emergencyContact}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Department</label>
+                <p th:text="${employee.department.name}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Designation</label>
+                <p th:text="${employee.designation.title}"></p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
