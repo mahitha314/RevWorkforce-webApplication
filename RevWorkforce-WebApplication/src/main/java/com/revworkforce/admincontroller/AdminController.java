@@ -88,6 +88,21 @@ private final SystemActivityLogRepository logRepository;
 
         return "admin/admin-dashboard";
     }	
+    @GetMapping("/profile")
+    public String profile(Authentication authentication, Model model) {
+
+        model.addAttribute("view", "profile");
+
+        String email = authentication.getName();
+
+        Employee employee = adminService.getEmployeeByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        model.addAttribute("employee", employee);
+
+        return "admin/profile";
+    }
+    
     @GetMapping("/employee-management")
     public String employeeManagementPage(Model model) {
         model.addAttribute("view", "employee");
@@ -292,6 +307,8 @@ private final SystemActivityLogRepository logRepository;
 
         return "admin/activity-logs";
     }
+    
+   
     
 
 }

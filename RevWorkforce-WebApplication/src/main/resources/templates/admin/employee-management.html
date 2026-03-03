@@ -6,12 +6,11 @@
 
 <body>
 
-<!-- ===== Sidebar ===== -->
-<div th:replace="~{fragments/sidebar :: sidebar('employee')}"></div>
+	<!-- Sidebar -->
+	<div th:replace="~{fragments/sidebar :: sidebar('employee')}"></div>
 
-<!-- ===== Topbar ===== -->
-<div th:replace="fragments/header :: header('Employee Management')"></div>
-
+	<!-- Topbar -->
+	<div th:replace="~{fragments/header :: topbar('Employee Management')}"></div>
 <!-- ================= MAIN CONTENT ================= -->
 <div class="content-wrapper">
     <div class="container mt-4">

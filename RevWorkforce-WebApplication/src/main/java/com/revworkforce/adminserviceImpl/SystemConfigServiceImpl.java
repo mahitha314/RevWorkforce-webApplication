@@ -4,23 +4,46 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.adminservice.SystemConfigService;
 import com.revworkforce.model.Department;
 import com.revworkforce.model.Designation;
 import com.revworkforce.repository.DepartmentRepository;
 import com.revworkforce.repository.DesignationRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 @Service
 public class SystemConfigServiceImpl implements SystemConfigService{
 	private final DepartmentRepository departmentRepository;
 	private final DesignationRepository designationRepository;
-	public SystemConfigServiceImpl(DepartmentRepository departmentRepository,
-            DesignationRepository designationRepository) {
-this.departmentRepository = departmentRepository;
-this.designationRepository = designationRepository;
-}
+	private final ActivityLogService activityLogService;
+	private final HttpServletRequest request;
+	
+	public SystemConfigServiceImpl(
+	        DepartmentRepository departmentRepository,
+	        DesignationRepository designationRepository,
+	        ActivityLogService activityLogService,
+	        HttpServletRequest request) {
+
+	    this.departmentRepository = departmentRepository;
+	    this.designationRepository = designationRepository;
+	    this.activityLogService = activityLogService;
+	    this.request = request;
+	}
+
 	@Override
 	public Department saveDepartment(Department department) {
-	    return departmentRepository.save(department);
+		Department saved = departmentRepository.save(department);
+
+	    activityLogService.log(
+	            "Created Department",
+	            "System Configuration",
+	            "Created department: " + saved.getName(),
+	            "SUCCESS",
+	            request
+	    );
+
+	    return saved;
 	}
 
 	@Override
@@ -36,8 +59,20 @@ this.designationRepository = designationRepository;
 
 	@Override
 	public void deleteDepartment(Long id) {
-	    departmentRepository.deleteById(id);
-	}	
+
+	    Department department = departmentRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Department not found"));
+
+	    departmentRepository.delete(department);
+
+	    activityLogService.log(
+	            "Deleted Department",
+	            "System Configuration",
+	            "Deleted department: " + department.getName(),
+	            "SUCCESS",
+	            request
+	    );
+	}
 	
 	@Override
 	public Designation saveDesignation(Long departmentId, Designation designation) {
@@ -46,7 +81,19 @@ this.designationRepository = designationRepository;
 	            .orElseThrow(() -> new RuntimeException("Department not found"));
 
 	    designation.setDepartment(department);
-	    return designationRepository.save(designation);
+
+	    Designation saved = designationRepository.save(designation);
+
+	    activityLogService.log(
+	            "Created Designation",
+	            "System Configuration",
+	            "Created designation: " + saved.getTitle() +
+	            " under department: " + department.getName(),
+	            "SUCCESS",
+	            request
+	    );
+
+	    return saved;
 	}
 
 	@Override
@@ -56,8 +103,21 @@ this.designationRepository = designationRepository;
 
 	@Override
 	public void deleteDesignation(Long id) {
-	    designationRepository.deleteById(id);
+
+	    Designation designation = designationRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Designation not found"));
+
+	    designationRepository.delete(designation);
+
+	    activityLogService.log(
+	            "Deleted Designation",
+	            "System Configuration",
+	            "Deleted designation: " + designation.getTitle(),
+	            "SUCCESS",
+	            request
+	    );
 	}
+	
 	@Override
 	public Designation getDesignationById(Long id) {
 	    return designationRepository.findById(id)
@@ -72,4 +132,5 @@ this.designationRepository = designationRepository;
 	public long countDesignations() {
 	    return designationRepository.count();
 	}
+	
 }

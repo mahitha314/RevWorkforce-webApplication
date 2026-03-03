@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('My Goals')"></head>
+
+<body>
+
+	<!-- Sidebar -->
+	<div th:replace="~{fragments/employee-sidebar :: sidebar}"></div>
+
+	<!-- Topbar -->
+	<div th:replace="~{fragments/header :: topbar('My Goals')}"></div>
+
+	<!-- MAIN CONTENT -->
+	<div class="content">
+
+		<h3 class="fw-bold mb-4">🎯 My Goals</h3>
+
+		<!-- ================= ADD GOAL FORM ================= -->
+		<div class="card shadow-sm border-0 p-4 mb-4">
+
+			<form th:action="@{/employee/goals}" method="post" th:object="${goal}">
+
+				<div class="row g-3">
+
+					<div class="col-md-4">
+						<label class="form-label">Description</label>
+						<input type="text" class="form-control" th:field="*{goalDescription}" required>
+					</div>
+
+					<div class="col-md-3">
+						<label class="form-label">Priority</label>
+						<select class="form-select" th:field="*{priority}">
+							<option value="LOW">LOW</option>
+							<option value="MEDIUM">MEDIUM</option>
+							<option value="HIGH">HIGH</option>
+						</select>
+					</div>
+
+					<div class="col-md-3">
+						<label class="form-label">Deadline</label>
+						<input type="date" class="form-control" th:field="*{deadline}" required>
+					</div>
+
+					<div class="col-md-2 d-flex align-items-end">
+						<button class="btn btn-success w-100">
+							Add Goal
+						</button>
+					</div>
+
+				</div>
+
+			</form>
+
+		</div>
+
+
+		<!-- ================= GOAL TABLE ================= -->
+		<div class="card shadow-sm border-0 p-4">
+
+			<div class="table-responsive">
+
+				<table class="table table-bordered table-hover align-middle text-center">
+
+					<thead class="table-dark">
+						<tr>
+							<th>Description</th>
+							<th>Priority</th>
+							<th>Status</th>
+							<th>Deadline</th>
+							<th width="220px">Progress</th>
+							<th>Update</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+						<tr th:each="goal : ${goals}">
+
+							<td th:text="${goal.goalDescription}"></td>
+
+							<td>
+								<span th:classappend="
+                              ${goal.priority == 'HIGH'} ? 'badge bg-danger' :
+                              (${goal.priority == 'MEDIUM'} ? 'badge bg-warning text-dark' :
+                              'badge bg-secondary')" th:text="${goal.priority}">
+								</span>
+							</td>
+
+							<td>
+								<span th:if="${goal.progress == 0}" class="badge bg-secondary">
+									Not Started
+								</span>
+
+								<span th:if="${goal.progress > 0 and goal.progress < 100}"
+									class="badge bg-warning text-dark">
+									In Progress
+								</span>
+
+								<span th:if="${goal.progress == 100}" class="badge bg-success">
+									Completed
+								</span>
+							</td>
+
+							<td th:text="${goal.deadline}"></td>
+
+							<!-- Progress Bar -->
+							<td>
+
+								<div class="progress" style="height:12px;">
+									<div class="progress-bar bg-info" th:style="'width:' + ${goal.progress} + '%'">
+									</div>
+								</div>
+
+								<small class="fw-bold" th:text="${goal.progress} + '%'">
+								</small>
+
+							</td>
+
+							<!-- Update Progress -->
+							<td>
+
+								<form th:action="@{/employee/goals/update-progress/{id}(id=${goal.id})}" method="post"
+									class="d-flex">
+
+									<input type="number" name="progress" min="0" max="100" th:value="${goal.progress}"
+										class="form-control form-control-sm me-2">
+
+									<button class="btn btn-sm btn-success">
+										Update
+									</button>
+								</form>
+
+							</td>
+
+						</tr>
+
+						<tr th:if="${#lists.isEmpty(goals)}">
+							<td colspan="6" class="text-muted">
+								No Goals Found
+							</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- Footer -->
+	<div th:replace="fragments/footer :: footer"></div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

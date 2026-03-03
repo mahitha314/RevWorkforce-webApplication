@@ -9,10 +9,9 @@
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
 
-        <!-- My Profile (Scrolls to profile section inside dashboard) -->
-        <a th:href="@{/manager/dashboard} + '#profileSection'" class="sidebar-link">
-            <i class="bi bi-person-circle"></i> My Profile
-        </a>
+		<a class="nav-link" th:href="@{/manager/profile}">
+		    <i class="bi bi-person"></i> Profile
+		</a>
 
         <!-- My Team -->
         <a th:href="@{/manager/team/{id}(id=${managerId})}" 
@@ -37,7 +36,13 @@
            th:if="${managerId != null}">
             <i class="bi bi-bullseye"></i> Goals
         </a>
-
+		
+		<!-- Notifications -->
+		<a th:href="@{/ui/notifications}"
+		   th:classappend="${view == 'notifications'} ? ' active' : ''">
+		    <i class="bi bi-bell"></i> Notifications
+		</a>
+		
         <!-- Logout -->
         <a th:href="@{/logout}">
             <i class="bi bi-box-arrow-right"></i> Logout

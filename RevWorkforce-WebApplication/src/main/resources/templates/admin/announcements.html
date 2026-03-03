@@ -53,12 +53,11 @@
 
 <body>
 
-<!-- TOPBAR -->
-<th:block th:replace="~{fragments/header :: header('announcements')}"></th:block>
+	<!-- TOPBAR -->
+	<th:block th:replace="~{fragments/header :: topbar('Announcement Management')}"></th:block>
 
-<!-- SIDEBAR -->
-<th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
-
+	<!-- SIDEBAR -->
+	<th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
 <div class="content"
      style="margin-left:240px; margin-top:70px; padding:30px; background:#f4f6f9; min-height:100vh;">
 

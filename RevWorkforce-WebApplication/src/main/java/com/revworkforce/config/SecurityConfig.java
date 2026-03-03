@@ -18,110 +18,91 @@ import com.revworkforce.security.CustomUserDetailsService;
 @Configuration
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
+	private final CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
-        this.customUserDetailsService = customUserDetailsService;
-    }
+	public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+		this.customUserDetailsService = customUserDetailsService;
+	}
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
+		http.csrf(csrf -> csrf.disable())
 
-            .authorizeHttpRequests(auth -> auth
+				.authorizeHttpRequests(auth -> auth
 
-                // ✅ Public pages
-                .requestMatchers(
-                        "/",
-                        "/login",
-                        "/auth/**",
-                        "/css/**",
-                        "/js/**"
-                ).permitAll()
+						// ✅ Public pages
+						.requestMatchers("/", "/login", "/auth/**", "/css/**", "/js/**").permitAll()
 
-                // ✅ Role Based APIs
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/manager/**").hasRole("MANAGER")
-                .requestMatchers("/employee/**")
-                    .hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
+						// Notifications (REST)
+						.requestMatchers("/notifications/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
 
-                .anyRequest().authenticated()
-            )
+						// Notifications (UI)
+						.requestMatchers("/ui/notifications/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
+						
+						// ✅ Role Based APIs
+						.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/manager/**").hasRole("MANAGER")
+						.requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
 
-            // ✅ Enable Session (IMPORTANT FIX)
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-            )
+						.anyRequest().authenticated())
 
-            // ✅ Use form login for Thymeleaf
-            .formLogin(form -> form
-            	    .loginPage("/login")
-            	    .successHandler((request, response, authentication) -> {
+				// ✅ Enable Session (IMPORTANT FIX)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
-            	        var authorities = authentication.getAuthorities();
+				// ✅ Use form login for Thymeleaf
+				.formLogin(form -> form.loginPage("/login").successHandler((request, response, authentication) -> {
 
-            	        if (authorities.stream()
-            	                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+					var authorities = authentication.getAuthorities();
 
-            	            response.sendRedirect("/admin/dashboard");
-            	        }
+					if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
 
-            	        else if (authorities.stream()
-            	                .anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"))) {
+						response.sendRedirect("/admin/dashboard");
+					}
 
-            	            response.sendRedirect("/manager/dashboard");
-            	        }
+				else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"))) {
 
-            	        else if (authorities.stream()
-            	                .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+						response.sendRedirect("/manager/dashboard");
+					}
 
-            	            CustomUserDetails userDetails =
-            	                    (CustomUserDetails) authentication.getPrincipal();
+				else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
 
-            	            Employee employee = userDetails.getEmployee();
+						CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-            	            response.sendRedirect("/employee/dashboard/" + employee.getId());
-            	        }
+						Employee employee = userDetails.getEmployee();
 
-            	        else {
-            	            response.sendRedirect("/login?error");
-            	        }
-            	    })
-            	    .permitAll()
-            	)
+						response.sendRedirect("/employee/employee/dashboard");
+					}
 
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
-            );
+				else {
+						response.sendRedirect("/login?error");
+					}
+				}).permitAll())
 
-        return http.build();
-    }
+				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login?logout").permitAll());
 
-    // 🔐 Password Encoder
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+		return http.build();
+	}
 
-    // 🔐 Authentication Provider
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+	// 🔐 Password Encoder
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(customUserDetailsService);
+	// 🔐 Authentication Provider
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
 
-        provider.setPasswordEncoder(passwordEncoder());
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailsService);
 
-        return provider;
-    }
-    // 🔐 Authentication Manager
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+		provider.setPasswordEncoder(passwordEncoder());
+
+		return provider;
+	}
+
+	// 🔐 Authentication Manager
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
 }

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Header Fragment -->
-    <th:block th:replace="~{fragments/header :: header('Leave Management')}"></th:block>
+<th:block th:replace="~{fragments/header :: header('Leave Management')}"></th:block>
 
     <!-- YOUR ORIGINAL STYLES (UNCHANGED) -->
     <style>
@@ -49,13 +49,13 @@
 </head>
 
 <body>
+	<body>
 
-<!-- TOPBAR -->
-<th:block th:replace="~{fragments/header :: header('Leave Management')}"></th:block>
+	<!-- TOPBAR -->
+	<th:block th:replace="~{fragments/header :: topbar('Leave Management')}"></th:block>
 
-<!-- SIDEBAR -->
-<th:block th:replace="~{fragments/sidebar :: sidebar('leave')}"></th:block>
-
+	<!-- SIDEBAR -->
+	<th:block th:replace="~{fragments/sidebar :: sidebar('leave')}"></th:block>
 <!-- MAIN CONTENT -->
 <div class="content">
 

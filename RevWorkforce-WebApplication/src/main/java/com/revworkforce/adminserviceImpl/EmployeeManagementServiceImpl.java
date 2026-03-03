@@ -13,9 +13,11 @@ import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.adminservice.EmployeeManagementService;
 import com.revworkforce.dto.ApiResponse;
 import com.revworkforce.dto.EmployeeDTO;
+import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.model.Department;
 import com.revworkforce.model.Designation;
 import com.revworkforce.model.Employee;
+import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.DepartmentRepository;
 import com.revworkforce.repository.DesignationRepository;
 import com.revworkforce.repository.EmployeeRepository;
@@ -25,26 +27,30 @@ import jakarta.servlet.http.HttpServletRequest;
 @Service
 public class EmployeeManagementServiceImpl implements EmployeeManagementService {
 
-	@Autowired
-    private HttpServletRequest request; 
-	
-    private final EmployeeRepository employeeRepository;
+	private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final DesignationRepository designationRepository;
     private final PasswordEncoder passwordEncoder;
-    private ActivityLogService activityLogService;
+    private final ActivityLogService activityLogService;
+    private final NotificationService notificationService;
+    private final HttpServletRequest request;
 
     public EmployeeManagementServiceImpl(
             EmployeeRepository employeeRepository,
             DepartmentRepository departmentRepository,
-            DesignationRepository designationRepository,ActivityLogService activityLogService,
-            PasswordEncoder passwordEncoder) {
+            DesignationRepository designationRepository,
+            ActivityLogService activityLogService,
+            PasswordEncoder passwordEncoder,
+            NotificationService notificationService,
+            HttpServletRequest request) {
 
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
         this.designationRepository = designationRepository;
         this.passwordEncoder = passwordEncoder;
-        this.activityLogService=activityLogService;
+        this.activityLogService = activityLogService;
+        this.notificationService = notificationService;
+        this.request = request;
     }
 
     // ================= ADD EMPLOYEE =================
@@ -81,21 +87,28 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
         employee.setLastName(dto.getLastName());
         employee.setEmail(dto.getEmail());
         employee.setPassword(passwordEncoder.encode(dto.getPassword()));
-
         employee.setPhoneNumber(dto.getPhoneNumber());
         employee.setAddress(dto.getAddress());
         employee.setEmergencyContact(dto.getEmergencyContact());
-
         employee.setRole(dto.getRole());
         employee.setStatus("ACTIVE");
         employee.setSalary(dto.getSalary());
         employee.setJoiningDate(LocalDate.now());
-
         employee.setDepartment(department);
         employee.setDesignation(designation);
         employee.setManager(manager);
 
         employeeRepository.save(employee);
+        
+     // 🔔 Send Welcome Notification
+        NotificationDTO notification = new NotificationDTO();
+        notification.setEmployeeId(employee.getEmployeeId());
+        notification.setTitle("Welcome to Company");
+        notification.setMessage("Your account has been created successfully.");
+        notification.setType("SYSTEM");
+        notification.setStatus("ACTIVE");
+
+        notificationService.createNotification(notification);
         activityLogService.log(
                 "Added Employee",
                 "Employee Management",
@@ -134,6 +147,15 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
     @Override
     public ResponseEntity<ApiResponse> searchEmployees(String q) {
         List<Employee> employees = employeeRepository.search(q);
+        
+        activityLogService.log(
+        	    "Search Employee",
+        	    "Employee Management",
+        	    "Searched employees with query: " + q,
+        	    "SUCCESS",
+        	    request
+        	);
+        
         return new ResponseEntity<>(
                 new ApiResponse(200, "Search results", employees),
                 HttpStatus.OK);
@@ -167,6 +189,14 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
         existing.setDesignation(des);
 
         employeeRepository.save(existing);
+        
+        activityLogService.log(
+        	    "Updated Employee",
+        	    "Employee Management",
+        	    "Updated employee " + existing.getFirstName(),
+        	    "SUCCESS",
+        	    request
+        	);
 
         return ResponseEntity.ok(
                 new ApiResponse(200, "Employee updated successfully", null)
@@ -181,12 +211,20 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         employeeRepository.delete(existing);
+        
+        activityLogService.log(
+        	    "Deleted Employee",
+        	    "Employee Management",
+        	    "Deleted employee " + existing.getFirstName(),
+        	    "SUCCESS",
+        	    request
+        	);
 
         return ResponseEntity.ok(
                 new ApiResponse(200, "Employee deleted successfully", null)
         );
     }
-    // ================= DEACTIVATE =================
+    // ================= REACTIVATE =================
     @Override
     public ResponseEntity<ApiResponse> reactivateEmployee(String employeeId, String reason) {
 
@@ -195,6 +233,24 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 
         employee.setStatus("ACTIVE");
         employeeRepository.save(employee);
+        
+     // 🔔 Notify employee
+        NotificationDTO notification = new NotificationDTO();
+        notification.setEmployeeId(employeeId);
+        notification.setTitle("Account Reactivated");
+        notification.setMessage("Your account has been reactivated.");
+        notification.setType("SYSTEM");
+        notification.setStatus("ACTIVE");
+
+        notificationService.createNotification(notification);
+        
+        activityLogService.log(
+        	    "Reactivated Employee",
+        	    "Employee Management",
+        	    "Reactivated employee " + employee.getFirstName(),
+        	    "SUCCESS",
+        	    request
+        	);
 
         return ResponseEntity.ok(
                 new ApiResponse(200, "Employee reactivated successfully", null)
@@ -208,6 +264,24 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 
         employee.setStatus("INACTIVE");
         employeeRepository.save(employee);
+        
+     // 🔔 Notify employee
+        NotificationDTO notification = new NotificationDTO();
+        notification.setEmployeeId(employeeId);
+        notification.setTitle("Account Deactivated");
+        notification.setMessage("Your account has been deactivated. Reason: " + reason);
+        notification.setType("SYSTEM");
+        notification.setStatus("ACTIVE");
+
+        notificationService.createNotification(notification);
+        
+        activityLogService.log(
+        	    "Deactivated Employee",
+        	    "Employee Management",
+        	    "Deactivated employee " + employee.getFirstName(),
+        	    "SUCCESS",
+        	    request
+        	);
 
         return ResponseEntity.ok(
                 new ApiResponse(200, "Employee deactivated successfully", null)
@@ -226,6 +300,14 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 
         employee.setManager(manager);
         employeeRepository.save(employee);
+        
+        activityLogService.log(
+        	    "Changed Manager",
+        	    "Employee Management",
+        	    "Changed manager for employee " + employee.getFirstName(),
+        	    "SUCCESS",
+        	    request
+        	);
 
         return new ResponseEntity<>(
                 new ApiResponse(200, "Manager updated successfully", employee),

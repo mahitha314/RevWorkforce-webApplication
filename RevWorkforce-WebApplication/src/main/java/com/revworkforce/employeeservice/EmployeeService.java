@@ -1,15 +1,14 @@
 package com.revworkforce.employeeservice;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.revworkforce.model.Employee;
+import java.util.List;
+import java.util.Optional;
 
-@Service
 public interface EmployeeService {
 
+    Optional<Employee> findByEmail(String email);
 
-    Employee createEmployee(Employee employee);
+    List<Employee> getAllEmployees();
+
+    List<Employee> searchEmployees(String keyword);
 }

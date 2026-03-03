@@ -106,5 +106,5 @@ public class LeaveRequest {
 	public void setLeaveApproval(LeaveApproval leaveApproval) {
 		this.leaveApproval = leaveApproval;
 	}
-	
+
 }

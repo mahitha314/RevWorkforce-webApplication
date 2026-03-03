@@ -1,5 +1,8 @@
 package com.revworkforce.exception;
 
-public class GoalUpdateException {
+public class GoalUpdateException extends RuntimeException {
 
+    public GoalUpdateException(String message) {
+        super(message);
+    }
 }

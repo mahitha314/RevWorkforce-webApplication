@@ -5,9 +5,7 @@
     <title>SystemConfiguration</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <th:block th:replace="~{fragments/header :: header('Holiday Management')}"></th:block>
-	<th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
+	<th:block th:replace="~{fragments/header :: header('System Configuration')}"></th:block>
 
     <style>
         .card {
@@ -28,10 +26,11 @@
 </head>
 
 <body>
-	<th:block th:replace="~{fragments/header :: header('departments')}"></th:block>
-	    <th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
+	<	<!-- TOPBAR -->
+	<th:block th:replace="~{fragments/header :: topbar('System Configuration')}"></th:block>
 
-	
+	<!-- SIDEBAR -->
+	<th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
 	<div class="content">
 	<div class="container-fluid mt-4">
 		<!-- Success Alert -->

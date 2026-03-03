@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.revworkforce.model.Employee;
+import com.revworkforce.model.LeaveRequest;
 import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.model.SystemActivityLog;
 import com.revworkforce.repository.EmployeeRepository;
@@ -52,5 +53,17 @@ public class ActivityLogServiceImpl implements ActivityLogService{
 
 	        repository.save(log);
 	    
+	 }
+
+	 @Override
+	 public void log(String action, String module, String description, String status, LeaveRequest request) {		
+	 }
+
+	 @Override
+	 public void log(String action, String module) {		
+	 }
+
+	 @Override
+	 public void log(Long id, String module) {
 	 }
 }

@@ -23,9 +23,27 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 		           OR lower(e.department.name) LIKE lower(concat('%', :q, '%'))
 		           OR lower(e.designation.title) LIKE lower(concat('%', :q, '%'))
 		    """)
-		    List<Employee> search(@Param("q") String q);
+	 List<Employee> search(@Param("q") String q);
 	 List<Employee> findByRole(String role);
 	 List<Employee> findByDepartmentId(Long departmentId);
 	 long countByRole(String role);
+	 
+	// 🔍 Directory Search Method
+	 List<Employee> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+	            String firstName,
+	            String lastName,
+	            String email
+	    );
+	    List<Employee> findByFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(
+	            String firstName,
+	            String lastName
+	    );
+
+	    // 🔍 SEARCH METHOD
+	    List<Employee> findByFirstNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+	            String firstName,
+	            String email
+	    );
+		Optional<Employee> findByEmailIgnoreCase(String email);
 }
 	 
