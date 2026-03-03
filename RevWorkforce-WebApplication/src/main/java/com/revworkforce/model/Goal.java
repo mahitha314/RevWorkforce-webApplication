@@ -1,4 +1,3 @@
-
 package com.revworkforce.model;
 
 import java.time.LocalDate;
@@ -11,7 +10,7 @@ public class Goal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	private String goalTitle;
 	@Column(nullable = false)
 	private String goalDescription;
 
@@ -33,9 +32,13 @@ public class Goal {
 
 	public Goal() {}
 
-	public Goal(Long id, String goalDescription, String priority, String status, LocalDate deadline, int progress,
-			Employee employee) {
+	
+
+	public Goal(Long id, String goalTitle, String goalDescription, String priority, String status, LocalDate deadline,
+			int progress, Employee employee) {
+		super();
 		this.id = id;
+		this.goalTitle = goalTitle;
 		this.goalDescription = goalDescription;
 		this.priority = priority;
 		this.status = status;
@@ -43,6 +46,8 @@ public class Goal {
 		this.progress = progress;
 		this.employee = employee;
 	}
+
+
 
 	public Long getId() {
 		return id;
@@ -98,6 +103,14 @@ public class Goal {
 
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
+	}
+
+	public String getGoalTitle() {
+		return goalTitle;
+	}
+
+	public void setGoalTitle(String goalTitle) {
+		this.goalTitle = goalTitle;
 	}
 
 }

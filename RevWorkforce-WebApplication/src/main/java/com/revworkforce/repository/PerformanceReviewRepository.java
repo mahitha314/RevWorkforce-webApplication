@@ -1,4 +1,3 @@
-
 package com.revworkforce.repository;
 
 import java.util.List;
@@ -10,6 +9,7 @@ import com.revworkforce.model.PerformanceReview;
 @Repository
 public interface PerformanceReviewRepository extends JpaRepository<PerformanceReview, Long>{
 	
-	 List<PerformanceReview> findByEmployee_Manager_Id(Long managerId);
+	List<PerformanceReview> findByEmployee_Id(Long employeeId);
+	List<PerformanceReview> findByEmployee_Manager_Id(Long managerId);
 	 
 }

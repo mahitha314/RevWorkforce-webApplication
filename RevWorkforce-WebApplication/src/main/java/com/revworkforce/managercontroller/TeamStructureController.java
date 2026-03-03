@@ -19,8 +19,7 @@ public class TeamStructureController {
 	public TeamStructureController(TeamStructureService service) {
 		this.service = service;
 	}
-	
-	// 1️⃣ View team structure
+
     @GetMapping("/{managerId}")
     public ResponseEntity<ApiResponse> getTeamStructure(
             @PathVariable Long managerId) {
@@ -29,7 +28,6 @@ public class TeamStructureController {
                 service.getTeamStructure(managerId));
     }
 
-    // 2️⃣ View team member profile
     @GetMapping("/{managerId}/profile/{employeeId}")
     public ResponseEntity<ApiResponse> getProfile(
             @PathVariable Long managerId,

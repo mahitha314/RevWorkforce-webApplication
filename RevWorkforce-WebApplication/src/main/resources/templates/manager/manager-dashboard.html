@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/header :: header('Manager Dashboard')}"></th:block>
+
+    <style>
+
+        /* ================= CONTENT AREA ================= */
+        .content {
+            margin-left: 260px;
+            padding: 50px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7ff, #eef2ff);
+        }
+
+        /* ================= PAGE TITLE ================= */
+        .content h2 {
+            font-size: 30px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .content h2::after {
+            content: "";
+            width: 80px;
+            height: 5px;
+            background: linear-gradient(to right, #0d6efd, #6610f2);
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            border-radius: 10px;
+        }
+
+        /* ================= CARDS ================= */
+        .card {
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: all 0.35s ease;
+            padding: 25px;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(13,110,253,0.15);
+            border-color: #0d6efd;
+        }
+
+        /* Card header text */
+        .card h4 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d3b66;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        /* ================= LIST STYLING ================= */
+        #teamList {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        #teamList li {
+            background: #f8faff;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            border-left: 5px solid #0d6efd;
+            font-weight: 500;
+            transition: 0.3s ease;
+        }
+
+        #teamList li:hover {
+            background: #e6f0ff;
+            transform: translateX(5px);
+        }
+
+        /* ================= TABLE ================= */
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background: linear-gradient(to right, #0d6efd, #6610f2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .table th {
+            padding: 12px;
+            border: none;
+        }
+
+        .table td {
+            padding: 12px;
+            vertical-align: middle;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .table tbody tr {
+            transition: 0.25s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #eef4ff;
+        }
+
+        /* ================= STATUS BADGES ================= */
+        .badge-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 992px) {
+            .content {
+                margin-left: 210px;
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                padding: 25px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+<!-- Topbar -->
+<div class="topbar d-flex justify-content-between align-items-center">
+
+    <div class="d-flex align-items-center">
+        <span class="menu-toggle d-md-none" onclick="toggleSidebar()">
+            <i class="bi bi-list"></i>
+        </span>
+
+        <div class="brand-left d-flex align-items-center">
+            <img class="brand-logo me-2" src="/images/rwflogo.png" width="40">
+            <div>
+                <p class="brand-title">RevWorkForce</p>
+                <p class="brand-subtitle">Manager Dashboard</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="topbar-actions">
+        <button class="icon-btn">
+            <i class="bi bi-bell"></i>
+            <span class="notify-dot"></span>
+        </button>
+
+        <span>
+            Welcome,
+            <strong th:text="${#authentication.principal.employee.firstName}"></strong>
+        </span>
+    </div>
+
+</div>
+
+<!-- Content -->
+<div class="content">
+
+    <h2 class="mb-4 fw-bold">Manager Dashboard</h2>
+
+    <div class="card p-4 mb-4">
+        <h4>My Team</h4>
+        <ul id="teamList"></ul>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h4>Leave Requests</h4>
+        <table class="table table-bordered align-middle">
+            <thead>
+            <tr>
+                <th>Employee</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="leaveRequests"></tbody>
+        </table>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h4>Performance Reviews</h4>
+        <div id="performanceReviews"></div>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h4>Goal Summary</h4>
+        <div id="goalSummary"></div>
+    </div>
+
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('show');
+    }
+</script>
+
+<script th:inline="javascript">
+    const managerId = /*[[${managerId}]]*/ 0;
+</script>
+
+<script src="/js/manager-dashboard.js"></script>
+
+</body>
+</html>

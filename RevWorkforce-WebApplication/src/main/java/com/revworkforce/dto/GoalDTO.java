@@ -9,10 +9,10 @@ public class GoalDTO {
 	private String employeeName;
 
 	private String goalDescription;
-	private String priority; // LOW / MEDIUM / HIGH
-	private String status; // ASSIGNED / IN_PROGRESS / COMPLETED
+	private String priority;
+	private String status;
 	private LocalDate deadline;
-	private Integer progress; // Use Integer to avoid null crash
+	private Integer progress;
 
 	public GoalDTO() {
 	}
@@ -29,8 +29,6 @@ public class GoalDTO {
 		this.deadline = deadline;
 		this.progress = progress;
 	}
-
-	// Getters & Setters
 
 	public Long getGoalId() {
 		return goalId;

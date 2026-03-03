@@ -1,9 +1,10 @@
 package com.revworkforce.admincontroller;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import com.revworkforce.model.Employee;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.util.JwtUtil;
@@ -21,6 +22,8 @@ public class AuthController {
 		this.passwordEncoder = passwordEncoder;
 		this.jwtUtil = jwtUtil;
 	}
+	
+	
 
 	@PostMapping("/login")
 	public Map<String, Object> login(@RequestBody Map<String, String> request) {
@@ -41,6 +44,6 @@ public class AuthController {
 		response.put("token", token);
 		response.put("role", employee.getRole());
 		return response;
-	}
 
+	}
 }

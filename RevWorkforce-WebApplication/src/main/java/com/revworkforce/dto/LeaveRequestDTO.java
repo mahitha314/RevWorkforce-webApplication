@@ -1,4 +1,3 @@
-
 package com.revworkforce.dto;
 
 import java.time.LocalDate;
@@ -125,4 +124,5 @@ public class LeaveRequestDTO {
 		this.status = status;
 	}
 
+    // Getters and Setters
 }
