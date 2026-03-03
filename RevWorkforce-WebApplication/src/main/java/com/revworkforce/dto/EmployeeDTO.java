@@ -3,53 +3,54 @@ package com.revworkforce.dto;
 import jakarta.validation.constraints.*;
 
 public class EmployeeDTO {
-	
-	@NotBlank
-    private String employeeId;
 
-	@NotBlank
-    private String firstName;
+	@NotBlank(message = "Employee ID is required")
+	@Pattern(regexp = "^REV\\d{4}$", message = "Employee ID must follow format REV1001")
+	private String employeeId;
 
-    @NotBlank
-    private String lastName;
+	@NotBlank(message = "First name is required")
+	@Pattern(regexp = "^[A-Za-z]{2,30}$", message = "First name must contain only letters (2-30 characters)")
+	private String firstName;
 
-    @NotBlank
-    private String email;
+	@NotBlank(message = "Last name is required")
+	@Pattern(regexp = "^[A-Za-z]{2,30}$", message = "Last name must contain only letters (2-30 characters)")
+	private String lastName;
 
-    @NotBlank(message = "Password required")
-    @Pattern(
-            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).{6,}$",
-            message = "Password must contain 1 uppercase, 1 number, 1 special char and min 6 characters"
-    )
-    private String password;
+	@NotBlank(message = "Email is required")
+	@Pattern(regexp = "^[a-z0-9._%+-]+@rev\\.com$", message = "Email must be lowercase and end with @rev.com")
+	private String email;
 
-    @NotBlank
-    private String role;
+	@NotBlank(message = "Password is required")
+	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{6,15}$", message = "Password must contain 1 uppercase, 1 lowercase, 1 number, 1 special character and be 6-15 characters long")
+	private String password;
 
-    @NotNull
-    private Long departmentId;
+	@NotBlank(message = "Role is required")
+	@Pattern(regexp = "ADMIN|MANAGER|EMPLOYEE", message = "Role must be ADMIN, MANAGER or EMPLOYEE")
+	private String role;
 
-    @NotNull
-    private Long designationId;
+	@NotNull(message = "Department is required")
+	private Long departmentId;
 
-    private Long managerId;
+	@NotNull(message = "Designation is required")
+	private Long designationId;
 
-    @NotNull(message = "Salary required")
-    @Positive(message = "Salary must be positive")
-    private Double salary;
+	private Long managerId;
 
-    @NotBlank(message = "Phone number required")
-    @Pattern(regexp = "^[0-9]{10}$",
-            message = "Phone number must be 10 digits")
-    private String phoneNumber;
+	@NotNull(message = "Salary required")
+	@Positive(message = "Salary must be positive and greater than zero")
+	private Double salary;
 
-    @NotBlank
-    private String address;
+	@NotBlank(message = "Phone number required")
+	@Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
+	private String phoneNumber;
 
-    @NotBlank(message = "Emergency contact required")
-    @Pattern(regexp = "^[0-9]{10}$",
-            message = "Emergency contact must be 10 digits")
-    private String emergencyContact;
+	@NotBlank(message = "Address is required")
+	@Size(min = 5, max = 200, message = "Address must be between 5 and 200 characters")
+	private String address;
+
+	@NotBlank(message = "Emergency contact required")
+	@Pattern(regexp = "^[0-9]{10}$", message = "Emergency contact must be 10 digits")
+	private String emergencyContact;
 
 	public String getEmployeeId() {
 		return employeeId;

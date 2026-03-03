@@ -27,9 +27,10 @@ public class Designation {
 
 	public Designation() {}
 
-	public Designation(Long id, String title) {
+	public Designation(Long id, String title, Department department) {
 		this.id = id;
 		this.title = title;
+		this.department = department;
 	}
 
 	public Long getId() {
@@ -54,6 +55,14 @@ public class Designation {
 
 	public void setEmployees(List<Employee> employees) {
 		this.employees = employees;
+	}
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 	
 }
