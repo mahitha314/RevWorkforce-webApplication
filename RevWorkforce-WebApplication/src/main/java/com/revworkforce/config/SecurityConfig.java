@@ -70,7 +70,7 @@ public class SecurityConfig {
 
 						Employee employee = userDetails.getEmployee();
 
-						response.sendRedirect("/employee/employee/dashboard");
+						response.sendRedirect("/employee/dashboard");
 					}
 
 				else {

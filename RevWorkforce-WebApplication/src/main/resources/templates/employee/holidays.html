@@ -50,25 +50,30 @@
                             <th>Description</th>
                         </tr>
                     </thead>
+					<tbody>
 
-                    <tbody>
+					    <tr th:each="holiday, stat : ${holidays}">
+					        <td th:text="${stat.count}"></td>
 
-                        <tr th:each="holiday, stat : ${holidays}">
-                            <td th:text="${stat.count}"></td>
-                            <td th:text="${holiday.name}"></td>
-                            <td th:text="${holiday.date}"></td>
-                            <td th:text="${holiday.day}"></td>
-                            <td th:text="${holiday.description}"></td>
-                        </tr>
+					        <!-- Correct field -->
+					        <td th:text="${holiday.holidayName}"></td>
 
-                        <tr th:if="${#lists.isEmpty(holidays)}">
-                            <td colspan="5" class="text-muted">
-                                No holidays available.
-                            </td>
-                        </tr>
+					        <!-- Correct field -->
+					        <td th:text="${holiday.holidayDate}"></td>
 
-                    </tbody>
+					        <!-- Calculate Day from Date -->
+					        <td th:text="${holiday.holidayDate.dayOfWeek}"></td>
 
+					        <td th:text="${holiday.description}"></td>
+					    </tr>
+
+					    <tr th:if="${#lists.isEmpty(holidays)}">
+					        <td colspan="5" class="text-muted">
+					            No holidays available.
+					        </td>
+					    </tr>
+
+					</tbody>
                 </table>
 
             </div>

@@ -72,7 +72,7 @@
 
     <div>
         Welcome,
-        <strong th:text="${#authentication != null ? #authentication.name : 'User'}"></strong>
+        <strong th:text="${#authentication.name}">User</strong>
     </div>
 
 </div>
@@ -168,7 +168,7 @@
             <div class="dashboard-card text-center">
                 <h6>Performance Rating</h6>
                 <div class="stat-number text-primary"
-                     th:text="${avgRating != null ? avgRating : 0} + ' / 5'">
+                    th:text="|${avgRating} / 5|">
                     0 / 5
                 </div>
 
@@ -182,26 +182,32 @@
 
     </div>
 
-    <!-- MY GOALS SECTION -->
-    <div class="dashboard-card">
-        <h5 class="mb-3">My Goals</h5>
+	<!-- ================= MY GOALS SECTION ================= -->
+	<div class="dashboard-card mt-4">
+	    <h5 class="mb-3">My Goals</h5>
 
-        <div th:each="goal : ${goals}" class="mb-3">
+	    <!-- If no goals -->
+	    <div th:if="${#lists.isEmpty(goals)}">
+	        <p class="text-muted">No goals assigned yet.</p>
+	    </div>
 
-            <div class="d-flex justify-content-between">
-                <span th:text="${goal.title}">Goal Name</span>
-                <span th:text="${goal.progress} + '%'">0%</span>
-            </div>
+	    <!-- Goals Loop -->
+	    <div th:each="goal : ${goals}" class="mb-3">
 
-            <div class="progress">
-                <div class="progress-bar bg-info"
-                     th:style="|width:${goal.progress}%|">
-                </div>
-            </div>
+	        <div class="d-flex justify-content-between">
+	            <!-- ⚠ CHANGE goal.goalTitle IF YOUR FIELD IS DIFFERENT -->
+	            <span th:text="${goal.goalTitle}">Goal Name</span>
+	            <span th:text="|${goal.progress}%|">0%</span>
+	        </div>
 
-        </div>
+	        <div class="progress">
+	            <div class="progress-bar bg-info"
+	                 th:style="|width:${goal.progress}%|">
+	            </div>
+	        </div>
 
-    </div>
+	    </div>
+	</div>
 
 </div>
 
