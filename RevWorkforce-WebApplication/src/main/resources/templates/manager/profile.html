@@ -2,340 +2,280 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Manager Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-	<th:block th:replace="fragments/header :: header('Manager Profile')"></th:block>
-	<style>
 
-	/* ================= GLOBAL ================= */
-	body {
-	    background: linear-gradient(135deg, #eef3f9, #ffffff);
-	    font-family: 'Segoe UI', sans-serif;
-	    margin: 0;
-	}
+    <!-- Header Fragment (contains global CSS, sidebar styles, topbar styles) -->
+    <th:block th:replace="fragments/header :: header('Manager Profile')"></th:block>
 
-	/* ================= LAYOUT ================= */
-	.layout {
-	    display: flex;
-	}
+    <style>
 
-	/* Sidebar */
-	.sidebar {
-	    width: 240px;
-	    height: 100vh;
-	    position: fixed;
-	    top: 0;
-	    left: 0;
-	    background: #111;
-	    z-index: 1000;
-	    transition: 0.3s ease;
-	}
+    /* ================= PROFILE PAGE ONLY ================= */
 
-	/* Main Content */
-	.main-content {
-	    margin-left: 240px;
-	    margin-top: 90px;   /* because topbar is fixed */
-	    width: 100%;
-	    padding: 40px;
-	    transition: 0.3s ease;
-	}
+    body {
+        background: linear-gradient(135deg, #eef3f9, #ffffff);
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-	/* ================= PROFILE SECTION ================= */
-	.profile-container {
-	    max-width: 1200px;
-	    margin: auto;
-	}
+    /* Main content area (same spacing as other manager pages) */
+    .content {
+        margin-left: 240px;
+        margin-top: 90px;
+        padding: 40px;
+    }
 
-	.profile-card {
-	    background: #ffffff;
-	    border-radius: 25px;
-	    padding: 50px;
-	    box-shadow: 0 25px 60px rgba(0,0,0,0.08);
-	    transition: 0.3s ease;
-	}
+    /* Profile Container */
+    .profile-container {
+        max-width: 1200px;
+        margin: auto;
+    }
 
-	.profile-card:hover {
-	    transform: translateY(-5px);
-	    box-shadow: 0 35px 75px rgba(0,0,0,0.12);
-	}
+    .profile-card {
+        background: #ffffff;
+        border-radius: 25px;
+        padding: 50px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+        transition: 0.3s ease;
+    }
 
-	/* Avatar */
-	.avatar {
-	    width: 100px;
-	    height: 100px;
-	    border-radius: 50%;
-	    background: linear-gradient(135deg, #198754, #20c997);
-	    display: flex;
-	    align-items: center;
-	    justify-content: center;
-	    font-size: 36px;
-	    font-weight: bold;
-	    color: white;
-	    box-shadow: 0 15px 35px rgba(25,135,84,0.4);
-	}
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 35px 75px rgba(0,0,0,0.12);
+    }
 
-	/* Name */
-	.profile-name {
-	    font-size: 28px;
-	    font-weight: 700;
-	}
+    /* Avatar */
+    .avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #198754, #20c997);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: bold;
+        color: white;
+        box-shadow: 0 15px 35px rgba(25,135,84,0.4);
+    }
 
-	/* Green Role Badge */
-	.role-badge {
-	    background: #198754;
-	    padding: 6px 18px;
-	    border-radius: 50px;
-	    font-size: 12px;
-	    letter-spacing: 1px;
-	    color: white;
-	}
+    .profile-name {
+        font-size: 28px;
+        font-weight: 700;
+    }
 
-	/* Info Cards */
-	.info-box {
-	    background: #f8f9fa;
-	    padding: 18px;
-	    border-radius: 15px;
-	    transition: 0.3s ease;
-	    height: 100%;
-	}
+    .role-badge {
+        background: #198754;
+        padding: 6px 18px;
+        border-radius: 50px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: white;
+    }
 
-	.info-box:hover {
-	    background: #ffffff;
-	    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-	}
+    .info-box {
+        background: #f8f9fa;
+        padding: 18px;
+        border-radius: 15px;
+        transition: 0.3s ease;
+        height: 100%;
+    }
 
-	.label-title {
-	    font-size: 12px;
-	    font-weight: 600;
-	    color: #6c757d;
-	    margin-bottom: 5px;
-	}
+    .info-box:hover {
+        background: #ffffff;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
 
-	.value-text {
-	    font-size: 15px;
-	    font-weight: 500;
-	}
+    .label-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
 
-	/* Update Button */
-	.update-btn {
-	    padding: 10px 30px;
-	    border-radius: 30px;
-	    font-weight: 600;
-	    background-color: #198754;
-	    border: none;
-	    color: white;
-	    box-shadow: 0 8px 20px rgba(25,135,84,0.3);
-	    transition: 0.3s ease;
-	}
+    .value-text {
+        font-size: 15px;
+        font-weight: 500;
+    }
 
-	.update-btn:hover {
-	    transform: translateY(-3px);
-	    box-shadow: 0 15px 30px rgba(25,135,84,0.4);
-	}
+    .update-btn {
+        padding: 10px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        background-color: #198754;
+        border: none;
+        color: white;
+        box-shadow: 0 8px 20px rgba(25,135,84,0.3);
+        transition: 0.3s ease;
+    }
 
-	/* ================= RESPONSIVE ================= */
+    .update-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(25,135,84,0.4);
+    }
 
-	/* Large tablets */
-	@media (max-width: 1200px) {
-	    .profile-card {
-	        padding: 35px;
-	    }
-	}
+    /* ================= RESPONSIVE ================= */
 
-	/* Tablets */
-	@media (max-width: 992px) {
+    @media (max-width: 992px) {
+        .content {
+            margin-left: 200px;
+            padding: 25px;
+        }
+    }
 
-	    .sidebar {
-	        width: 200px;
-	    }
+    @media (max-width: 768px) {
+        .content {
+            margin-left: 0;
+            margin-top: 90px;
+            padding: 20px;
+        }
 
-	    .main-content {
-	        margin-left: 200px;
-	        padding: 25px;
-	    }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            font-size: 28px;
+        }
 
-	    .profile-card {
-	        padding: 30px;
-	    }
+        .profile-name {
+            font-size: 22px;
+        }
+    }
 
-	}
+    @media (max-width: 576px) {
+        .profile-card {
+            padding: 20px;
+            border-radius: 15px;
+        }
 
-	/* Mobile */
-	@media (max-width: 768px) {
+        .update-btn {
+            width: 100%;
+        }
+    }
 
-	    .sidebar {
-	        position: relative;
-	        width: 100%;
-	        height: auto;
-	    }
-
-	    .main-content {
-	        margin-left: 0;
-	        margin-top: 90px;
-	        padding: 20px;
-	    }
-
-	    .profile-card {
-	        padding: 25px;
-	    }
-
-	    .avatar {
-	        width: 80px;
-	        height: 80px;
-	        font-size: 28px;
-	    }
-
-	    .profile-name {
-	        font-size: 22px;
-	    }
-	}
-
-	/* Small Mobile */
-	@media (max-width: 576px) {
-
-	    .profile-card {
-	        padding: 20px;
-	        border-radius: 15px;
-	    }
-
-	    .update-btn {
-	        width: 100%;
-	    }
-
-	}
-
-	</style>
+    </style>
 </head>
 
 <body>
 
-<div class="layout">
+<!-- Sidebar (WILL NOT CHANGE NOW) -->
+<div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
 
-	<div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
+<!-- Topbar -->
+<div th:replace="fragments/header :: topbar('Profile')"></div>
 
-	<div th:replace="fragments/header :: topbar('Profile')"></div>
-    <!-- Main Content -->
-    <div class="main-content">
+<!-- Content -->
+<div class="content">
 
-        <div class="profile-container">
-            <div class="profile-card">
+    <div class="profile-container">
+        <div class="profile-card">
 
-                <!-- HEADER -->
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-4">
 
-                    <div class="d-flex align-items-center gap-4">
+                <div class="d-flex align-items-center gap-4">
 
-                        <div class="avatar"
-                             th:text="${manager.firstName != null ? manager.firstName.substring(0,1) : 'M'}">
-                        </div>
-
-                        <div>
-                            <div class="profile-name"
-                                 th:text="|${manager.firstName} ${manager.lastName}|">
-                            </div>
-
-                            <span class="role-badge"
-                                  th:text="${manager.role}">
-                            </span>
-                        </div>
-
+                    <div class="avatar"
+                         th:text="${manager.firstName != null ? manager.firstName.substring(0,1) : 'M'}">
                     </div>
 
-                    <a th:href="@{/manager/edit-profile}"
-                       class="btn btn-success update-btn">
-                        Update Profile
-                    </a>
+                    <div>
+                        <div class="profile-name"
+                             th:text="|${manager.firstName} ${manager.lastName}|">
+                        </div>
+
+                        <span class="role-badge"
+                              th:text="${manager.role}">
+                        </span>
+                    </div>
 
                 </div>
 
-                <!-- DETAILS -->
-                <div class="row g-4">
+                <a th:href="@{/manager/edit-profile}"
+                   class="btn update-btn">
+                    Update Profile
+                </a>
 
-                    <!-- Repeat same info-box blocks (NO CHANGE TO YOUR THYMELEAF CODE) -->
+            </div>
 
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Employee ID</div>
-                            <div class="value-text" th:text="${manager.employeeId}"></div>
+            <div class="row g-4">
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Employee ID</div>
+                        <div class="value-text" th:text="${manager.employeeId}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Email</div>
+                        <div class="value-text" th:text="${manager.email}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Phone</div>
+                        <div class="value-text" th:text="${manager.phoneNumber}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Emergency Contact</div>
+                        <div class="value-text" th:text="${manager.emergencyContact}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Status</div>
+                        <div class="value-text text-success fw-bold" th:text="${manager.status}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Joining Date</div>
+                        <div class="value-text"
+                             th:text="${#temporals.format(manager.joiningDate, 'dd MMM yyyy')}">
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Email</div>
-                            <div class="value-text" th:text="${manager.email}"></div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Salary</div>
+                        <div class="value-text" th:text="${manager.salary}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Department</div>
+                        <div class="value-text"
+                             th:text="${manager.department != null ? manager.department.name : 'Not Assigned'}">
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Phone</div>
-                            <div class="value-text" th:text="${manager.phoneNumber}"></div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Designation</div>
+                        <div class="value-text"
+                             th:text="${manager.designation != null ? manager.designation.title : 'Not Assigned'}">
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Emergency Contact</div>
-                            <div class="value-text" th:text="${manager.emergencyContact}"></div>
-                        </div>
+                <div class="col-12">
+                    <div class="info-box">
+                        <div class="label-title">Address</div>
+                        <div class="value-text" th:text="${manager.address}"></div>
                     </div>
-
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Status</div>
-                            <div class="value-text text-success fw-bold"
-                                 th:text="${manager.status}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Joining Date</div>
-                            <div class="value-text" th:text="${manager.joiningDate}"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Salary</div>
-                            <div class="value-text" th:text="${manager.salary}"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Department</div>
-                            <div class="value-text"
-                                 th:text="${manager.department != null ? manager.department.name : 'Not Assigned'}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="info-box">
-                            <div class="label-title">Designation</div>
-                            <div class="value-text"
-                                 th:text="${manager.designation != null ? manager.designation.title : 'Not Assigned'}">
-                            </div>
-                        </div>
-                    </div>
-
-                   
-
-                    <div class="col-12 col-md-6">
-                        <div class="info-box">
-                            <div class="label-title">Address</div>
-                            <div class="value-text" th:text="${manager.address}"></div>
-                        </div>
-                    </div>
-
                 </div>
 
             </div>
-        </div>
 
+        </div>
     </div>
+
 </div>
 
 </body>

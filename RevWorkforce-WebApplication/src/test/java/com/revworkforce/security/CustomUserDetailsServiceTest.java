@@ -1,4 +1,4 @@
-package com.workforce.security;
+package com.revworkforce.security;
 
 public class CustomUserDetailsServiceTest {
 

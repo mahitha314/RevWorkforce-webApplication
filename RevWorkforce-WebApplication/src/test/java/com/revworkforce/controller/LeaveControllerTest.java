@@ -1,4 +1,4 @@
-package com.workforce.controller;
+package com.revworkforce.controller;
 
 public class LeaveControllerTest {
 

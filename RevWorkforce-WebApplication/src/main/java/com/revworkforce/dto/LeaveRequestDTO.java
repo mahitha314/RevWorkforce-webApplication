@@ -18,31 +18,31 @@ public class LeaveRequestDTO {
 
     private String reason;
     private String status;  // PENDING / APPROVED / REJECTED
-
+   
     public LeaveRequestDTO() {}
 
     public LeaveRequestDTO(Long id,
-                           Long employeeId,
-                           String employeeName,
-                           Long leaveTypeId,
-                           String leaveTypeName,
-                           LocalDate startDate,
-                           LocalDate endDate,
-                           Integer totalDays,
-                           String reason,
-                           String status) {
+            Long employeeId,
+            String employeeName,
+            Long leaveTypeId,
+            String leaveTypeName,
+            LocalDate startDate,
+            LocalDate endDate,
+            int totalDays,
+            String reason,
+            String status) {
 
-        this.id = id;
-        this.employeeId = employeeId;
-        this.employeeName = employeeName;
-        this.leaveTypeId = leaveTypeId;
-        this.leaveTypeName = leaveTypeName;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.totalDays = totalDays;
-        this.reason = reason;
-        this.status = status;
-    }
+this.id = id;
+this.employeeId = employeeId;
+this.employeeName = employeeName;
+this.leaveTypeId = leaveTypeId;
+this.leaveTypeName = leaveTypeName;
+this.startDate = startDate;
+this.endDate = endDate;
+this.totalDays = totalDays;
+this.reason = reason;
+this.status = status;
+}
 
 	public Long getId() {
 		return id;
@@ -123,6 +123,5 @@ public class LeaveRequestDTO {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
-    // Getters and Setters
+	
 }

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/header :: header('Team Structure')"></th:block>
+
+    <style>
+        .content {
+            margin-left: 260px;
+            margin-top: 90px;
+            padding: 30px;
+            background: #f4f6fa;
+            min-height: 100vh;
+        }
+
+        .card-box {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .employee-card {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .employee-card:hover {
+            background: #f0f4ff;
+        }
+
+        .profile-section {
+            display: none;
+            margin-top: 25px;
+        }
+
+        .count-box {
+            background: #e8f0ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
+<div th:replace="fragments/header :: topbar('Team Structure')"></div>
+
+<div class="content">
+
+    <h3 class="fw-bold mb-4">My Team Members</h3>
+
+    <div class="card-box">
+
+        <!-- Employee Count -->
+        <div id="employeeCount" class="count-box">
+            Loading count...
+        </div>
+
+        <!-- Team List -->
+        <div id="teamContainer">
+            Loading team members...
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profileSection" class="profile-section card p-4 shadow-sm">
+            <h4 id="profileName"></h4>
+            <hr>
+            <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+            <p><strong>Phone:</strong> <span id="profilePhone"></span></p>
+            <p><strong>Department:</strong> <span id="profileDepartment"></span></p>
+            <p><strong>Designation:</strong> <span id="profileDesignation"></span></p>
+        </div>
+
+    </div>
+</div>
+
+<!-- Manager ID -->
+<script th:inline="javascript">
+    const managerId = /*[[${managerId}]]*/ 0;
+</script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (!managerId) {
+        document.getElementById("teamContainer").innerHTML =
+            "<p style='color:red'>Manager ID not found.</p>";
+        return;
+    }
+
+    loadTeam();
+});
+
+function loadTeam() {
+
+    fetch(`/manager/team/${managerId}`)
+        .then(res => res.json())
+        .then(result => {
+
+            const team = result.data || [];
+            const container = document.getElementById("teamContainer");
+            const countBox = document.getElementById("employeeCount");
+
+            container.innerHTML = "";
+
+            // ✅ Show Count
+            countBox.innerHTML = `Total Employees Assigned: ${team.length}`;
+
+            if (team.length === 0) {
+                container.innerHTML = "<p>No team members assigned.</p>";
+                return;
+            }
+
+            team.forEach(emp => {
+
+                const fullName =
+                    (emp.firstName || "") + " " + (emp.lastName || "");
+
+                const div = document.createElement("div");
+                div.className = "employee-card";
+
+                div.innerHTML = `
+                    <div>
+                        <strong>${fullName}</strong>
+                    </div>
+                    <button class="btn btn-sm btn-primary"
+                        onclick="loadProfile(${emp.id})">
+                        View
+                    </button>
+                `;
+
+                container.appendChild(div);
+            });
+        })
+        .catch(() => {
+            document.getElementById("teamContainer").innerHTML =
+                "<p style='color:red'>Error loading team.</p>";
+        });
+}		function loadProfile(employeeId) {
+
+		    fetch(`/manager/team/${managerId}/profile/${employeeId}`)
+		        .then(res => res.json())
+		        .then(result => {
+
+		            console.log(result.data); // keep this for debugging
+
+		            const emp = result.data;
+
+		            // ✅ Handle all possible name fields
+		            const fullName =
+		                emp.fullName ||
+		                ((emp.firstName || "") + " " + (emp.lastName || "")) ||
+		                emp.name ||
+		                "N/A";
+
+		            const phone =
+		                emp.phoneNumber ||
+		                emp.mobileNumber ||
+		                emp.phone ||
+		                "N/A";
+
+		            document.getElementById("profileName").innerText = fullName;
+		            document.getElementById("profileEmail").innerText = emp.email || emp.emailId || "N/A";
+		            document.getElementById("profilePhone").innerText = phone;
+		            document.getElementById("profileDepartment").innerText =
+		                emp.department || emp.departmentName || "N/A";
+		            document.getElementById("profileDesignation").innerText =
+		                emp.designation || emp.designationName || "N/A";
+
+		            document.getElementById("profileSection").style.display = "block";
+		        })
+		        .catch(() => {
+		            alert("Error loading employee details.");
+		        });
+		}
+
+</script>
+
+</body>
+</html>

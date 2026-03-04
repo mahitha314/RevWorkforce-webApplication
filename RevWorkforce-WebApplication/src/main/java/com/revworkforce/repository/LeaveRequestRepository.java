@@ -22,7 +22,9 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
 
 	// ================= SORT NEWEST FIRST =================
 	List<LeaveRequest> findByEmployee_IdOrderByStartDateDesc(Long employeeId);
-
+	
+	long countByEmployee_IdAndLeaveApproval_Status(Long employeeId, String status);
+	
 	// ================= UNREAD NOTIFICATIONS COUNT =================
 	@Query(value = """
 			SELECT COUNT(*)

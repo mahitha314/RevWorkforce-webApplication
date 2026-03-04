@@ -17,7 +17,7 @@ public class HolidayController {
         this.holidayService = holidayService;
     }
 
-    // ✅ View Page
+   
     @GetMapping
     public String viewHolidays(Model model) {
         model.addAttribute("holidays", holidayService.getAllHolidays());
@@ -25,14 +25,13 @@ public class HolidayController {
         return "admin/holiday-management";
     }
 
-    // ✅ SAVE
     @PostMapping("/save")
     public String saveHoliday(@ModelAttribute Holiday holiday) {
         holidayService.saveHoliday(holiday);
         return "redirect:/admin/system-config?success=added";
     }
 
-    // ✅ EDIT (LOAD DATA INTO FORM)
+    
     @GetMapping("/edit/{id}")
     public String editHoliday(@PathVariable Long id, Model model) {
         Holiday holiday = holidayService.getHolidayById(id);
@@ -41,7 +40,7 @@ public class HolidayController {
         return "admin/holiday-management";
     }
 
-    // ✅ UPDATE
+  
     @PostMapping("/update/{id}")
     public String updateHoliday(@PathVariable Long id,
                                 @ModelAttribute Holiday holiday) {
@@ -49,7 +48,7 @@ public class HolidayController {
         return "redirect:/admin/system-config?success=updated";
     }
 
-    // ✅ DELETE
+  
     @GetMapping("/delete/{id}")
     public String deleteHoliday(@PathVariable Long id) {
         holidayService.deleteHoliday(id);

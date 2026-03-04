@@ -1,143 +1,100 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<!-- ================= HEAD ================= -->
-<head th:replace="fragments/header :: header('Manager Dashboard')"></head>
+<head>
+    <th:block th:replace="fragments/header :: header('Team Leave Requests')"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
 
 <body>
 
-<!-- ================= TOPBAR ================= -->
-<div th:replace="fragments/header :: topbar('Manager Dashboard')"></div>
+<!-- Sidebar -->
+<div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
 
-<!-- ================= SIDEBAR ================= -->
-<div th:replace="fragments/sidebar :: managerSidebar"></div>
+<!-- Topbar -->
+<div th:replace="fragments/header :: topbar('Team Leave Requests')"></div>
 
-
-<!-- ================= MAIN CONTENT ================= -->
+<!-- Main Content (IMPORTANT: use class="content") -->
 <div class="content">
 
-    <div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-        <!-- Welcome Section -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold">Welcome, <span th:text="${employeeName}">Manager</span></h2>
-                <p class="text-muted">Here’s your team overview</p>
+            <h4 class="mb-4">Team Leave Requests</h4>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center">
+
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Employee</th>
+                        <th>Leave Type</th>
+                        <th>Dates</th>
+                        <th>Total Days</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="leave : ${leaves}">
+
+                        <td th:text="${leave.employee.firstName + ' ' + leave.employee.lastName}"></td>
+
+                        <td th:text="${leave.leaveType.typeName}"></td>
+
+                        <td>
+                            <span th:text="${leave.startDate}"></span> -
+                            <span th:text="${leave.endDate}"></span>
+                        </td>
+
+                        <td th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(leave.startDate, leave.endDate) + 1}"></td>
+
+                        <td>
+                            <span class="badge bg-success"
+                                  th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'APPROVED'}"
+                                  th:text="${leave.leaveApproval.status}">
+                            </span>
+
+                            <span class="badge bg-danger"
+                                  th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'REJECTED'}"
+                                  th:text="${leave.leaveApproval.status}">
+                            </span>
+
+                            <span class="badge bg-warning text-dark"
+                                  th:if="${leave.leaveApproval == null}">
+                                PENDING
+                            </span>
+                        </td>
+
+                        <td>
+                            <div th:if="${leave.leaveApproval == null}">
+                                <form th:action="@{/manager/approve/{id}(id=${leave.id})}"
+                                      method="post" style="display:inline">
+                                    <button class="btn btn-success btn-sm">Approve</button>
+                                </form>
+
+                                <form th:action="@{/manager/reject/{id}(id=${leave.id})}"
+                                      method="post" style="display:inline">
+                                    <input type="hidden" name="comments" value="Rejected by Manager"/>
+                                    <button class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            </div>
+
+                            <span th:if="${leave.leaveApproval != null}">-</span>
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+                </table>
             </div>
+
         </div>
-
-        <!-- Dashboard Cards -->
-        <div class="row g-4">
-
-            <!-- Leave Requests -->
-            <div class="col-lg-4 col-md-6">
-                <a th:href="@{/manager/team-leaves}" class="text-decoration-none">
-                    <div class="card dashboard-card shadow-sm border-0 p-4 text-center">
-                        <i class="bi bi-calendar-check display-5 text-primary"></i>
-                        <h5 class="mt-3 fw-bold">Team Leave Requests</h5>
-                        <p class="text-muted small">
-                            Approve or reject employee leave applications
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Leave Calendar -->
-            <div class="col-lg-4 col-md-6">
-                <a th:href="@{/manager/team-calendar}" class="text-decoration-none">
-                    <div class="card dashboard-card shadow-sm border-0 p-4 text-center">
-                        <i class="bi bi-calendar3 display-5 text-success"></i>
-                        <h5 class="mt-3 fw-bold">Team Leave Calendar</h5>
-                        <p class="text-muted small">
-                            View upcoming leaves in calendar format
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Leave Balance -->
-            <div class="col-lg-4 col-md-6">
-                <a th:href="@{/manager/team-balance}" class="text-decoration-none">
-                    <div class="card dashboard-card shadow-sm border-0 p-4 text-center">
-                        <i class="bi bi-bar-chart-line display-5 text-warning"></i>
-                        <h5 class="mt-3 fw-bold">Team Leave Balance</h5>
-                        <p class="text-muted small">
-                            Monitor leave balance of your team
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Profile -->
-            <div class="col-lg-4 col-md-6">
-                <a th:href="@{/manager/profile}" class="text-decoration-none">
-                    <div class="card dashboard-card shadow-sm border-0 p-4 text-center">
-                        <i class="bi bi-person-circle display-5 text-info"></i>
-                        <h5 class="mt-3 fw-bold">My Profile</h5>
-                        <p class="text-muted small">
-                            View and update your profile details
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-        </div>
-
     </div>
 
 </div>
-
-<!-- ================= FOOTER ================= -->
-<div class="footer">
-    © 2026 RevWorkForce | Manager Panel
-</div>
-
-
-<!-- ================= SWEET ALERT ================= -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script th:inline="javascript">
-/*<![CDATA[*/
-
-    let message = /*[[${sweetMessage}]]*/ null;
-    let status  = /*[[${sweetStatus}]]*/ null;
-
-    if (message !== null) {
-        Swal.fire({
-            icon: status === 200 ? 'success' : 'error',
-            title: message,
-			position: 'top-end',
-            timer: 2000,
-            showConfirmButton: false
-        });
-    }
-
-/*]]>*/
-</script>
-
-
-<!-- ================= CUSTOM STYLES ================= -->
-<style>
-
-    .dashboard-card {
-        border-radius: 18px;
-        transition: all 0.3s ease;
-        background: white;
-        min-height: 220px;
-    }
-
-    .dashboard-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-    }
-
-    @media (max-width: 768px) {
-        .dashboard-card {
-            min-height: auto;
-        }
-    }
-
-</style>
 
 </body>
 </html>

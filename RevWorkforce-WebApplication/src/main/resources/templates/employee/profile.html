@@ -2,94 +2,95 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <!-- Load HEAD fragment (CSS, meta, title) -->
     <th:block th:replace="~{fragments/header :: header('My Profile')}"></th:block>
-
-    <style>
-        body {
-            margin: 0;
-        }
-
-        .wrapper {
-            margin-top: 60px;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 30px;
-        }
-    </style>
 </head>
 
 <body>
 
-<!-- Load TOPBAR inside body -->
+<!-- ================= SIDEBAR ================= -->
+<div th:replace="~{fragments/employee-sidebar :: sidebar}"></div>
+
+<!-- ================= TOPBAR ================= -->
 <div th:replace="~{fragments/header :: topbar('My Profile')}"></div>
 
-<div class="wrapper">
+<!-- ================= MAIN CONTENT ================= -->
+<div class="content p-4">
 
-    <!-- Sidebar -->
-    <div th:replace="~{fragments/employee-sidebar :: sidebar}"></div>
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">👤 My Profile</h3>
 
-    <!-- Main Content -->
-    <div class="main-content">
+        <a th:href="@{/employee/profile/edit}"
+           class="btn btn-primary">
+            Update Profile
+        </a>
+    </div>
 
-        <h3 class="fw-bold mb-4">My Profile</h3>
+    <!-- Success Message -->
+    <div th:if="${successMessage}"
+         class="alert alert-success"
+         th:text="${successMessage}">
+    </div>
 
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-dark text-white">
-                        Employee Information
-                    </div>
+    <!-- ================= PROFILE CARD ================= -->
+    <div class="card shadow-sm border-0 p-4">
 
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Employee ID</th>
-                                <td th:text="${employee.employeeId}"></td>
-                            </tr>
-                            <tr>
-                                <th>Full Name</th>
-                                <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
-                            </tr>
-                            <tr>
-                                <th>Email</th>
-                                <td th:text="${employee.email}"></td>
-                            </tr>
-                            <tr>
-                                <th>Phone</th>
-                                <td th:text="${employee.phoneNumber}"></td>
-                            </tr>
-                            <tr>
-                                <th>Department</th>
-                                <td th:text="${employee.department != null ? employee.department.name : 'N/A'}"></td>
-                            </tr>
-                            <tr>
-                                <th>Designation</th>
-                                <td th:text="${employee.designation != null ? employee.designation.title : 'N/A'}"></td>
-                            </tr>
-                            <tr>
-                                <th>Joining Date</th>
-                                <td th:text="${employee.joiningDate}"></td>
-                            </tr>
-                            <tr>
-                                <th>Status</th>
-                                <td>
-                                    <span class="badge bg-success"
-                                          th:text="${employee.status}"></span>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+        <!-- Null Safety Check -->
+        <div th:if="${employee != null}" class="row g-3">
 
-                </div>
+            <div class="col-md-6">
+                <label class="fw-bold">First Name</label>
+                <p th:text="${employee.firstName}"></p>
             </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Last Name</label>
+                <p th:text="${employee.lastName}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Email</label>
+                <p th:text="${employee.email}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Phone Number</label>
+                <p th:text="${employee.phoneNumber}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Address</label>
+                <p th:text="${employee.address}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Emergency Contact</label>
+                <p th:text="${employee.emergencyContact}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Department</label>
+                <p th:text="${employee.department != null ? employee.department.name : 'Not Assigned'}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="fw-bold">Designation</label>
+                <p th:text="${employee.designation != null ? employee.designation.title : 'Not Assigned'}"></p>
+            </div>
+
+        </div>
+
+        <!-- If Employee Not Loaded -->
+        <div th:if="${employee == null}" class="text-center text-muted py-4">
+            Employee details not available.
         </div>
 
     </div>
+
 </div>
 
+<!-- ================= FOOTER ================= -->
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

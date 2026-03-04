@@ -31,7 +31,7 @@ public class EmployeeManagementController {
         this.departmentRepository = departmentRepository;
     }
 
-    // ================= DROPDOWNS =================
+   
 
     @GetMapping("/departments")
     public ResponseEntity<ApiResponse> getAllDepartments() {
@@ -57,36 +57,34 @@ public class EmployeeManagementController {
         );
     }
 
-    // ================= EMPLOYEE CRUD =================
-
-    // ✅ Add Employee
+   
     @PostMapping("/employees")
     public ResponseEntity<ApiResponse> addEmployee(
             @Validated @RequestBody EmployeeDTO dto) {
         return employeeManagementService.addEmployee(dto);
     }
 
-    // ✅ Get All Employees
+  
     @GetMapping("/employees")
     public ResponseEntity<ApiResponse> getAllEmployees() {
         return employeeManagementService.getAllEmployees();
     }
 
-    // ✅ Get by EmployeeId (STRING)
+   
     @GetMapping("/employees/{employeeId}")
     public ResponseEntity<ApiResponse> getEmployeeById(
             @PathVariable String employeeId) {
         return employeeManagementService.getByEmployeeId(employeeId);
     }
 
-    // ✅ Search
+   
     @GetMapping("/employees/search")
     public ResponseEntity<ApiResponse> search(
             @RequestParam String q) {
         return employeeManagementService.searchEmployees(q);
     }
 
-    // ✅ Update (by employeeId)
+    
     @PutMapping("/employees/{employeeId}")
     public ResponseEntity<ApiResponse> updateEmployee(
             @PathVariable String employeeId,
@@ -94,16 +92,14 @@ public class EmployeeManagementController {
         return employeeManagementService.updateEmployee(employeeId, dto);
     }
 
-    // ✅ Delete by employeeId
+   
     @DeleteMapping("/employees/{employeeId}")
     public ResponseEntity<ApiResponse> deleteEmployee(
             @PathVariable String employeeId) {
         return employeeManagementService.deleteEmployee(employeeId);
     }
 
-    // ================= STATUS ACTIONS =================
-
-    // ================= DEACTIVATE =================
+  
     @PutMapping("/employees/{employeeId}/deactivate")
     public ResponseEntity<ApiResponse> deactivateEmployee(
             @PathVariable String employeeId,
@@ -112,7 +108,6 @@ public class EmployeeManagementController {
         return employeeManagementService.deactivateEmployee(employeeId, reason);
     }
 
-    // ================= REACTIVATE =================
     @PutMapping("/employees/{employeeId}/reactivate")
     public ResponseEntity<ApiResponse> reactivateEmployee(
             @PathVariable String employeeId,

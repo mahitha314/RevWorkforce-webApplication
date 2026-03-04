@@ -3,20 +3,16 @@ package com.revworkforce.managerserviceImpl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
-
 import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.dto.ApiResponse;
 import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.dto.PerformanceReviewDTO;
 import com.revworkforce.managerservice.PerformanceReviewService;
 import com.revworkforce.model.Employee;
-import com.revworkforce.model.Notification;
 import com.revworkforce.model.PerformanceReview;
 import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
-import com.revworkforce.repository.NotificationRepository;
 import com.revworkforce.repository.PerformanceReviewRepository;
 
 @Service

@@ -202,19 +202,23 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         String status = "PENDING";
 
-        if (leave.getLeaveApproval() != null &&
-                leave.getLeaveApproval().getStatus() != null) {
-
-            status = leave.getLeaveApproval().getStatus();
+        if (leave.getLeaveApproval() != null) {
+            status = leave.getLeaveApproval().getStatus() != null
+                    ? leave.getLeaveApproval().getStatus()
+                    : "PENDING";
         }
 
         return new LeaveRequestDTO(
                 leave.getId(),
-                leave.getEmployee().getId(),
-                leave.getEmployee().getFirstName() + " " +
-                        leave.getEmployee().getLastName(),
-                leave.getLeaveType().getId(),
-                leave.getLeaveType().getTypeName(),   // change if field name differs
+                leave.getEmployee() != null ? leave.getEmployee().getId() : null,
+                leave.getEmployee() != null
+                        ? leave.getEmployee().getFirstName() + " " +
+                          leave.getEmployee().getLastName()
+                        : "N/A",
+                leave.getLeaveType() != null ? leave.getLeaveType().getId() : null,
+                leave.getLeaveType() != null
+                        ? leave.getLeaveType().getTypeName()
+                        : "N/A",
                 leave.getStartDate(),
                 leave.getEndDate(),
                 (int) days,

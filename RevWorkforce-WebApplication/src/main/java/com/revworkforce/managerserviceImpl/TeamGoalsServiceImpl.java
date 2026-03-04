@@ -11,11 +11,9 @@ import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.exception.ResourceNotFoundException;
 import com.revworkforce.managerservice.TeamGoalsService;
 import com.revworkforce.model.Goal;
-import com.revworkforce.model.Notification;
 import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.GoalRepository;
-import com.revworkforce.repository.NotificationRepository;
 
 @Service
 public class TeamGoalsServiceImpl implements TeamGoalsService {
@@ -127,4 +125,5 @@ public class TeamGoalsServiceImpl implements TeamGoalsService {
 		return new ApiResponse(200, "Goal summary fetched successfully", summary);
 	}
 
+	
 }

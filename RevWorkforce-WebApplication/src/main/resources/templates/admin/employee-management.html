@@ -568,41 +568,54 @@
 	}
 
 	// ================= SAVE EMPLOYEE =================
-	document.getElementById("addForm").addEventListener("submit", function (e) {
+	document.addEventListener("DOMContentLoaded", function () {
 
-		e.preventDefault();
+	    // ================= SAVE EMPLOYEE =================
+	    document.getElementById("addForm").addEventListener("submit", function (e) {
 
-		const formData = new FormData(this);
-		const data = Object.fromEntries(formData.entries());
+	        e.preventDefault();
 
-		data.salary = parseFloat(data.salary);
-		data.departmentId = parseInt(data.departmentId);
-		data.designationId = parseInt(data.designationId);
-		data.managerId = data.managerId ? parseInt(data.managerId) : null;
+	        const formData = new FormData(this);
+	        const data = Object.fromEntries(formData.entries());
 
-		fetch("/admin/employees", {
-			method: "POST",
-			headers: {"Content-Type": "application/json"},
-			body: JSON.stringify(data)
-		})
-			.then(res => res.json())
-			.then(response => {
+	        data.salary = parseFloat(data.salary);
+	        data.departmentId = parseInt(data.departmentId);
+	        data.designationId = parseInt(data.designationId);
+	        data.managerId = data.managerId ? parseInt(data.managerId) : null;
 
-				if (response.status === 201) {
+	        fetch("/admin/employees", {
+	            method: "POST",
+	            headers: {"Content-Type": "application/json"},
+	            body: JSON.stringify(data)
+	        })
+	        .then(res => {
+	            if (!res.ok) throw new Error("Save failed");
+	            return res.json();
+	        })
+	        .then(response => {
 
-					Swal.fire({
-						icon: 'success',
-						title: 'Success',
-						text: response.message,
-						confirmButtonColor: '#3085d6'
-					});
+	            Swal.fire({
+	                icon: 'success',
+	                title: 'Success',
+	                text: response.message || "Employee added successfully"
+	            });
 
-					document.getElementById("addForm").reset();
-				}
-			})
-			.catch(err => console.error("Save Error:", err));
+	            document.getElementById("addForm").reset();
+	        })
+	        .catch(err => {
+
+	            Swal.fire({
+	                icon: 'error',
+	                title: 'Error',
+	                text: "Employee save failed"
+	            });
+
+	            console.error(err);
+	        });
+
+	    });
+
 	});
-
 </script>
 
 </body>

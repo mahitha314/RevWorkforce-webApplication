@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/admin")   // ✅ Added base mapping
+@RequestMapping("/admin")   
 public class AdminController {
 
     private final AdminService adminService;
@@ -36,7 +36,7 @@ public class AdminController {
     private final SystemConfigService systemConfigService;
     private final EmployeeManagementService employeeManagementService;
 private final SystemActivityLogRepository logRepository;
-//    private final LeaveManagementService leaveService;
+
     
     public AdminController(AdminService adminService,
                            LeaveManagementService leaveService,
@@ -109,18 +109,18 @@ private final SystemActivityLogRepository logRepository;
         return "admin/employee-management";
     }
 
-    // ================= LEAVE MANAGEMENT PAGE =================
+  
     @GetMapping("/leave-management")
     public String leavePage(Model model) {
 
-        model.addAttribute("view", "leave");   // ✅ ADD THIS
+        model.addAttribute("view", "leave");  
         model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
         model.addAttribute("employees", employeeRepository.findAll());
 
         return "admin/leave-management";
     }
 
-    // ================= CREATE LEAVE TYPE =================
+   
     @PostMapping("/leave/type")
     public String createLeaveType(@RequestParam String typeName,
                                   @RequestParam Integer totalDays) {
@@ -142,7 +142,7 @@ private final SystemActivityLogRepository logRepository;
         return "redirect:/admin/leave-management";
     }
 
-    // ================= ADJUST LEAVE =================
+    
     @PostMapping("/leave/adjust")
     public String adjustLeave(@RequestParam Long employeeId,
                               @RequestParam Long leaveTypeId,
@@ -160,7 +160,7 @@ private final SystemActivityLogRepository logRepository;
         return "redirect:/admin/leave-management";
     }
 
-    // ================= EMPLOYEE REPORT =================
+   
     @GetMapping("/leave/employee-view")
     public String viewEmployeeLeave(@RequestParam Long employeeId, Model model) {
 
@@ -172,7 +172,7 @@ private final SystemActivityLogRepository logRepository;
         return "admin/leave-management";
     }
 
-    // ================= DEPARTMENT REPORT =================
+    
     @GetMapping("/leave/department-view")
     public String departmentReport(@RequestParam Long departmentId, Model model) {
 
@@ -183,7 +183,7 @@ private final SystemActivityLogRepository logRepository;
 
         return "admin/leave-management";
     }
- // ================= DEPARTMENT PAGE =================
+ 
     @GetMapping("/system-config")
     public String systemConfig(@RequestParam(required = false) Long deptId, Model model) {
 
@@ -261,7 +261,7 @@ private final SystemActivityLogRepository logRepository;
     
     
 
-    // ✅ View All Logs
+    
     @GetMapping("/logs")
     public String viewAllLogs(Model model) {
     	model.addAttribute("view", "logs");
@@ -273,7 +273,7 @@ private final SystemActivityLogRepository logRepository;
         return "admin/activity-logs";
     }
 
-    // ✅ Search by Username
+    
     @GetMapping("/logs/search")
     public String searchLogs(@RequestParam("keyword") String keyword,
                              Model model) {
@@ -287,7 +287,7 @@ private final SystemActivityLogRepository logRepository;
         return "admin/activity-logs";
     }
 
-    // ✅ Filter by Date Range
+    
     @GetMapping("/logs/filter")
     public String filterByDate(
             @RequestParam("from") String fromDate,
