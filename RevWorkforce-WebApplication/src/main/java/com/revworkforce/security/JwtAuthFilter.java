@@ -31,7 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // ✅ Skip public URLs
+       
         if (path.equals("/login") ||
             path.startsWith("/auth") ||
             path.startsWith("/css") ||

@@ -17,7 +17,7 @@ public class LeaveRequestDTO {
     private Integer totalDays;
 
     private String reason;
-    private String status;  // PENDING / APPROVED / REJECTED
+    private String status;  
    
     public LeaveRequestDTO() {}
 

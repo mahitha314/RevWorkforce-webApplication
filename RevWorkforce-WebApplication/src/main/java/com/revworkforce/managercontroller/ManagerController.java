@@ -44,7 +44,7 @@ private NotificationRepository notificationrepository;
 	this.performanceService = performanceService;
 	this.notificationrepository = notificationrepository;
 }
-	// ================= DASHBOARD =================
+	
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
 
@@ -54,23 +54,23 @@ private NotificationRepository notificationrepository;
         model.addAttribute("manager", manager);
         model.addAttribute("managerId", managerId);
 
-        // ✅ Team Members (repository correct method)
+       
         model.addAttribute("teamMembers",
                 employeeRepository.findByManager_Id(managerId));
 
-        // ✅ Leave Requests
+        
         ApiResponse leaveResponse =
                 teamLeavesService.getTeamLeaveRequests(managerId);
         model.addAttribute("leaveRequests",
                 leaveResponse != null ? leaveResponse.getData() : null);
 
-        // ✅ Performance Reviews (correct method name)
+       
         ApiResponse reviewResponse =
                 performanceService.getTeamPerformanceReviews(managerId);
         model.addAttribute("performanceReviews",
                 reviewResponse != null ? reviewResponse.getData() : null);
 
-        // ✅ Goals
+       
         ApiResponse goalsResponse =
                 teamGoalsService.getTeamGoals(managerId);
         model.addAttribute("goals",
@@ -78,7 +78,7 @@ private NotificationRepository notificationrepository;
 
         return "manager/manager-dashboard";
     }
-    // ================= PROFILE =================
+   
     @GetMapping("/profile")
     public String profile(Authentication authentication, Model model) {
 
@@ -131,7 +131,7 @@ private NotificationRepository notificationrepository;
         return "redirect:/manager/profile?profileSuccess";
     }
 
-    // ================= TEAM LEAVES =================
+   
     @GetMapping("/team-leaves")
     public String teamLeaves(Authentication authentication, Model model) {
 
@@ -145,7 +145,7 @@ private NotificationRepository notificationrepository;
         return "manager/team_leaves";
     }
 
-    // ================= APPROVE LEAVE =================
+   
     @PostMapping("/approve/{leaveId}")
     public String approve(@PathVariable Long leaveId,
                           @RequestParam(required = false) String comments,
@@ -163,7 +163,7 @@ private NotificationRepository notificationrepository;
         return "redirect:/manager/team-leaves";
     }
 
-    // ================= REJECT LEAVE =================
+   
     @PostMapping("/reject/{leaveId}")
     public String reject(@PathVariable Long leaveId,
                          @RequestParam String comments,
@@ -181,7 +181,7 @@ private NotificationRepository notificationrepository;
         return "redirect:/manager/team-leaves";
     }
 
-    // ================= TEAM CALENDAR =================
+   
     @GetMapping("/team-calendar")
     public String calendar(Authentication authentication, Model model) {
 
@@ -193,7 +193,7 @@ private NotificationRepository notificationrepository;
         return "manager/team-calendar";
     }
 
-    // ================= TEAM BALANCE =================
+   
     @GetMapping("/team-balance")
     public String balance(Authentication authentication, Model model) {
 
@@ -205,7 +205,7 @@ private NotificationRepository notificationrepository;
         return "manager/team-balance";
     }
 
-    // ================= TEAM STRUCTURE =================
+    
     @GetMapping("/team-structure")
     public String teamStructure(Authentication authentication, Model model) {
 
@@ -215,7 +215,7 @@ private NotificationRepository notificationrepository;
         return "manager/team_structure";
     }
 
-    // ================= TEAM GOALS =================
+   
     @GetMapping("/team-goals")
     public String teamGoals(Authentication authentication, Model model) {
 
@@ -230,7 +230,7 @@ private NotificationRepository notificationrepository;
         return "manager/team_goals";
     }
 
-    // ================= PERFORMANCE =================
+    
     @GetMapping("/performance-review")
     public String performancePage(Authentication authentication, Model model) {
 
@@ -239,7 +239,7 @@ private NotificationRepository notificationrepository;
 
         return "manager/performance_review";
     }
-    // ================= COMMON METHOD =================
+   
     private Employee getLoggedInManager(Authentication authentication) {
 
         return employeeRepository
@@ -260,7 +260,6 @@ private NotificationRepository notificationrepository;
                 notificationrepository
                         .findByEmployee_IdOrderByCreatedAtDesc(manager.getId());
 
-        // Unread count (optional but useful for badge)
         long unreadCount =
                 notificationrepository
                         .countByEmployee_IdAndIsRead(manager.getId(), false);

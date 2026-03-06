@@ -23,16 +23,13 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 	private final NotificationService notificationService;
 	private final ActivityLogService activityLogService;
 
-	public PerformanceReviewServiceImpl(
-	            PerformanceReviewRepository reviewRepo,
-	            EmployeeRepository employeeRepo,
-	            NotificationService notificationService,
-	            ActivityLogService activityLogService) {
-		
+	public PerformanceReviewServiceImpl(PerformanceReviewRepository reviewRepo, EmployeeRepository employeeRepo,
+			NotificationService notificationService, ActivityLogService activityLogService) {
+
 		this.reviewRepo = reviewRepo;
-        this.employeeRepo = employeeRepo;
-        this.notificationService = notificationService;
-        this.activityLogService = activityLogService;
+		this.employeeRepo = employeeRepo;
+		this.notificationService = notificationService;
+		this.activityLogService = activityLogService;
 
 	}
 
@@ -43,17 +40,10 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 			return new ApiResponse(404, "Manager not found", null);
 		}
 
-		List<PerformanceReviewDTO> reviews =
-                reviewRepo.findByEmployee_Manager_Id(managerId)
-                        .stream()
-                        .map(this::mapToDTO)
-                        .collect(Collectors.toList());
+		List<PerformanceReviewDTO> reviews = reviewRepo.findByEmployee_Manager_Id(managerId).stream()
+				.map(this::mapToDTO).collect(Collectors.toList());
 
-        // Activity Log
-        activityLogService.log(
-                managerId,
-                "Viewed team performance reviews"
-        );
+		activityLogService.log(managerId, "Viewed team performance reviews");
 
 		return new ApiResponse(200, "Team performance reviews fetched", reviews);
 	}
@@ -75,12 +65,10 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 		if ("REVIEWED".equals(review.getStatus())) {
 			return new ApiResponse(400, "Review already completed", null);
 		}
-		
+
 		if (!"Submitted".equalsIgnoreCase(review.getStatus())) {
-            return new ApiResponse(400,
-                    "Employee has not submitted the review yet",
-                    null);
-        }
+			return new ApiResponse(400, "Employee has not submitted the review yet", null);
+		}
 
 		if (dto.getManagerRating() == 0) {
 			return new ApiResponse(400, "Manager rating is required", null);
@@ -95,7 +83,7 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 		review.setManagerFeedback(dto.getManagerFeedback());
 		review.setStatus("REVIEWED");
 		reviewRepo.save(review);
-		
+
 		Employee employee = review.getEmployee();
 
 		NotificationDTO notification = new NotificationDTO();
@@ -110,36 +98,18 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 
 		notificationService.createNotification(notification);
 
-		// ================= ACTIVITY LOG =================
-        activityLogService.log(
-                managerId,
-                "Reviewed performance of employee ID: " + employee.getId()
-        );
+		activityLogService.log(managerId, "Reviewed performance of employee ID: " + employee.getId());
 
-        return new ApiResponse(
-                200,
-                "Performance review submitted successfully",
-                mapToDTO(review)
-        );
+		return new ApiResponse(200, "Performance review submitted successfully", mapToDTO(review));
 	}
-	
-	// ================= DTO MAPPING =================
-    private PerformanceReviewDTO mapToDTO(PerformanceReview review) {
 
-        return new PerformanceReviewDTO(
-                review.getId(),
-                review.getEmployee().getId(),
-                review.getEmployee().getFirstName() + " " +
-                        review.getEmployee().getLastName(),
-                review.getAccomplishments(),
-                review.getDeliverables(),
-                review.getAreasOfImprovement(),
-                review.getSelfRating(),
-                review.getManagerRating(),
-                review.getManagerFeedback(),
-                review.getStatus(),
-                review.getSubmittedDate()
-        );
-    }
+	private PerformanceReviewDTO mapToDTO(PerformanceReview review) {
+
+		return new PerformanceReviewDTO(review.getId(), review.getEmployee().getId(),
+				review.getEmployee().getFirstName() + " " + review.getEmployee().getLastName(),
+				review.getAccomplishments(), review.getDeliverables(), review.getAreasOfImprovement(),
+				review.getSelfRating(), review.getManagerRating(), review.getManagerFeedback(), review.getStatus(),
+				review.getSubmittedDate());
+	}
 
 }

@@ -39,7 +39,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         this.activityLogService = activityLogService;
     }
 
-    // ================= CREATE SELF REVIEW =================
+   
     @Override
     public ApiResponse createSelfReview(Long employeeId, PerformanceReviewDTO dto) {
 
@@ -73,7 +73,6 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    // ================= GET EMPLOYEE REVIEWS =================
     @Override
     public ApiResponse getEmployeeReviews(Long employeeId) {
 
@@ -94,7 +93,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    // ================= SUBMIT REVIEW =================
+  
     @Override
     public ApiResponse submitReview(Long reviewId) {
 
@@ -109,7 +108,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         
         Employee employee = review.getEmployee();
 
-        // Notify Manager (Assuming employee has manager assigned)
+       
         if (employee.getManager() != null) {
 
             NotificationDTO notificationDTO = new NotificationDTO();
@@ -135,7 +134,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    // ================= DELETE REVIEW =================
+    
     @Override
     public ApiResponse deleteReview(Long reviewId) {
 
@@ -166,7 +165,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    // ================= DTO MAPPING =================
+   
     private PerformanceReviewDTO mapToDTO(PerformanceReview review) {
 
         return new PerformanceReviewDTO(

@@ -13,57 +13,48 @@ import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.SystemActivityLogRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 @Service
-public class ActivityLogServiceImpl implements ActivityLogService{
+public class ActivityLogServiceImpl implements ActivityLogService {
 	private SystemActivityLogRepository repository;
 	private EmployeeRepository employeeRepository;
-	  public ActivityLogServiceImpl(
-	            SystemActivityLogRepository repository,
-	            EmployeeRepository employeeRepository) {
-	        this.repository = repository;
-	        this.employeeRepository = employeeRepository;
-	    }
-	
-	 @Override
-	    public void log(String action,
-	                    String module,
-	                    String description,
-	                    String status,
-	                    HttpServletRequest request) {
 
-	        String username = SecurityContextHolder
-	                .getContext()
-	                .getAuthentication()
-	                .getName();
-	        Employee emp = employeeRepository
-	                .findByEmail(username)
-	                .orElseThrow(() -> 
-	                    new RuntimeException("Employee not found"));
+	public ActivityLogServiceImpl(SystemActivityLogRepository repository, EmployeeRepository employeeRepository) {
+		this.repository = repository;
+		this.employeeRepository = employeeRepository;
+	}
 
-	        SystemActivityLog log = new SystemActivityLog();
-	        log.setUserId(emp.getId());
-	        log.setUserName(emp.getFirstName());
-	        log.setRole(emp.getRole());  // ✅ NO .name()
-	        log.setAction(action);
-	        log.setModule(module);
-	        log.setDescription(description);
-	        log.setStatus(status);       // SUCCESS / FAILED (String)
-	        log.setIpAddress(request.getRemoteAddr());
-	        log.setCreatedAt(LocalDateTime.now());
+	@Override
+	public void log(String action, String module, String description, String status, HttpServletRequest request) {
 
-	        repository.save(log);
-	    
-	 }
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Employee emp = employeeRepository.findByEmail(username)
+				.orElseThrow(() -> new RuntimeException("Employee not found"));
 
-	 @Override
-	 public void log(String action, String module, String description, String status, LeaveRequest request) {		
-	 }
+		SystemActivityLog log = new SystemActivityLog();
+		log.setUserId(emp.getId());
+		log.setUserName(emp.getFirstName());
+		log.setRole(emp.getRole());
+		log.setAction(action);
+		log.setModule(module);
+		log.setDescription(description);
+		log.setStatus(status);
+		log.setIpAddress(request.getRemoteAddr());
+		log.setCreatedAt(LocalDateTime.now());
 
-	 @Override
-	 public void log(String action, String module) {		
-	 }
+		repository.save(log);
 
-	 @Override
-	 public void log(Long id, String module) {
-	 }
+	}
+
+	@Override
+	public void log(String action, String module, String description, String status, LeaveRequest request) {
+	}
+
+	@Override
+	public void log(String action, String module) {
+	}
+
+	@Override
+	public void log(Long id, String module) {
+	}
 }

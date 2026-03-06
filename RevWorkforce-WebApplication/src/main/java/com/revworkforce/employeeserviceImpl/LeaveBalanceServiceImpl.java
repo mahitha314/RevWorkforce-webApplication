@@ -41,12 +41,12 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
                         .map(balance -> new LeaveBalanceDTO(
                                 balance.getId(),                                // LeaveBalance ID
                                 employee.getId(),                               // Employee ID
-                                employee.getFirstName(),                             // Employee Name
+                                employee.getFirstName(),                         // Employee Name
                                 balance.getLeaveType().getId(),                 // LeaveType ID
-                                balance.getLeaveType().getTypeName(),           // LeaveType Name
+                                balance.getLeaveType().getTypeName(),          
                                 balance.getTotalLeaves(),                       // Total Leaves
-                                balance.getUsedLeaves(),                        // Used Leaves
-                                balance.getRemainingLeaves()                    // Remaining Leaves
+                                balance.getUsedLeaves(),                      
+                                balance.getRemainingLeaves()                    
                         ))
                         .collect(Collectors.toList());
 

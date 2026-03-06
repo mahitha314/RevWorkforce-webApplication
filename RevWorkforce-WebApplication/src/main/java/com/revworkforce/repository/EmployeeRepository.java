@@ -27,8 +27,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 	 List<Employee> findByRole(String role);
 	 List<Employee> findByDepartmentId(Long departmentId);
 	 long countByRole(String role);
-	 
-	// 🔍 Directory Search Method
+	
 	 List<Employee> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
 	            String firstName,
 	            String lastName,
@@ -39,7 +38,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 	            String lastName
 	    );
 
-	    // 🔍 SEARCH METHOD
+	    
 	    List<Employee> findByFirstNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
 	            String firstName,
 	            String email

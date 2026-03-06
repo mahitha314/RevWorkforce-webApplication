@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 @Service
 public class GoalServiceImpl implements GoalService {
 
-    private final GoalRepository goalRepo;
-    private final EmployeeRepository employeeRepo;
-    private final NotificationService notificationService;
-    private final ActivityLogService activityLogService;
+	private final GoalRepository goalRepo;
+	private final EmployeeRepository employeeRepo;
+	private final NotificationService notificationService;
+	private final ActivityLogService activityLogService;
 
-    public GoalServiceImpl(GoalRepository goalRepo, EmployeeRepository employeeRepo,
+	public GoalServiceImpl(GoalRepository goalRepo, EmployeeRepository employeeRepo,
 			NotificationService notificationService, ActivityLogService activityLogService) {
 		super();
 		this.goalRepo = goalRepo;
@@ -34,158 +34,101 @@ public class GoalServiceImpl implements GoalService {
 		this.activityLogService = activityLogService;
 	}
 
-	// ================= CREATE GOAL =================
-    @Override
-    public ApiResponse createGoal(Long employeeId, GoalDTO dto) {
+	@Override
+	public ApiResponse createGoal(Long employeeId, GoalDTO dto) {
 
-        Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+		Employee employee = employeeRepo.findById(employeeId)
+				.orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
 
-        Goal goal = new Goal();
-        goal.setEmployee(employee);
-        goal.setGoalDescription(dto.getGoalDescription());
-        goal.setPriority(dto.getPriority());
-        goal.setStatus("NOT_STARTED");
-        goal.setDeadline(dto.getDeadline());
-        goal.setProgress(0);
-        
-        Goal savedGoal = goalRepo.save(goal);
+		Goal goal = new Goal();
+		goal.setEmployee(employee);
+		goal.setGoalDescription(dto.getGoalDescription());
+		goal.setPriority(dto.getPriority());
+		goal.setStatus("NOT_STARTED");
+		goal.setDeadline(dto.getDeadline());
+		goal.setProgress(0);
 
-     // 🔔 Send Notification to Employee
-        NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setEmployeeId(goal.getEmployee().getEmployeeId());
-        notificationDTO.setTitle("New Goal Assigned");
-        notificationDTO.setMessage("A new goal has been assigned to you.");
-        notificationDTO.setType("GOAL");
+		Goal savedGoal = goalRepo.save(goal);
 
-        notificationService.createNotification(notificationDTO);
+		NotificationDTO notificationDTO = new NotificationDTO();
+		notificationDTO.setEmployeeId(goal.getEmployee().getEmployeeId());
+		notificationDTO.setTitle("New Goal Assigned");
+		notificationDTO.setMessage("A new goal has been assigned to you.");
+		notificationDTO.setType("GOAL");
 
-        // 📜 Activity Log
-        activityLogService.log(
-                "GOAL_CREATED",
-                "Goal created for employee: "
-                        + employee.getFirstName() + " "
-                        + employee.getLastName()
-        );
+		notificationService.createNotification(notificationDTO);
 
-        return new ApiResponse(
-                201,
-                "Goal created successfully",
-                mapToDTO(savedGoal)
-        );
-    }
+		activityLogService.log("GOAL_CREATED",
+				"Goal created for employee: " + employee.getFirstName() + " " + employee.getLastName());
 
-    // ================= GET EMPLOYEE GOALS =================
-    @Override
-    public ApiResponse getEmployeeGoals(Long employeeId) {
+		return new ApiResponse(201, "Goal created successfully", mapToDTO(savedGoal));
+	}
 
-        employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+	@Override
+	public ApiResponse getEmployeeGoals(Long employeeId) {
 
-        List<GoalDTO> goals = goalRepo.findByEmployee_Id(employeeId)
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+		employeeRepo.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
 
-        return new ApiResponse(
-                200,
-                "Goals fetched successfully",
-                goals
-        );
-    }
+		List<GoalDTO> goals = goalRepo.findByEmployee_Id(employeeId).stream().map(this::mapToDTO)
+				.collect(Collectors.toList());
 
-    // ================= UPDATE GOAL PROGRESS =================
-    @Override
-    public ApiResponse updateGoalProgress(Long goalId, Integer progress) {
+		return new ApiResponse(200, "Goals fetched successfully", goals);
+	}
 
-        Goal goal = goalRepo.findById(goalId)
-                .orElseThrow(() ->
-                        new GoalUpdateException("Goal not found"));
+	@Override
+	public ApiResponse updateGoalProgress(Long goalId, Integer progress) {
 
-        if (progress == null || progress < 0 || progress > 100) {
-            throw new GoalUpdateException(
-                    "Progress must be between 0 and 100");
-        }
+		Goal goal = goalRepo.findById(goalId).orElseThrow(() -> new GoalUpdateException("Goal not found"));
 
-        goal.setProgress(progress);
+		if (progress == null || progress < 0 || progress > 100) {
+			throw new GoalUpdateException("Progress must be between 0 and 100");
+		}
 
-        if (progress == 0)
-            goal.setStatus("NOT_STARTED");
-        else if (progress == 100)
-            goal.setStatus("COMPLETED");
-        else
-            goal.setStatus("IN_PROGRESS");
+		goal.setProgress(progress);
 
-        goalRepo.save(goal);
-        
-     // 📜 Activity Log
-        activityLogService.log(
-                "GOAL_UPDATED",
-                "Goal progress updated to " + progress + "%"
-        );
+		if (progress == 0)
+			goal.setStatus("NOT_STARTED");
+		else if (progress == 100)
+			goal.setStatus("COMPLETED");
+		else
+			goal.setStatus("IN_PROGRESS");
 
-        // 🔔 If completed → Notify Employee
-        if (progress == 100) {
-            NotificationDTO notificationDTO = new NotificationDTO();
-            notificationDTO.setEmployeeId(goal.getEmployee().getEmployeeId());
-            notificationDTO.setTitle("Goal Completed");
-            notificationDTO.setMessage(
-                    "Congratulations! You have completed your goal.");
-            notificationDTO.setType("GOAL");
+		goalRepo.save(goal);
 
-            notificationService.createNotification(notificationDTO);
-        }
+		activityLogService.log("GOAL_UPDATED", "Goal progress updated to " + progress + "%");
 
-        return new ApiResponse(
-                200,
-                "Goal progress updated successfully",
-                null
-        );
-    }
+		if (progress == 100) {
+			NotificationDTO notificationDTO = new NotificationDTO();
+			notificationDTO.setEmployeeId(goal.getEmployee().getEmployeeId());
+			notificationDTO.setTitle("Goal Completed");
+			notificationDTO.setMessage("Congratulations! You have completed your goal.");
+			notificationDTO.setType("GOAL");
 
-    // ================= DELETE GOAL =================
-    @Override
-    public ApiResponse deleteGoal(Long goalId) {
+			notificationService.createNotification(notificationDTO);
+		}
 
-        Goal goal = goalRepo.findById(goalId)
-                .orElseThrow(() ->
-                        new GoalUpdateException("Goal not found"));
+		return new ApiResponse(200, "Goal progress updated successfully", null);
+	}
 
-        if ("COMPLETED".equalsIgnoreCase(goal.getStatus())) {
-            throw new GoalUpdateException(
-                    "Completed goal cannot be deleted");
-        }
+	@Override
+	public ApiResponse deleteGoal(Long goalId) {
 
-        goalRepo.delete(goal);
-        
-     // 📜 Activity Log
-        activityLogService.log(
-                "GOAL_DELETED",
-                "Goal deleted for employee: "
-                        + goal.getEmployee().getFirstName()
-        );
+		Goal goal = goalRepo.findById(goalId).orElseThrow(() -> new GoalUpdateException("Goal not found"));
 
-        return new ApiResponse(
-                200,
-                "Goal deleted successfully",
-                null
-        );
-    }
-    
- // ================= DTO MAPPER =================
-    private GoalDTO mapToDTO(Goal goal) {
-        return new GoalDTO(
-                goal.getId(),
-                goal.getEmployee().getId(),
-                goal.getEmployee().getFirstName() + " " +
-                        goal.getEmployee().getLastName(),
-                goal.getGoalDescription(),
-                goal.getPriority(),
-                goal.getStatus(),
-                goal.getDeadline(),
-                goal.getProgress()
-        );
-    }
+		if ("COMPLETED".equalsIgnoreCase(goal.getStatus())) {
+			throw new GoalUpdateException("Completed goal cannot be deleted");
+		}
+
+		goalRepo.delete(goal);
+
+		activityLogService.log("GOAL_DELETED", "Goal deleted for employee: " + goal.getEmployee().getFirstName());
+
+		return new ApiResponse(200, "Goal deleted successfully", null);
+	}
+
+	private GoalDTO mapToDTO(Goal goal) {
+		return new GoalDTO(goal.getId(), goal.getEmployee().getId(),
+				goal.getEmployee().getFirstName() + " " + goal.getEmployee().getLastName(), goal.getGoalDescription(),
+				goal.getPriority(), goal.getStatus(), goal.getDeadline(), goal.getProgress());
+	}
 }

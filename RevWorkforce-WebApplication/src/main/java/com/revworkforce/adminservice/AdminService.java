@@ -1,19 +1,19 @@
 package com.revworkforce.adminservice;
 
-
 import com.revworkforce.model.Employee;
 
 import java.util.Optional;
 
-public interface AdminService{
-    Optional<Employee> getEmployeeByEmail(String email);
-    long getTotalEmployees();
+public interface AdminService {
+	Optional<Employee> getEmployeeByEmail(String email);
 
-    long getTotalManagers();
+	long getTotalEmployees();
 
-    long getTotalRegularEmployees();
+	long getTotalManagers();
 
-    long getPendingLeaves();
+	long getTotalRegularEmployees();
 
-    long getApprovedLeaves();
+	long getPendingLeaves();
+
+	long getApprovedLeaves();
 }

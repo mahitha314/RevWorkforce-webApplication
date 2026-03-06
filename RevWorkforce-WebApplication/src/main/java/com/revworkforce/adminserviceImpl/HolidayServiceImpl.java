@@ -19,105 +19,80 @@ import jakarta.servlet.http.HttpServletRequest;
 public class HolidayServiceImpl implements HolidayService {
 
 	private final HolidayRepository holidayRepository;
-    private final NotificationService notificationService;
-    private final ActivityLogService activityLogService;
-    private final HttpServletRequest request;
+	private final NotificationService notificationService;
+	private final ActivityLogService activityLogService;
+	private final HttpServletRequest request;
 
-    public HolidayServiceImpl(HolidayRepository holidayRepository,
-                              NotificationService notificationService,
-                              ActivityLogService activityLogService,
-                              HttpServletRequest request) {
-        this.holidayRepository = holidayRepository;
-        this.notificationService = notificationService;
-        this.activityLogService = activityLogService;
-        this.request = request;
-    }
+	public HolidayServiceImpl(HolidayRepository holidayRepository, NotificationService notificationService,
+			ActivityLogService activityLogService, HttpServletRequest request) {
+		this.holidayRepository = holidayRepository;
+		this.notificationService = notificationService;
+		this.activityLogService = activityLogService;
+		this.request = request;
+	}
 
-    @Override
-    public Holiday saveHoliday(Holiday holiday) {
+	@Override
+	public Holiday saveHoliday(Holiday holiday) {
 
-        if (holidayRepository.existsByHolidayDate(holiday.getHolidayDate())) {
-            throw new RuntimeException("Holiday already exists for this date.");
-        }
+		if (holidayRepository.existsByHolidayDate(holiday.getHolidayDate())) {
+			throw new RuntimeException("Holiday already exists for this date.");
+		}
 
-        Holiday saved = holidayRepository.save(holiday);
+		Holiday saved = holidayRepository.save(holiday);
 
-        // 🔔 Notify All Employees
-        NotificationDTO dto = new NotificationDTO();
-        dto.setTitle("New Holiday Added");
-        dto.setMessage("Holiday: " + holiday.getHolidayName() +
-                " on " + holiday.getHolidayDate());
-        dto.setType("HOLIDAY");
-        dto.setStatus("ACTIVE");
+		NotificationDTO dto = new NotificationDTO();
+		dto.setTitle("New Holiday Added");
+		dto.setMessage("Holiday: " + holiday.getHolidayName() + " on " + holiday.getHolidayDate());
+		dto.setType("HOLIDAY");
+		dto.setStatus("ACTIVE");
 
-        notificationService.createNotificationForAll(dto);
+		notificationService.createNotificationForAll(dto);
 
-        // 📜 Log Activity
-        activityLogService.log(
-                "Holiday Added",
-                "Holiday Management",
-                "Added holiday " + holiday.getHolidayName(),
-                "SUCCESS",
-                request
-        );
+		activityLogService.log("Holiday Added", "Holiday Management", "Added holiday " + holiday.getHolidayName(),
+				"SUCCESS", request);
 
-        return saved;
-    }
+		return saved;
+	}
 
-    @Override
-    public Holiday updateHoliday(Long id, Holiday holiday) {
+	@Override
+	public Holiday updateHoliday(Long id, Holiday holiday) {
 
-        Holiday existing = holidayRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Holiday not found"));
+		Holiday existing = holidayRepository.findById(id).orElseThrow(() -> new RuntimeException("Holiday not found"));
 
-        // Prevent duplicate date on update
-        if (!existing.getHolidayDate().equals(holiday.getHolidayDate()) &&
-                holidayRepository.existsByHolidayDate(holiday.getHolidayDate())) {
-            throw new RuntimeException("Another holiday already exists on this date.");
-        }
-        
-        existing.setHolidayName(holiday.getHolidayName());
-        existing.setHolidayDate(holiday.getHolidayDate());
-        existing.setDescription(holiday.getDescription());
+		if (!existing.getHolidayDate().equals(holiday.getHolidayDate())
+				&& holidayRepository.existsByHolidayDate(holiday.getHolidayDate())) {
+			throw new RuntimeException("Another holiday already exists on this date.");
+		}
 
-        Holiday updated = holidayRepository.save(existing);
+		existing.setHolidayName(holiday.getHolidayName());
+		existing.setHolidayDate(holiday.getHolidayDate());
+		existing.setDescription(holiday.getDescription());
 
-        // 📜 Activity Log
-        activityLogService.log(
-                "Holiday Updated",
-                "Holiday Management",
-                "Updated holiday " + updated.getHolidayName(),
-                "SUCCESS",
-                request
-        );
+		Holiday updated = holidayRepository.save(existing);
 
-        return updated;
-    }
+		activityLogService.log("Holiday Updated", "Holiday Management", "Updated holiday " + updated.getHolidayName(),
+				"SUCCESS", request);
 
-    @Override
-    public void deleteHoliday(Long id) {
-    	Holiday holiday = holidayRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Holiday not found"));
+		return updated;
+	}
 
-        holidayRepository.delete(holiday);
+	@Override
+	public void deleteHoliday(Long id) {
+		Holiday holiday = holidayRepository.findById(id).orElseThrow(() -> new RuntimeException("Holiday not found"));
 
-        activityLogService.log(
-                "Holiday Deleted",
-                "Holiday Management",
-                "Deleted holiday " + holiday.getHolidayName(),
-                "SUCCESS",
-                request
-        );
-    }
+		holidayRepository.delete(holiday);
 
-    @Override
-    public List<Holiday> getAllHolidays() {
-        return holidayRepository.findAllByOrderByHolidayDateAsc();
-    }
+		activityLogService.log("Holiday Deleted", "Holiday Management", "Deleted holiday " + holiday.getHolidayName(),
+				"SUCCESS", request);
+	}
 
-    @Override
-    public Holiday getHolidayById(Long id) {
-        return holidayRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Holiday not found"));
-    }
+	@Override
+	public List<Holiday> getAllHolidays() {
+		return holidayRepository.findAllByOrderByHolidayDateAsc();
+	}
+
+	@Override
+	public Holiday getHolidayById(Long id) {
+		return holidayRepository.findById(id).orElseThrow(() -> new RuntimeException("Holiday not found"));
+	}
 }

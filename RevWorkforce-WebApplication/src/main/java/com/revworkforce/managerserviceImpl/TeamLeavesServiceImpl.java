@@ -28,237 +28,195 @@ import jakarta.transaction.Transactional;
 public class TeamLeavesServiceImpl implements TeamLeavesService {
 
 	private final EmployeeRepository employeeRepo;
-    private final LeaveRequestRepository leaveRequestRepo;
-    private final LeaveApprovalRepository approvalRepo;
-    private final LeaveBalanceRepository leaveBalanceRepo;
-    private final NotificationService notificationService;
-    private final ActivityLogService activityLogService;
+	private final LeaveRequestRepository leaveRequestRepo;
+	private final LeaveApprovalRepository approvalRepo;
+	private final LeaveBalanceRepository leaveBalanceRepo;
+	private final NotificationService notificationService;
+	private final ActivityLogService activityLogService;
 
-    public TeamLeavesServiceImpl(EmployeeRepository employeeRepo,
-                                 LeaveRequestRepository leaveRequestRepo,
-                                 LeaveApprovalRepository approvalRepo,
-                                 LeaveBalanceRepository leaveBalanceRepo,
-                                 NotificationService notificationService,
-                                 ActivityLogService activityLogService) {
+	public TeamLeavesServiceImpl(EmployeeRepository employeeRepo, LeaveRequestRepository leaveRequestRepo,
+			LeaveApprovalRepository approvalRepo, LeaveBalanceRepository leaveBalanceRepo,
+			NotificationService notificationService, ActivityLogService activityLogService) {
 
-        this.employeeRepo = employeeRepo;
-        this.leaveRequestRepo = leaveRequestRepo;
-        this.approvalRepo = approvalRepo;
-        this.leaveBalanceRepo = leaveBalanceRepo;
-        this.notificationService = notificationService;
-        this.activityLogService = activityLogService;
-    }
-    
- // ================= VALIDATE MANAGER =================
-    private Employee validateManager(Long managerId) {
-        return employeeRepo.findById(managerId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Manager not found"));
-    }
+		this.employeeRepo = employeeRepo;
+		this.leaveRequestRepo = leaveRequestRepo;
+		this.approvalRepo = approvalRepo;
+		this.leaveBalanceRepo = leaveBalanceRepo;
+		this.notificationService = notificationService;
+		this.activityLogService = activityLogService;
+	}
 
-    @Override
-    @Transactional
-    public ApiResponse getDirectReportees(Long managerId) {
+	private Employee validateManager(Long managerId) {
+		return employeeRepo.findById(managerId).orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
+	}
 
-        if (!employeeRepo.existsById(managerId)) {
-            return new ApiResponse(404, "Manager not found", null);
-        }
+	@Override
+	@Transactional
+	public ApiResponse getDirectReportees(Long managerId) {
 
-        List<Employee> team = employeeRepo.findByManager_Id(managerId);
+		if (!employeeRepo.existsById(managerId)) {
+			return new ApiResponse(404, "Manager not found", null);
+		}
 
-        return new ApiResponse(200, "Direct reportees fetched", team);
-    }
+		List<Employee> team = employeeRepo.findByManager_Id(managerId);
 
-    @Override
-    public ApiResponse getTeamLeaveRequests(Long managerId) {
+		return new ApiResponse(200, "Direct reportees fetched", team);
+	}
 
-        if (!employeeRepo.existsById(managerId)) {
-            return new ApiResponse(404, "Manager not found", null);
-        }
+	@Override
+	public ApiResponse getTeamLeaveRequests(Long managerId) {
 
-        List<LeaveRequest> requests =
-                leaveRequestRepo.findByEmployee_Manager_Id(managerId);
-        
-        activityLogService.log(
-                managerId,
-                "Viewed team leave requests"
-        );
+		if (!employeeRepo.existsById(managerId)) {
+			return new ApiResponse(404, "Manager not found", null);
+		}
 
-        return new ApiResponse(200, "Team leave requests fetched", requests);
-    }
+		List<LeaveRequest> requests = leaveRequestRepo.findByEmployee_Manager_Id(managerId);
 
-    @Override
-    @Transactional
-    public ApiResponse approveLeave(Long managerId,
-                                    Long leaveId,
-                                    String comments) {
+		activityLogService.log(managerId, "Viewed team leave requests");
 
-        LeaveRequest request = leaveRequestRepo.findById(leaveId).orElse(null);
+		return new ApiResponse(200, "Team leave requests fetched", requests);
+	}
 
-        if (request == null) {
-            return new ApiResponse(404, "Leave not found", null);
-        }
-        
-        if (request.getLeaveApproval() != null) {
-            return new ApiResponse(400,
-                    "Leave already processed",
-                    null);
-        }
+	@Override
+	@Transactional
+	public ApiResponse approveLeave(Long managerId, Long leaveId, String comments) {
 
-        if (request.getEmployee().getManager() == null ||
-            !request.getEmployee().getManager().getId().equals(managerId)) {
+		LeaveRequest request = leaveRequestRepo.findById(leaveId).orElse(null);
 
-            return new ApiResponse(403,
-                    "Unauthorized to approve this leave", null);
-        }
+		if (request == null) {
+			return new ApiResponse(404, "Leave not found", null);
+		}
 
-        Employee manager = employeeRepo.findById(managerId).orElse(null);
-        if (manager == null) {
-            return new ApiResponse(404, "Manager not found", null);
-        }
+		if (request.getLeaveApproval() != null) {
+			return new ApiResponse(400, "Leave already processed", null);
+		}
 
-        LeaveApproval approval = new LeaveApproval();
-        approval.setManager(manager);
-        approval.setStatus("APPROVED");
-        approval.setComments(comments);
-        approval.setApprovalDate(LocalDate.now());
+		if (request.getEmployee().getManager() == null
+				|| !request.getEmployee().getManager().getId().equals(managerId)) {
 
-        approvalRepo.save(approval);
+			return new ApiResponse(403, "Unauthorized to approve this leave", null);
+		}
 
-        request.setLeaveApproval(approval);
-        leaveRequestRepo.save(request);
+		Employee manager = employeeRepo.findById(managerId).orElse(null);
+		if (manager == null) {
+			return new ApiResponse(404, "Manager not found", null);
+		}
 
-        NotificationDTO notification = new NotificationDTO();
-        notification.setEmployeeId(request.getEmployee().getEmployeeId());
-        notification.setTitle("Leave Approved");
-        notification.setMessage("Your leave request has been approved.");
-        notification.setType("LEAVE");
-        notification.setStatus("APPROVED");
-        notification.setIsRead(false);
-        notification.setCreatedAt(LocalDateTime.now());
-        notification.setReferenceId(request.getId());
+		LeaveApproval approval = new LeaveApproval();
+		approval.setManager(manager);
+		approval.setStatus("APPROVED");
+		approval.setComments(comments);
+		approval.setApprovalDate(LocalDate.now());
 
-        notificationService.createNotification(notification);
+		approvalRepo.save(approval);
 
-     // ========== ACTIVITY LOG ==========
-        activityLogService.log(
-                managerId,
-                "Approved leave ID " + leaveId +
-                        " for employee ID " +
-                        request.getEmployee().getId()
-        );
+		request.setLeaveApproval(approval);
+		leaveRequestRepo.save(request);
 
-        return new ApiResponse(200, "Leave approved successfully", request);
-    }
+		NotificationDTO notification = new NotificationDTO();
+		notification.setEmployeeId(request.getEmployee().getEmployeeId());
+		notification.setTitle("Leave Approved");
+		notification.setMessage("Your leave request has been approved.");
+		notification.setType("LEAVE");
+		notification.setStatus("APPROVED");
+		notification.setIsRead(false);
+		notification.setCreatedAt(LocalDateTime.now());
+		notification.setReferenceId(request.getId());
 
-    @Override
-    @Transactional
-    public ApiResponse rejectLeave(Long managerId,
-                                   Long leaveId,
-                                   String comments) {
+		notificationService.createNotification(notification);
 
-        if (comments == null || comments.isBlank()) {
-            return new ApiResponse(400,
-                    "Comments mandatory for rejection", null);
-        }
+		// ========== ACTIVITY LOG ==========
+		activityLogService.log(managerId,
+				"Approved leave ID " + leaveId + " for employee ID " + request.getEmployee().getId());
 
-        LeaveRequest request = leaveRequestRepo.findById(leaveId)
-                .orElse(null);
+		return new ApiResponse(200, "Leave approved successfully", request);
+	}
 
-        if (request == null) {
-            return new ApiResponse(404, "Leave not found", null);
-        }
-        
-        if (request.getLeaveApproval() != null) {
-            return new ApiResponse(400,
-                    "Leave already processed",
-                    null);
-        }
+	@Override
+	@Transactional
+	public ApiResponse rejectLeave(Long managerId, Long leaveId, String comments) {
 
-        if (request.getEmployee().getManager() == null ||
-            !request.getEmployee().getManager().getId().equals(managerId)) {
+		if (comments == null || comments.isBlank()) {
+			return new ApiResponse(400, "Comments mandatory for rejection", null);
+		}
 
-            return new ApiResponse(403,
-                    "Unauthorized to reject this leave", null);
-        }
+		LeaveRequest request = leaveRequestRepo.findById(leaveId).orElse(null);
 
-        Employee manager = employeeRepo.findById(managerId).orElse(null);
+		if (request == null) {
+			return new ApiResponse(404, "Leave not found", null);
+		}
 
-        LeaveApproval approval = new LeaveApproval();
-        approval.setManager(manager);
-        approval.setStatus("REJECTED");
-        approval.setComments(comments);
-        approval.setApprovalDate(LocalDate.now());
+		if (request.getLeaveApproval() != null) {
+			return new ApiResponse(400, "Leave already processed", null);
+		}
 
-        approvalRepo.save(approval);
+		if (request.getEmployee().getManager() == null
+				|| !request.getEmployee().getManager().getId().equals(managerId)) {
 
-        request.setLeaveApproval(approval);
-        leaveRequestRepo.save(request);
+			return new ApiResponse(403, "Unauthorized to reject this leave", null);
+		}
 
-        NotificationDTO notification = new NotificationDTO();
-        notification.setEmployeeId(request.getEmployee().getEmployeeId());
-        notification.setTitle("Leave Rejected");
-        notification.setMessage("Your leave was rejected. Reason: " + comments);
-        notification.setType("LEAVE");
-        notification.setStatus("REJECTED");
-        notification.setIsRead(false);
-        notification.setCreatedAt(LocalDateTime.now());
-        notification.setReferenceId(request.getId());
+		Employee manager = employeeRepo.findById(managerId).orElse(null);
 
-        notificationService.createNotification(notification);
+		LeaveApproval approval = new LeaveApproval();
+		approval.setManager(manager);
+		approval.setStatus("REJECTED");
+		approval.setComments(comments);
+		approval.setApprovalDate(LocalDate.now());
 
-     // ========== ACTIVITY LOG ==========
-        activityLogService.log(
-                managerId,
-                "Approved leave ID " + leaveId +
-                        " for employee ID " +
-                        request.getEmployee().getId()
-        );
+		approvalRepo.save(approval);
 
-        return new ApiResponse(200,
-                "Leave rejected successfully",
-                request);
-    }
+		request.setLeaveApproval(approval);
+		leaveRequestRepo.save(request);
 
-    @Override
-    public ApiResponse getTeamLeaveCalendar(Long managerId) {
+		NotificationDTO notification = new NotificationDTO();
+		notification.setEmployeeId(request.getEmployee().getEmployeeId());
+		notification.setTitle("Leave Rejected");
+		notification.setMessage("Your leave was rejected. Reason: " + comments);
+		notification.setType("LEAVE");
+		notification.setStatus("REJECTED");
+		notification.setIsRead(false);
+		notification.setCreatedAt(LocalDateTime.now());
+		notification.setReferenceId(request.getId());
 
-        if (!employeeRepo.existsById(managerId)) {
-            return new ApiResponse(404, "Manager not found", null);
-        }
+		notificationService.createNotification(notification);
 
-        List<LeaveRequest> calendar =
-                leaveRequestRepo.findByEmployee_Manager_Id(managerId);
+		activityLogService.log(managerId,
+				"Approved leave ID " + leaveId + " for employee ID " + request.getEmployee().getId());
 
-        return new ApiResponse(200, "Team leave calendar fetched", calendar);
-    }
+		return new ApiResponse(200, "Leave rejected successfully", request);
+	}
 
-    @Override
-    public ApiResponse getTeamLeaveBalance(Long managerId) {
+	@Override
+	public ApiResponse getTeamLeaveCalendar(Long managerId) {
 
-        if (!employeeRepo.existsById(managerId)) {
-            return new ApiResponse(404, "Manager not found", null);
-        }
+		if (!employeeRepo.existsById(managerId)) {
+			return new ApiResponse(404, "Manager not found", null);
+		}
 
-        List<Employee> team = employeeRepo.findByManager_Id(managerId);
+		List<LeaveRequest> calendar = leaveRequestRepo.findByEmployee_Manager_Id(managerId);
 
-        Map<String, Object> result = new HashMap<>();
+		return new ApiResponse(200, "Team leave calendar fetched", calendar);
+	}
 
-        for (Employee emp : team) {
-            result.put(
-                emp.getFirstName() + " " + emp.getLastName(),
-                leaveBalanceRepo.findByEmployee_Id(emp.getId())
-            );
-        }
-        
-        activityLogService.log(
-                managerId,
-                "Viewed team leave balances"
-        );
+	@Override
+	public ApiResponse getTeamLeaveBalance(Long managerId) {
 
-        return new ApiResponse(200,
-                "Team leave balance fetched",
-                result);
-    }
-    
+		if (!employeeRepo.existsById(managerId)) {
+			return new ApiResponse(404, "Manager not found", null);
+		}
+
+		List<Employee> team = employeeRepo.findByManager_Id(managerId);
+
+		Map<String, Object> result = new HashMap<>();
+
+		for (Employee emp : team) {
+			result.put(emp.getFirstName() + " " + emp.getLastName(), leaveBalanceRepo.findByEmployee_Id(emp.getId()));
+		}
+
+		activityLogService.log(managerId, "Viewed team leave balances");
+
+		return new ApiResponse(200, "Team leave balance fetched", result);
+	}
+
 }

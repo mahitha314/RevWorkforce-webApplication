@@ -22,8 +22,6 @@ public class AuthController {
 		this.passwordEncoder = passwordEncoder;
 		this.jwtUtil = jwtUtil;
 	}
-	
-	
 
 	@PostMapping("/login")
 	public Map<String, Object> login(@RequestBody Map<String, String> request) {

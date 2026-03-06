@@ -45,7 +45,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         this.request = request;
     }
 
-    // ================= APPLY LEAVE =================
+    
     @Override
     public ApiResponse applyLeave(LeaveRequestDTO dto) {
 
@@ -62,7 +62,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         request.setEndDate(dto.getEndDate());
         request.setReason(dto.getReason());
 
-        // 🔥 Create Approval with PENDING
+       
         LeaveApproval approval = new LeaveApproval();
         approval.setStatus("PENDING");
         approval.setLeaveRequest(request);
@@ -71,7 +71,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         leaveRequestRepo.save(request);
 
-     // 🔔 Notify Manager
+     // Notify Manager
         NotificationDTO notification = new NotificationDTO();
         notification.setTitle("New Leave Request");
         notification.setMessage(employee.getFirstName()
@@ -82,7 +82,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         notificationService.createNotificationForAll(notification); // change if manager-specific
 
-        // 📜 Activity Log
+        //  Activity Log
         activityLogService.log(
                 "LEAVE_APPLIED",
                 "Leave Management",
@@ -98,7 +98,6 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 null);
     }
 
-    // ================= CANCEL LEAVE =================
     @Override
     public ApiResponse cancelLeave(Long leaveId) {
 
@@ -119,7 +118,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         leaveRequestRepo.save(request);
         
-        // 🔔 Notify Manager
+        // Notify Manager
         NotificationDTO notification = new NotificationDTO();
         notification.setTitle("Leave Cancelled");
         notification.setMessage(request.getEmployee().getFirstName()
@@ -129,7 +128,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         notificationService.createNotificationForAll(notification);
 
-        // 📜 Activity Log
+        // Activity Log
         activityLogService.log(
                 "LEAVE_CANCELLED",
                 "Leave Management",
@@ -144,7 +143,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 null);
     }
 
-    // ================= LEAVE HISTORY =================
+   
     @Override
     public ApiResponse getLeaveHistory(Long employeeId) {
 
@@ -161,7 +160,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 dtoList);
     }
 
-    // ================= GET ONLY PENDING =================
+    
     @Override
     public ApiResponse getPendingLeaves(Long employeeId) {
 
@@ -179,7 +178,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 dtoList);
     }
 
-    // ================= GET SINGLE LEAVE =================
+   
     @Override
     public ApiResponse getLeaveById(Long leaveId) {
 
@@ -193,7 +192,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 dto);
     }
 
-    // ================= ENTITY → DTO =================
+    
     private LeaveRequestDTO convertToDTO(LeaveRequest leave) {
 
         long days = ChronoUnit.DAYS.between(

@@ -20,12 +20,12 @@ import jakarta.servlet.http.HttpServletRequest;
 @Transactional
 public class AnnouncementServiceImpl implements AnnouncementService {
 
-    private final AnnouncementRepository repository;
-    private final NotificationService notificationService;
-    private final ActivityLogService activityLogService;
-    private final HttpServletRequest request;
+	private final AnnouncementRepository repository;
+	private final NotificationService notificationService;
+	private final ActivityLogService activityLogService;
+	private final HttpServletRequest request;
 
-    public AnnouncementServiceImpl(AnnouncementRepository repository, NotificationService notificationService,
+	public AnnouncementServiceImpl(AnnouncementRepository repository, NotificationService notificationService,
 			ActivityLogService activityLogService, HttpServletRequest request) {
 		this.repository = repository;
 		this.notificationService = notificationService;
@@ -34,90 +34,69 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 	}
 
 	@Override
-    public Announcement saveAnnouncement(Announcement announcement) {
-        announcement.setPostedDate(LocalDate.now());
-        Announcement announced = repository.save(announcement);
-        
-     // 🔔 BROADCAST NOTIFICATION
-        NotificationDTO dto = new NotificationDTO();
-        dto.setTitle("New Company Announcement");
-        dto.setMessage(announced.getTitle() + " - " + announced.getMessage());
-        dto.setType("ANNOUNCEMENT");
-        dto.setStatus("ACTIVE");
-        dto.setReferenceId(announced.getId());
+	public Announcement saveAnnouncement(Announcement announcement) {
+		announcement.setPostedDate(LocalDate.now());
+		Announcement announced = repository.save(announcement);
 
-        notificationService.createNotificationForAll(dto);
-        
-     // 📝 Activity Log
-        activityLogService.log(
-                "Created Announcement",
-                "Announcement",
-                "Created announcement: " + announced.getTitle(),
-                "SUCCESS",
-                request
-        );
+		NotificationDTO dto = new NotificationDTO();
+		dto.setTitle("New Company Announcement");
+		dto.setMessage(announced.getTitle() + " - " + announced.getMessage());
+		dto.setType("ANNOUNCEMENT");
+		dto.setStatus("ACTIVE");
+		dto.setReferenceId(announced.getId());
 
-        return announced;
-    }
+		notificationService.createNotificationForAll(dto);
 
-    @Override
-    public Announcement updateAnnouncement(Long id, Announcement announcement) {
-        Announcement existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Announcement not found"));
+		activityLogService.log("Created Announcement", "Announcement", "Created announcement: " + announced.getTitle(),
+				"SUCCESS", request);
 
-        existing.setTitle(announcement.getTitle());
-        existing.setMessage(announcement.getMessage());
+		return announced;
+	}
 
-        Announcement updated = repository.save(existing);
+	@Override
+	public Announcement updateAnnouncement(Long id, Announcement announcement) {
+		Announcement existing = repository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Announcement not found"));
 
-        // 🔔 Optional: Notify All About Update
-        NotificationDTO dto = new NotificationDTO();
-        dto.setTitle("Announcement Updated");
-        dto.setMessage("Announcement \"" + existing.getTitle() + "\" has been updated.");
-        dto.setType("ANNOUNCEMENT");
-        dto.setStatus("ACTIVE");
-        dto.setReferenceId(updated.getId());
+		existing.setTitle(announcement.getTitle());
+		existing.setMessage(announcement.getMessage());
 
-        notificationService.createNotificationForAll(dto);
-        
-     // 📝 Activity Log
-        activityLogService.log(
-                "Updated Announcement",
-                "Announcement",
-                "Updated announcement: " + updated.getTitle(),
-                "SUCCESS",
-                request
-        );
+		Announcement updated = repository.save(existing);
 
-        return updated;
-    }
+		NotificationDTO dto = new NotificationDTO();
+		dto.setTitle("Announcement Updated");
+		dto.setMessage("Announcement \"" + existing.getTitle() + "\" has been updated.");
+		dto.setType("ANNOUNCEMENT");
+		dto.setStatus("ACTIVE");
+		dto.setReferenceId(updated.getId());
 
-    @Override
-    public void deleteAnnouncement(Long id) {
-    	Announcement existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Announcement not found"));
+		notificationService.createNotificationForAll(dto);
 
-        repository.delete(existing);
+		activityLogService.log("Updated Announcement", "Announcement", "Updated announcement: " + updated.getTitle(),
+				"SUCCESS", request);
 
-        // 📝 Activity Log
-        activityLogService.log(
-                "Deleted Announcement",
-                "Announcement",
-                "Deleted announcement: " + existing.getTitle(),
-                "SUCCESS",
-                request
-        );
-    }
+		return updated;
+	}
 
-    @Override
-    public Announcement getAnnouncementById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Announcement not found"));
-    }
+	@Override
+	public void deleteAnnouncement(Long id) {
+		Announcement existing = repository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Announcement not found"));
 
-    @Override
-    public List<Announcement> getAllAnnouncements() {
-        return repository.findAllByOrderByPostedDateDesc();
-    }
-    
+		repository.delete(existing);
+
+		activityLogService.log("Deleted Announcement", "Announcement", "Deleted announcement: " + existing.getTitle(),
+				"SUCCESS", request);
+	}
+
+	@Override
+	public Announcement getAnnouncementById(Long id) {
+		return repository.findById(id).orElseThrow(() -> new RuntimeException("Announcement not found"));
+	}
+
+	@Override
+	public List<Announcement> getAllAnnouncements() {
+		return repository.findAllByOrderByPostedDateDesc();
+	}
+
 }

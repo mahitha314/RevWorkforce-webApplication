@@ -5,45 +5,90 @@
     <th:block th:replace="fragments/header :: header('Team Structure')"></th:block>
 
     <style>
+        body {
+            background: #eef2f7;
+        }
+
         .content {
             margin-left: 260px;
             margin-top: 90px;
+            padding: 40px;
+        }
+
+        .main-card {
+            background: #ffffff;
+            border-radius: 20px;
             padding: 30px;
-            background: #f4f6fa;
-            min-height: 100vh;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
-        .card-box {
-            background: #fff;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 20px;
         }
 
-        .employee-card {
+        .count-box {
+            background: linear-gradient(135deg, #4e73df, #224abe);
+            color: white;
             padding: 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-bottom: 25px;
         }
 
-        .employee-card:hover {
-            background: #f0f4ff;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #4e73df;
+            color: white;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:hover {
+            background: #f1f4ff;
+        }
+
+        .btn-view {
+            background: #4e73df;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-view:hover {
+            background: #224abe;
         }
 
         .profile-section {
             display: none;
-            margin-top: 25px;
+            margin-top: 40px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
         }
 
-        .count-box {
-            background: #e8f0ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
+        .profile-section h4 {
+            margin-bottom: 15px;
         }
+
     </style>
 </head>
 
@@ -54,26 +99,40 @@
 
 <div class="content">
 
-    <h3 class="fw-bold mb-4">My Team Members</h3>
+    <div class="main-card">
 
-    <div class="card-box">
+        <h2 class="page-title">My Team Members</h2>
 
-        <!-- Employee Count -->
+        <!-- Count -->
         <div id="employeeCount" class="count-box">
             Loading count...
         </div>
 
-        <!-- Team List -->
-        <div id="teamContainer">
-            Loading team members...
+        <!-- Table -->
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="teamTableBody">
+                    <tr>
+                        <td colspan="5">Loading team members...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- Profile Section -->
-        <div id="profileSection" class="profile-section card p-4 shadow-sm">
-            <h4 id="profileName"></h4>
-            <hr>
+        <div id="profileSection" class="profile-section">
+            <h4>Employee Profile</h4>
+            <p><strong>Name:</strong> <span id="profileName"></span></p>
             <p><strong>Email:</strong> <span id="profileEmail"></span></p>
-            <p><strong>Phone:</strong> <span id="profilePhone"></span></p>
             <p><strong>Department:</strong> <span id="profileDepartment"></span></p>
             <p><strong>Designation:</strong> <span id="profileDesignation"></span></p>
         </div>
@@ -81,7 +140,6 @@
     </div>
 </div>
 
-<!-- Manager ID -->
 <script th:inline="javascript">
     const managerId = /*[[${managerId}]]*/ 0;
 </script>
@@ -91,8 +149,8 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     if (!managerId) {
-        document.getElementById("teamContainer").innerHTML =
-            "<p style='color:red'>Manager ID not found.</p>";
+        document.getElementById("teamTableBody").innerHTML =
+            "<tr><td colspan='5'>Manager ID not found.</td></tr>";
         return;
     }
 
@@ -106,81 +164,78 @@ function loadTeam() {
         .then(result => {
 
             const team = result.data || [];
-            const container = document.getElementById("teamContainer");
+            const tableBody = document.getElementById("teamTableBody");
             const countBox = document.getElementById("employeeCount");
 
-            container.innerHTML = "";
-
-            // ✅ Show Count
+            tableBody.innerHTML = "";
             countBox.innerHTML = `Total Employees Assigned: ${team.length}`;
 
             if (team.length === 0) {
-                container.innerHTML = "<p>No team members assigned.</p>";
+                tableBody.innerHTML =
+                    "<tr><td colspan='5'>No team members assigned.</td></tr>";
                 return;
             }
 
             team.forEach(emp => {
 
                 const fullName =
-                    (emp.firstName || "") + " " + (emp.lastName || "");
+                    emp.fullName ||
+                    emp.name ||
+                    ((emp.firstName || "") + " " + (emp.lastName || "")) ||
+                    "N/A";
 
-                const div = document.createElement("div");
-                div.className = "employee-card";
-
-                div.innerHTML = `
-                    <div>
-                        <strong>${fullName}</strong>
-                    </div>
-                    <button class="btn btn-sm btn-primary"
-                        onclick="loadProfile(${emp.id})">
-                        View
-                    </button>
+                const row = `
+                    <tr>
+                        <td>${fullName}</td>
+                        <td>${emp.email || "N/A"}</td>
+                        <td>${emp.department || "N/A"}</td>
+                        <td>${emp.designation || "N/A"}</td>
+                        <td>
+                            <button class="btn-view"
+                                onclick="loadProfile(${emp.id})">
+                                View
+                            </button>
+                        </td>
+                    </tr>
                 `;
 
-                container.appendChild(div);
+                tableBody.innerHTML += row;
             });
         })
         .catch(() => {
-            document.getElementById("teamContainer").innerHTML =
-                "<p style='color:red'>Error loading team.</p>";
+            document.getElementById("teamTableBody").innerHTML =
+                "<tr><td colspan='5'>Error loading team.</td></tr>";
         });
-}		function loadProfile(employeeId) {
+}
 
-		    fetch(`/manager/team/${managerId}/profile/${employeeId}`)
-		        .then(res => res.json())
-		        .then(result => {
+function loadProfile(employeeId) {
 
-		            console.log(result.data); // keep this for debugging
+    fetch(`/manager/team/${managerId}/profile/${employeeId}`)
+        .then(res => res.json())
+        .then(result => {
 
-		            const emp = result.data;
+            const emp = result.data;
 
-		            // ✅ Handle all possible name fields
-		            const fullName =
-		                emp.fullName ||
-		                ((emp.firstName || "") + " " + (emp.lastName || "")) ||
-		                emp.name ||
-		                "N/A";
+            const fullName =
+                emp.fullName ||
+                ((emp.firstName || "") + " " + (emp.lastName || "")) ||
+                "N/A";
 
-		            const phone =
-		                emp.phoneNumber ||
-		                emp.mobileNumber ||
-		                emp.phone ||
-		                "N/A";
+            document.getElementById("profileName").innerText = fullName;
+            document.getElementById("profileEmail").innerText =
+                emp.email || "N/A";
+            document.getElementById("profileDepartment").innerText =
+                emp.department || "N/A";
+            document.getElementById("profileDesignation").innerText =
+                emp.designation || "N/A";
 
-		            document.getElementById("profileName").innerText = fullName;
-		            document.getElementById("profileEmail").innerText = emp.email || emp.emailId || "N/A";
-		            document.getElementById("profilePhone").innerText = phone;
-		            document.getElementById("profileDepartment").innerText =
-		                emp.department || emp.departmentName || "N/A";
-		            document.getElementById("profileDesignation").innerText =
-		                emp.designation || emp.designationName || "N/A";
-
-		            document.getElementById("profileSection").style.display = "block";
-		        })
-		        .catch(() => {
-		            alert("Error loading employee details.");
-		        });
-		}
+            document.getElementById("profileSection").style.display = "block";
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        })
+        .catch(() => {
+            alert("Error loading employee details.");
+        });
+}
 
 </script>
 

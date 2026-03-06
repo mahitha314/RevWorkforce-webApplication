@@ -21,4 +21,8 @@
     <fullyQualifiedTypeName name="com.revworkforce.repository.SystemActivityLogRepository"/>
     <fullyQualifiedTypeName name="com.fasterxml.jackson.annotation.JsonBackReference"/>
     <fullyQualifiedTypeName name="org.springframework.stereotype.Repository"/>
+    <fullyQualifiedTypeName name="com.revworkforce.adminservice.ActivityLogService"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.ControllerAdvice"/>
+    <fullyQualifiedTypeName name="com.revworkforce.model.Notification"/>
+    <fullyQualifiedTypeName name="com.revworkforce.repository.NotificationRepository"/>
 </qualifiedTypeNameHistroy>

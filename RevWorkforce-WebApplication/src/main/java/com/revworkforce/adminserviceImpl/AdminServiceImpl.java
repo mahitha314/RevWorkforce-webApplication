@@ -7,46 +7,47 @@ import org.springframework.stereotype.Service;
 import com.revworkforce.adminservice.AdminService;
 import com.revworkforce.model.Employee;
 import com.revworkforce.repository.EmployeeRepository;
+
 @Service
-public class AdminServiceImpl  implements AdminService{
+public class AdminServiceImpl implements AdminService {
 	private final EmployeeRepository employeeRepository;
 
-    public AdminServiceImpl(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
-    }
+	public AdminServiceImpl(EmployeeRepository employeeRepository) {
+		this.employeeRepository = employeeRepository;
+	}
 
-    @Override
-    public Optional<Employee> getEmployeeByEmail(String email) {
-        return employeeRepository.findByEmail(email);
-    }
+	@Override
+	public Optional<Employee> getEmployeeByEmail(String email) {
+		return employeeRepository.findByEmail(email);
+	}
 
 	@Override
 	public long getTotalEmployees() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 	@Override
 	public long getTotalManagers() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 	@Override
 	public long getTotalRegularEmployees() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 	@Override
 	public long getPendingLeaves() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 	@Override
 	public long getApprovedLeaves() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 }

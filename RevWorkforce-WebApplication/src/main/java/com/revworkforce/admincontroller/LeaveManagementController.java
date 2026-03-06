@@ -9,49 +9,41 @@ import com.revworkforce.dto.*;
 import com.revworkforce.model.LeaveBalance;
 
 @RestController
-@RequestMapping("/api/admin/leave")   
+@RequestMapping("/api/admin/leave")
 public class LeaveManagementController {
 
-    private final LeaveManagementService service;
+	private final LeaveManagementService service;
 
-    public LeaveManagementController(LeaveManagementService service) {
-        this.service = service;
-    }
+	public LeaveManagementController(LeaveManagementService service) {
+		this.service = service;
+	}
 
-  
-    @PostMapping("/type")
-    public LeaveTypeDTO createLeaveType(@RequestBody LeaveTypeDTO dto) {
-        return service.createLeaveType(dto);
-    }
+	@PostMapping("/type")
+	public LeaveTypeDTO createLeaveType(@RequestBody LeaveTypeDTO dto) {
+		return service.createLeaveType(dto);
+	}
 
-    @GetMapping("/type")
-    public List<LeaveTypeDTO> getAllTypes() {
-        return service.getAllLeaveTypes();
-    }
+	@GetMapping("/type")
+	public List<LeaveTypeDTO> getAllTypes() {
+		return service.getAllLeaveTypes();
+	}
 
-    
-    @PostMapping("/assign")
-    public LeaveBalance assignLeave(@RequestParam Long employeeId,
-                                    @RequestParam Long leaveTypeId,
-                                    @RequestParam int totalDays) {
+	@PostMapping("/assign")
+	public LeaveBalance assignLeave(@RequestParam Long employeeId, @RequestParam Long leaveTypeId,
+			@RequestParam int totalDays) {
 
-        return service.assignLeaveToEmployee(employeeId, leaveTypeId, totalDays);
-    }
+		return service.assignLeaveToEmployee(employeeId, leaveTypeId, totalDays);
+	}
 
-    
-    @PostMapping("/adjust")
-    public LeaveBalance adjustLeave(@RequestBody LeaveBalanceDTO dto) {
-        return service.adjustLeave(dto);
-    }
+	@PostMapping("/adjust")
+	public LeaveBalance adjustLeave(@RequestBody LeaveBalanceDTO dto) {
+		return service.adjustLeave(dto);
+	}
 
-   
-    @GetMapping("/employee/{id}")
-    public List<LeaveBalance> employeeLeave(@PathVariable Long id) {
-        return service.getEmployeeLeaveInfo(id);
-    }
+	@GetMapping("/employee/{id}")
+	public List<LeaveBalance> employeeLeave(@PathVariable Long id) {
+		return service.getEmployeeLeaveInfo(id);
+	}
 
-    @GetMapping("/department/{id}")
-    public List<LeaveBalance> departmentReport(@PathVariable Long id) {
-        return service.getDepartmentLeaveReport(id);
-    }
+	
 }

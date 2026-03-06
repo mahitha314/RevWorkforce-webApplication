@@ -25,21 +25,18 @@ public class TeamStructureServiceImpl implements TeamStructureService {
 		this.employeeRepo = employeeRepo;
 		this.activityLogService = activityLogService;
 	}
-	
-	// ================= VALIDATE MANAGER =================
-    private Employee validateManager(Long managerId) {
 
-        Employee manager = employeeRepo.findById(managerId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Manager not found"));
+	private Employee validateManager(Long managerId) {
 
-        if (!"MANAGER".equalsIgnoreCase(manager.getRole())) {
-            throw new IllegalStateException(
-                    "Only managers can access team structure");
-        }
+		Employee manager = employeeRepo.findById(managerId)
+				.orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
 
-        return manager;
-    }
+		if (!"MANAGER".equalsIgnoreCase(manager.getRole())) {
+			throw new IllegalStateException("Only managers can access team structure");
+		}
+
+		return manager;
+	}
 
 	@Override
 	public ApiResponse getTeamStructure(Long managerId) {
@@ -59,10 +56,7 @@ public class TeamStructureServiceImpl implements TeamStructureService {
 						emp.getDepartment().getName(), emp.getDesignation().getTitle()))
 				.collect(Collectors.toList());
 
-		activityLogService.log(
-                managerId,
-                "Viewed team structure"
-        );
+		activityLogService.log(managerId, "Viewed team structure");
 
 		return new ApiResponse(200, "Team structure fetched", teamDTO);
 	}
@@ -82,10 +76,7 @@ public class TeamStructureServiceImpl implements TeamStructureService {
 				employee.getFirstName() + " " + employee.getLastName(), employee.getEmail(), employee.getRole(),
 				employee.getDepartment().getName(), employee.getDesignation().getTitle());
 
-		activityLogService.log(
-                managerId,
-                "Viewed profile of employee ID: " + employeeId
-        );
+		activityLogService.log(managerId, "Viewed profile of employee ID: " + employeeId);
 
 		return new ApiResponse(200, "Employee profile fetched", dto);
 	}

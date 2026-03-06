@@ -24,15 +24,7 @@
                         <i class="bi bi-person-plus"></i> Add Employee
                     </button>
 
-                    <button type="button" id="updateBtn"
-                            class="action-btn w-100 mb-3">
-                        <i class="bi bi-pencil-square"></i> Update Employee
-                    </button>
-
-                    <button type="button" id="deleteBtn"
-                            class="action-btn w-100">
-                        <i class="bi bi-trash"></i> Delete Employee
-                    </button>
+                 
                 </div>
             </div>
 
@@ -131,70 +123,6 @@
                                     <button type="submit"
                                             class="btn btn-primary px-5 py-2">
                                         Save Employee
-                                    </button>
-                                </div>
-
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ================= UPDATE SECTION ================= -->
-                <div id="updateSection" style="display:none;">
-                    <div class="card form-card shadow border-0">
-                        <div class="card-body p-5">
-
-                            <h4 class="fw-bold mb-4 text-warning">
-                                <i class="bi bi-pencil-square"></i> Update Employee
-                            </h4>
-
-                            <form id="updateForm">
-                                <div class="row g-4">
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Employee ID</label>
-										<input type="text" class="form-control" name="employeeId" required>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">First Name</label>
-                                        <input type="text" class="form-control" name="firstName">
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Last Name</label>
-                                        <input type="text" class="form-control" name="lastName">
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email">
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Department</label>
-                                        <select class="form-select" id="updateDepartmentId"
-                                                name="departmentId"></select>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Designation</label>
-                                        <select class="form-select" id="updateDesignationId"
-                                                name="designationId"></select>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Salary</label>
-                                        <input type="number" step="0.01"
-                                               class="form-control" name="salary">
-                                    </div>
-
-                                </div>
-
-                                <div class="text-center mt-5">
-                                    <button type="submit"
-                                            class="btn btn-warning px-5 py-2">
-                                        Update Employee
                                     </button>
                                 </div>
 
@@ -322,300 +250,208 @@
 		opacity: 0.9;
 	}
 </style>
-
-
-<!-- ===== SCRIPT ===== -->
 <script>
+document.addEventListener("DOMContentLoaded", function () {
 
-	document.addEventListener("DOMContentLoaded", function () {
+    loadDepartments();
+    loadManagers();
 
-	    loadDepartments();
-	    loadManagers();
+    const addBtn = document.getElementById("addBtn");
+    const updateBtn = document.getElementById("updateBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
 
-	    const addBtn = document.getElementById("addBtn");
-	    const updateBtn = document.getElementById("updateBtn");
-	    const deleteBtn = document.getElementById("deleteBtn");
+    const addSection = document.getElementById("addSection");
+    const updateSection = document.getElementById("updateSection");
+    const deleteSection = document.getElementById("deleteSection");
 
-	    const addSection = document.getElementById("addSection");
-	    const updateSection = document.getElementById("updateSection");
-	    const deleteSection = document.getElementById("deleteSection");
+    showAdd();
 
-	    // Default
-	    showAdd();
+    if (addBtn) addBtn.addEventListener("click", showAdd);
+    if (updateBtn) updateBtn.addEventListener("click", showUpdate);
+    if (deleteBtn) deleteBtn.addEventListener("click", showDelete);
 
-	    addBtn.addEventListener("click", showAdd);
-	    updateBtn.addEventListener("click", showUpdate);
-	    deleteBtn.addEventListener("click", showDelete);
+    function showAdd() {
+        if (addSection) addSection.style.display = "block";
+        if (updateSection) updateSection.style.display = "none";
+        if (deleteSection) deleteSection.style.display = "none";
 
-	    function showAdd() {
-	        addSection.style.display = "block";
-	        updateSection.style.display = "none";
-	        deleteSection.style.display = "none";
+        addBtn?.classList.add("active-btn");
+        updateBtn?.classList.remove("active-btn");
+        deleteBtn?.classList.remove("active-btn");
+    }
 
-	        addBtn.classList.add("active-btn");
-	        updateBtn.classList.remove("active-btn");
-	        deleteBtn.classList.remove("active-btn");
-	    }
+    function showUpdate() {
+        if (addSection) addSection.style.display = "none";
+        if (updateSection) updateSection.style.display = "block";
+        if (deleteSection) deleteSection.style.display = "none";
 
-	    function showUpdate() {
-	        addSection.style.display = "none";
-	        updateSection.style.display = "block";
-	        deleteSection.style.display = "none";
+        updateBtn?.classList.add("active-btn");
+        addBtn?.classList.remove("active-btn");
+        deleteBtn?.classList.remove("active-btn");
+    }
 
-	        updateBtn.classList.add("active-btn");
-	        addBtn.classList.remove("active-btn");
-	        deleteBtn.classList.remove("active-btn");
-	    }
+    function showDelete() {
+        if (addSection) addSection.style.display = "none";
+        if (updateSection) updateSection.style.display = "none";
+        if (deleteSection) deleteSection.style.display = "block";
 
-	    function showDelete() {
-	        addSection.style.display = "none";
-	        updateSection.style.display = "none";
-	        deleteSection.style.display = "block";
+        deleteBtn?.classList.add("active-btn");
+        addBtn?.classList.remove("active-btn");
+        updateBtn?.classList.remove("active-btn");
+    }
 
-	        deleteBtn.classList.add("active-btn");
-	        addBtn.classList.remove("active-btn");
-	        updateBtn.classList.remove("active-btn");
-	    }
-	});
+    // ================= SAVE EMPLOYEE WITH VALIDATION =================
+    document.getElementById("addForm").addEventListener("submit", function (e) {
 
-	// ================= LOAD DEPARTMENTS =================
-	function loadDepartments() {
+        e.preventDefault();
 
-		fetch("/admin/departments")
-			.then(res => res.json())
-			.then(api => {
+        const form = this;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
 
-				const list = api.data || [];
+        // ✅ EMAIL VALIDATION (@rev.com only)
+        if (!data.email.endsWith("@rev.com")) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Email",
+                text: "Email must end with @rev.com"
+            });
+            return;
+        }
 
-				const deptSelect = document.getElementById("departmentId");
-				deptSelect.innerHTML = '<option value="">Select Department</option>';
+        // ✅ PHONE VALIDATION (10 digits only)
+        if (!/^[0-9]{10}$/.test(data.phoneNumber)) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Phone Number",
+                text: "Phone number must be exactly 10 digits"
+            });
+            return;
+        }
 
-				list.forEach(dept => {
-					deptSelect.innerHTML +=
-						`<option value="${dept.id}">${dept.name}</option>`;
-				});
-			})
-			.catch(err => console.error("Department Error:", err));
-	}
+        // ✅ PASSWORD VALIDATION
+        const passwordRegex =
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*?&]).{8,}$/;
+
+        if (!passwordRegex.test(data.password)) {
+            Swal.fire({
+                icon: "error",
+                title: "Weak Password",
+                text:
+                    "Password must be 8+ chars, include upper, lower, number & special char"
+            });
+            return;
+        }
+
+        data.salary = parseFloat(data.salary);
+        data.departmentId = parseInt(data.departmentId);
+        data.designationId = parseInt(data.designationId);
+        data.managerId = data.managerId
+            ? parseInt(data.managerId)
+            : null;
+
+        fetch("/admin/employees", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.json();
+        })
+        .then(response => {
+
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: response.message
+            });
+
+            form.reset();
+        })
+        .catch(() => {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Employee save failed"
+            });
+        });
+    });
+
+});
 
 
-	// ================= LOAD DESIGNATIONS =================
-	document.getElementById("departmentId")
-		.addEventListener("change", function () {
+// ================= LOAD DEPARTMENTS =================
+function loadDepartments() {
+    fetch("/admin/departments")
+        .then(res => res.json())
+        .then(api => {
 
-			const deptId = this.value;
+            const list = api.data || [];
+            const dept = document.getElementById("departmentId");
 
-			const desigSelect = document.getElementById("designationId");
-			desigSelect.innerHTML = '<option value="">Select Designation</option>';
+            if (!dept) return;
 
-			if (!deptId) return;
+            dept.innerHTML =
+                '<option value="">Select Department</option>';
 
-			fetch(`/admin/designations/by-department/${deptId}`)
-				.then(res => res.json())
-				.then(api => {
-
-					const list = api.data || [];
-
-					list.forEach(desig => {
-						desigSelect.innerHTML +=
-							`<option value="${desig.id}">${desig.title}</option>`;
-					});
-				})
-				.catch(err => console.error("Designation Error:", err));
-		});
+            list.forEach(d => {
+                dept.innerHTML +=
+                    `<option value="${d.id}">${d.name}</option>`;
+            });
+        });
+}
 
 
-	// ================= LOAD MANAGERS =================
-	function loadManagers() {
+// ================= LOAD DESIGNATIONS =================
+document.getElementById("departmentId")
+?.addEventListener("change", function () {
 
-		fetch("/admin/managers")
-			.then(res => res.json())
-			.then(api => {
+    const deptId = this.value;
+    const desig = document.getElementById("designationId");
 
-				const list = api.data || [];
+    desig.innerHTML =
+        '<option value="">Select Designation</option>';
 
-				const managerSelect = document.getElementById("managerId");
-				managerSelect.innerHTML =
-					'<option value="">Select Manager</option>';
+    if (!deptId) return;
 
-				list.forEach(emp => {
-					managerSelect.innerHTML +=
-						`<option value="${emp.id}">
+    fetch(`/admin/designations/by-department/${deptId}`)
+        .then(res => res.json())
+        .then(api => {
+
+            const list = api.data || [];
+
+            list.forEach(d => {
+                desig.innerHTML +=
+                    `<option value="${d.id}">${d.title}</option>`;
+            });
+        });
+});
+
+
+// ================= LOAD MANAGERS =================
+function loadManagers() {
+
+    fetch("/admin/managers")
+        .then(res => res.json())
+        .then(api => {
+
+            const list = api.data || [];
+            const manager = document.getElementById("managerId");
+
+            if (!manager) return;
+
+            manager.innerHTML =
+                '<option value="">Select Manager</option>';
+
+            list.forEach(emp => {
+                manager.innerHTML +=
+                    `<option value="${emp.id}">
                         ${emp.firstName} ${emp.lastName}
                     </option>`;
-				});
-			})
-			.catch(err => console.error("Manager Error:", err));
-	}
-
-
-	// ================= UPDATE EMPLOYEE =================
-	document.getElementById("updateForm").addEventListener("submit", function (e) {
-	    e.preventDefault();
-
-	    const form = e.target;
-	    const employeeId = form.employeeId.value;   // MUST be employeeId (String)
-
-	    fetch(`/admin/employees/${employeeId}`, {
-	        method: "PUT",
-	        headers: {
-	            "Content-Type": "application/json"
-	        },
-	        body: JSON.stringify({
-	            firstName: form.firstName.value,
-	            lastName: form.lastName.value,
-	            email: form.email.value,
-	            departmentId: form.departmentId.value,
-	            designationId: form.designationId.value,
-	            salary: form.salary.value
-	        })
-	    })
-	    .then(res => {
-	        if (!res.ok) throw new Error("Update failed");
-	        return res.json();
-	    })
-	    .then(data => {
-	        Swal.fire({
-	            icon: "success",
-	            title: "Updated!",
-	            text: "Employee updated successfully"
-	        });
-	    })
-	    .catch(err => {
-	        Swal.fire({
-	            icon: "error",
-	            title: "Error",
-	            text: "Update failed"
-	        });
-	    });
-	});
-
-	// ================= SEARCH FOR DELETE =================
-	function searchDeleteEmployee() {
-
-	    const employeeId = document.getElementById("deleteEmployeeId").value;
-	    if (!employeeId) return;
-
-	    fetch(`/admin/employees/${employeeId}`)
-	        .then(res => {
-	            if (!res.ok) throw new Error("Employee Not Found");
-	            return res.json();
-	        })
-	        .then(data => {
-
-	            const emp = data.data;  // if your response is wrapped
-
-	            document.getElementById("deleteResult").innerHTML = `
-	                <div class="mb-3">
-	                    <strong>Name:</strong> ${emp.firstName} ${emp.lastName}<br>
-	                    <strong>Email:</strong> ${emp.email}<br>
-	                   <strong>Department:</strong> ${emp.department?.name || 'N/A'}
-	                </div>
-
-	                <button class="btn btn-danger"
-	                        onclick="deleteEmployee('${emp.employeeId}')">
-	                    Confirm Delete
-	                </button>
-	            `;
-	        })
-	        .catch(() => {
-	            document.getElementById("deleteResult").innerHTML =
-	                `<div class="text-danger">Employee not found</div>`;
-	        });
-	}
-
-	// ================= DELETE EMPLOYEE =================
-	function deleteEmployee(employeeId) {
-
-	    Swal.fire({
-	        title: "Are you sure?",
-	        text: "This will permanently delete the employee!",
-	        icon: "warning",
-	        showCancelButton: true,
-	        confirmButtonColor: "#d33",
-	        confirmButtonText: "Yes, Delete"
-	    }).then((result) => {
-
-	        if (result.isConfirmed) {
-
-	            fetch(`/admin/employees/${employeeId}`, {
-	                method: "DELETE"
-	            })
-	            .then(res => {
-	                if (!res.ok) throw new Error("Delete failed");
-	                return res.text();
-	            })
-	            .then(() => {
-
-	                Swal.fire({
-	                    icon: "success",
-	                    title: "Deleted!",
-	                    text: "Employee deleted successfully"
-	                });
-
-	                document.getElementById("deleteResult").innerHTML = "";
-	                document.getElementById("deleteEmployeeId").value = "";
-	            })
-	            .catch(() => {
-	                Swal.fire({
-	                    icon: "error",
-	                    title: "Error",
-	                    text: "Delete failed"
-	                });
-	            });
-	        }
-	    });
-	}
-
-	// ================= SAVE EMPLOYEE =================
-	document.addEventListener("DOMContentLoaded", function () {
-
-	    // ================= SAVE EMPLOYEE =================
-	    document.getElementById("addForm").addEventListener("submit", function (e) {
-
-	        e.preventDefault();
-
-	        const formData = new FormData(this);
-	        const data = Object.fromEntries(formData.entries());
-
-	        data.salary = parseFloat(data.salary);
-	        data.departmentId = parseInt(data.departmentId);
-	        data.designationId = parseInt(data.designationId);
-	        data.managerId = data.managerId ? parseInt(data.managerId) : null;
-
-	        fetch("/admin/employees", {
-	            method: "POST",
-	            headers: {"Content-Type": "application/json"},
-	            body: JSON.stringify(data)
-	        })
-	        .then(res => {
-	            if (!res.ok) throw new Error("Save failed");
-	            return res.json();
-	        })
-	        .then(response => {
-
-	            Swal.fire({
-	                icon: 'success',
-	                title: 'Success',
-	                text: response.message || "Employee added successfully"
-	            });
-
-	            document.getElementById("addForm").reset();
-	        })
-	        .catch(err => {
-
-	            Swal.fire({
-	                icon: 'error',
-	                title: 'Error',
-	                text: "Employee save failed"
-	            });
-
-	            console.error(err);
-	        });
-
-	    });
-
-	});
+            });
+        });
+}
 </script>
 
 </body>
