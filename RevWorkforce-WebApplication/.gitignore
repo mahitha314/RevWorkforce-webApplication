@@ -43,3 +43,19 @@ build/
 # Maven/Build
 target/
 bin/
+
+# Eclipse
+.metadata/
+.settings/
+.project
+.classpath
+
+# Maven
+target/
+
+# Logs
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
