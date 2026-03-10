@@ -1,11 +1,9 @@
 package com.revworkforce.config;
 
 import java.util.Optional;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import com.revworkforce.model.Department;
 import com.revworkforce.model.Designation;
 import com.revworkforce.model.Employee;
@@ -31,6 +29,7 @@ public class DataInitializer implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+
 		System.out.println("DataInitializer Started...");
 
 		if (employeeRepository.findByEmail("admin@rev.com").isPresent()) {
@@ -72,4 +71,5 @@ public class DataInitializer implements CommandLineRunner {
 
 		System.out.println("DEFAULT ADMIN CREATED");
 	}
+	
 }

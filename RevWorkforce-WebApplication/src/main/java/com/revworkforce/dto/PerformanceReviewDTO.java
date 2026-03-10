@@ -39,8 +39,6 @@ public class PerformanceReviewDTO {
 		this.submittedDate = submittedDate;
 	}
 
-	// Getters & Setters
-
 	public Long getReviewId() {
 		return reviewId;
 	}
@@ -89,7 +87,7 @@ public class PerformanceReviewDTO {
 		this.areasOfImprovement = areasOfImprovement;
 	}
 
-	public Integer getSelfRating() { // FIXED
+	public Integer getSelfRating() {
 		return selfRating;
 	}
 

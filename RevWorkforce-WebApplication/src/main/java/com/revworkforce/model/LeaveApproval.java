@@ -1,9 +1,7 @@
 package com.revworkforce.model;
 
 import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -30,7 +28,7 @@ public class LeaveApproval {
 	@OneToOne(mappedBy="leaveApproval")
 	@JsonBackReference(value="request-approval")
 	private LeaveRequest leaveRequest;
-	
+
 	public LeaveApproval() {}
 
 	public LeaveApproval(Long id, Employee manager, String status, String comments, LocalDate approvalDate) {

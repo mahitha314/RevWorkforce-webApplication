@@ -2,8 +2,8 @@ package com.revworkforce.dto;
 
 import jakarta.validation.constraints.*;
 
-
 public class EmployeeDTO {
+
 	@NotBlank
 	private String employeeId;
 
@@ -43,7 +43,7 @@ public class EmployeeDTO {
     @Pattern(regexp = "^[0-9]{10}$",
             message = "Phone number must be 10 digits")
     private String phoneNumber;
-	
+
 	@NotBlank
 	private String address;
 
@@ -153,4 +153,5 @@ public class EmployeeDTO {
 	public void setEmergencyContact(String emergencyContact) {
 		this.emergencyContact = emergencyContact;
 	}
+
 }

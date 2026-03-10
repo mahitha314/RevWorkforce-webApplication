@@ -33,4 +33,5 @@ public interface EmployeeManagementService {
 	long countEmployees();
 
 	long countManagers();
+
 }

@@ -4,45 +4,38 @@ import java.time.LocalDate;
 
 public class LeaveRequestDTO {
 
-    private Long id;
+	private Long id;
 
-    private Long employeeId;
-    private String employeeName;
+	private Long employeeId;
+	private String employeeName;
 
-    private Long leaveTypeId;
-    private String leaveTypeName;
+	private Long leaveTypeId;
+	private String leaveTypeName;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Integer totalDays;
+	private LocalDate startDate;
+	private LocalDate endDate;
+	private Integer totalDays;
 
-    private String reason;
-    private String status;  
-   
-    public LeaveRequestDTO() {}
+	private String reason;
+	private String status;
 
-    public LeaveRequestDTO(Long id,
-            Long employeeId,
-            String employeeName,
-            Long leaveTypeId,
-            String leaveTypeName,
-            LocalDate startDate,
-            LocalDate endDate,
-            int totalDays,
-            String reason,
-            String status) {
+	public LeaveRequestDTO() {
+	}
 
-this.id = id;
-this.employeeId = employeeId;
-this.employeeName = employeeName;
-this.leaveTypeId = leaveTypeId;
-this.leaveTypeName = leaveTypeName;
-this.startDate = startDate;
-this.endDate = endDate;
-this.totalDays = totalDays;
-this.reason = reason;
-this.status = status;
-}
+	public LeaveRequestDTO(Long id, Long employeeId, String employeeName, Long leaveTypeId, String leaveTypeName,
+			LocalDate startDate, LocalDate endDate, int totalDays, String reason, String status) {
+
+		this.id = id;
+		this.employeeId = employeeId;
+		this.employeeName = employeeName;
+		this.leaveTypeId = leaveTypeId;
+		this.leaveTypeName = leaveTypeName;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.totalDays = totalDays;
+		this.reason = reason;
+		this.status = status;
+	}
 
 	public Long getId() {
 		return id;
@@ -123,5 +116,5 @@ this.status = status;
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 }

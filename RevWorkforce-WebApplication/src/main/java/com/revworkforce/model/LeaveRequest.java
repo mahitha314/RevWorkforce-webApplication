@@ -1,10 +1,8 @@
 package com.revworkforce.model;
 
 import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -38,6 +36,7 @@ public class LeaveRequest {
 	@JoinColumn(name = "approval_id")
 	@JsonManagedReference(value="request-approval")
 	private LeaveApproval leaveApproval;
+
 	public LeaveRequest() {}
 
 	public LeaveRequest(Long id, LocalDate startDate, LocalDate endDate, String reason, Employee employee,

@@ -14,6 +14,15 @@ import com.revworkforce.model.Employee;
 import com.revworkforce.repository.DepartmentRepository;
 import com.revworkforce.repository.DesignationRepository;
 import com.revworkforce.repository.EmployeeRepository;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.revworkforce.adminservice.EmployeeManagementService;
+import com.revworkforce.dto.ApiResponse;
+import com.revworkforce.dto.EmployeeDTO;
 
 @RestController
 @RequestMapping("/admin")
@@ -185,4 +194,23 @@ public class EmployeeManagementController {
         return employeeManagementService
                 .changeManager(employeeId, managerId);
     }
+//=======
+//	
+//	private final EmployeeManagementService employeeManagementService;
+//
+//	public EmployeeManagementController(EmployeeManagementService employeeManagementService) {
+//		this.employeeManagementService = employeeManagementService;
+//	}
+//
+//	@PostMapping("/add-employee")
+//	public ResponseEntity<ApiResponse> addEmployee(@Validated @RequestBody EmployeeDTO dto) {
+//		return employeeManagementService.addEmployee(dto);
+//	}
+//
+//	@GetMapping("/all-employees")
+//	public ResponseEntity<ResponseEntity<ApiResponse>> getAllEmployees() {
+//		return ResponseEntity.ok(employeeManagementService.getAllEmployees());
+//	}
+//	
+//>>>>>>> 4f45ab240f530d50f4cbd98df0acde023db2d29c
 }

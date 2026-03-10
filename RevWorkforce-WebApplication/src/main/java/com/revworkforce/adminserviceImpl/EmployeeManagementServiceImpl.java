@@ -2,13 +2,11 @@ package com.revworkforce.adminserviceImpl;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.adminservice.EmployeeManagementService;
 import com.revworkforce.dto.ApiResponse;
@@ -21,7 +19,6 @@ import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.DepartmentRepository;
 import com.revworkforce.repository.DesignationRepository;
 import com.revworkforce.repository.EmployeeRepository;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
@@ -47,6 +44,7 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 		this.activityLogService = activityLogService;
 		this.notificationService = notificationService;
 		this.request = request;
+
 	}
 
 	@Override
@@ -91,7 +89,6 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 
 		employeeRepository.save(employee);
 
-		// 🔔 Send Welcome Notification
 		NotificationDTO notification = new NotificationDTO();
 		notification.setEmployeeId(employee.getEmployeeId());
 		notification.setTitle("Welcome to Company");
@@ -104,10 +101,12 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 				"SUCCESS", request);
 
 		return new ResponseEntity<>(new ApiResponse(201, "Employee added successfully", employee), HttpStatus.CREATED);
+
 	}
 
 	@Override
 	public ResponseEntity<ApiResponse> getAllEmployees() {
+
 		List<Employee> employees = employeeRepository.findAll();
 		return new ResponseEntity<>(new ApiResponse(200, "Employees fetched successfully", employees), HttpStatus.OK);
 	}
@@ -256,4 +255,5 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	public long countManagers() {
 		return employeeRepository.countByRole("MANAGER");
 	}
+
 }

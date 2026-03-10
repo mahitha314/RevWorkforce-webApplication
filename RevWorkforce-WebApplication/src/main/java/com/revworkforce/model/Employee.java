@@ -2,10 +2,8 @@ package com.revworkforce.model;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -54,7 +52,7 @@ public class Employee {
 
 	@ManyToOne
 	@JoinColumn(name = "department_id", nullable = false)
-	
+
 	private Department department;
 
 	@ManyToOne
@@ -242,4 +240,5 @@ public class Employee {
 	public void setLeaveBalances(List<LeaveBalance> leaveBalances) {
 		this.leaveBalances = leaveBalances;
 	}
+
 }
