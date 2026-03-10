@@ -1,5 +1,6 @@
 package com.revworkforce.config;
 
+import java.util.Optional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -29,36 +30,46 @@ public class DataInitializer implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		if (employeeRepository.findByEmail("admin@rev.com").isEmpty()) {
+		System.out.println("DataInitializer Started...");
 
-			Department department = new Department();
-			department.setName("IT");
-			departmentRepository.save(department);
-
-			Designation designation = new Designation();
-			designation.setTitle("Software Engineer");
-			designationRepository.save(designation);
-
-			Employee admin = new Employee();
-			admin.setEmployeeId("REV1001");
-			admin.setFirstName("ADMIN");
-			admin.setLastName("USER");
-			admin.setEmail("admin@rev.com");
-			admin.setPassword(passwordEncoder.encode("Admin@123"));
-			admin.setPhoneNumber("9562387496");
-			admin.setAddress("HYDERABAD");
-			admin.setEmergencyContact("9987465423");
-			admin.setRole("ADMIN");
-			admin.setStatus("ACTIVE");
-			admin.setSalary(100000.0);
-			admin.setJoiningDate(java.time.LocalDate.now());
-			admin.setDepartment(department);
-			admin.setDesignation(designation);
-			employeeRepository.save(admin);
-
-			System.out.println("DEFAULT ADMIN CREATED");
+		if (employeeRepository.findByEmail("admin@rev.com").isPresent()) {
+			System.out.println("DEFAULT ADMIN already exists.");
+			return;
 		}
 
-	}
+		Department department = departmentRepository.findByName("IT").orElseGet(() -> {
+			Department d = new Department();
+			d.setName("IT");
+			return departmentRepository.save(d);
+		});
 
+		Designation designation = designationRepository
+				.findByTitleAndDepartmentId("Software Engineer", department.getId()).orElseGet(() -> {
+					Designation des = new Designation();
+					des.setTitle("Software Engineer");
+					des.setDepartment(department);
+					return designationRepository.save(des);
+				});
+
+		Employee admin = new Employee();
+		admin.setEmployeeId("REV1001");
+		admin.setFirstName("MAHITHA");
+		admin.setLastName("SAI");
+		admin.setEmail("admin@rev.com");
+		admin.setPassword(passwordEncoder.encode("Admin@123"));
+		admin.setPhoneNumber("9562387496");
+		admin.setAddress("HYDERABAD");
+		admin.setEmergencyContact("9987465423");
+		admin.setRole("ADMIN");
+		admin.setStatus("ACTIVE");
+		admin.setSalary(100000.0);
+		admin.setJoiningDate(java.time.LocalDate.now());
+		admin.setDepartment(department);
+		admin.setDesignation(designation);
+
+		employeeRepository.save(admin);
+
+		System.out.println("DEFAULT ADMIN CREATED");
+	}
+	
 }

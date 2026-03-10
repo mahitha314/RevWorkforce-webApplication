@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/header :: header('Manager Dashboard')}"></th:block>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+<!-- Topbar -->
+<div th:replace="~{fragments/header :: topbar('Manager Dashboard')}"></div>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="content p-4">
+
+    <h2 class="mb-4 fw-bold">Manager Dashboard</h2>
+
+    <!-- ================= TEAM MEMBERS ================= -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h4 class="mb-3">My Team</h4>
+
+        <ul class="list-group">
+            <li class="list-group-item"
+                th:each="emp : ${teamMembers}"
+                th:text="${emp.firstName + ' ' + emp.lastName}">
+            </li>
+
+            <li class="list-group-item text-muted"
+                th:if="${teamMembers == null or #lists.isEmpty(teamMembers)}">
+                No team members found
+            </li>
+        </ul>
+    </div>
+
+
+    <!-- ================= LEAVE REQUESTS ================= -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h4 class="mb-3">Leave Requests</h4>
+
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Employee</th>
+                    <th>Leave Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                   
+                    <th>Status</th>
+                </tr>
+                </thead>
+
+				<tbody>
+				<tr th:each="leave : ${leaveRequests}">
+				    <td th:text="${leave.employee.firstName + ' ' + leave.employee.lastName}"></td>
+				    <td th:text="${leave.leaveType.typeName}"></td>
+				    <td th:text="${leave.startDate}"></td>
+				    <td th:text="${leave.endDate}"></td>
+				    <td th:text="${leave.leaveApproval != null ? leave.leaveApproval.status : 'PENDING'}"></td>
+				</tr>
+
+				<tr th:if="${leaveRequests == null or #lists.isEmpty(leaveRequests)}">
+				    <td colspan="5" class="text-center text-muted">
+				        No leave requests found
+				    </td>
+				</tr>
+				</tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- ================= PERFORMANCE REVIEWS ================= -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h4 class="mb-3">Performance Reviews</h4>
+
+        <div th:each="review : ${performanceReviews}"
+             class="border rounded p-3 mb-3 bg-light">
+
+            <h6 class="fw-bold mb-2"
+                th:text="${review.employeeName}"></h6>
+
+            <p>
+                <strong>Self Rating:</strong>
+                <span th:text="${review.selfRating}"></span>
+            </p>
+
+            <p>
+                <strong>Manager Rating:</strong>
+                <span th:text="${review.managerRating != null ? review.managerRating : 'Not Reviewed'}"></span>
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span th:text="${review.status}"></span>
+            </p>
+
+            <p th:if="${review.managerFeedback != null}">
+                <strong>Feedback:</strong>
+                <span th:text="${review.managerFeedback}"></span>
+            </p>
+
+            <p class="text-muted">
+                <small>
+                    Submitted on:
+                    <span th:text="${review.submittedDate}"></span>
+                </small>
+            </p>
+
+        </div>
+
+        <div th:if="${performanceReviews == null or #lists.isEmpty(performanceReviews)}"
+             class="text-muted">
+            No performance reviews found
+        </div>
+    </div>
+
+
+    <!-- ================= GOALS ================= -->
+	<!-- ================= GOALS ================= -->
+	<div class="card shadow-sm p-4 mb-4">
+	    <h4 class="mb-3">Team Goals</h4>
+
+	    <div th:each="goal : ${goals}"
+	         class="border rounded p-3 mb-3 bg-white">
+
+	        <h6 class="fw-bold"
+	            th:text="${goal.goalTitle}"></h6>
+
+	        <p>
+	            <strong>Description:</strong>
+	            <span th:text="${goal.goalDescription}"></span>
+	        </p>
+
+	        <p>
+	            <strong>Priority:</strong>
+	            <span th:text="${goal.priority}"></span>
+	        </p>
+
+	        <p>
+	            <strong>Status:</strong>
+	            <span th:text="${goal.status}"></span>
+	        </p>
+
+	        <p>
+	            <strong>Deadline:</strong>
+	            <span th:text="${goal.deadline}"></span>
+	        </p>
+
+	        <p>
+	            <strong>Progress:</strong>
+	            <span th:text="${goal.progress}"></span>%
+	        </p>
+
+	    </div>
+
+	    <div th:if="${goals == null or #lists.isEmpty(goals)}"
+	         class="text-muted">
+	        No goals assigned
+	    </div>
+	</div>
+</div>
+
+</body>
+</html>

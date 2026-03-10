@@ -1,6 +1,7 @@
 package com.revworkforce.model;
 
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,9 +19,11 @@ public class LeaveType {
 	private int totalDays;
 
 	@OneToMany(mappedBy = "leaveType")
+	@JsonManagedReference(value = "leavetype-leavebalance")
 	private List<LeaveBalance> leaveBalances;
 
 	@OneToMany(mappedBy = "leaveType")
+	@JsonManagedReference(value = "leavetype-leaverequest")
 	private List<LeaveRequest> leaveRequests;
 
 	public LeaveType() {}

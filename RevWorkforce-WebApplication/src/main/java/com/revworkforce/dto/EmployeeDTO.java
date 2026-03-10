@@ -3,7 +3,7 @@ package com.revworkforce.dto;
 import jakarta.validation.constraints.*;
 
 public class EmployeeDTO {
-	
+
 	@NotBlank
 	private String employeeId;
 
@@ -17,11 +17,15 @@ public class EmployeeDTO {
 	@NotBlank
 	private String email;
 
+	@NotBlank(message = "Password required")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).{6,}$",
+            message = "Password must contain 1 uppercase, 1 number, 1 special char and min 6 characters"
+    )
+    private String password;
+	
 	@NotBlank
-	private String password;
-
-	@NotBlank
-	private String role; // EMPLOYEE or MANAGER
+	private String role; 
 
 	@NotNull
 	private Long departmentId;
@@ -29,13 +33,16 @@ public class EmployeeDTO {
 	@NotNull
 	private Long designationId;
 
-	private Long managerId; // optional
+	private Long managerId; 
 
-	@NotNull
+	@NotNull(message = "Salary required")
+    @Positive(message = "Salary must be positive")
 	private Double salary;
 
-	@NotBlank
-	private String phoneNumber;
+	@NotBlank(message = "Phone number required")
+    @Pattern(regexp = "^[0-9]{10}$",
+            message = "Phone number must be 10 digits")
+    private String phoneNumber;
 
 	@NotBlank
 	private String address;
