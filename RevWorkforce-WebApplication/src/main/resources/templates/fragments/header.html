@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<!-- ================= HEADER FRAGMENT ================= -->
+
 <head th:fragment="header(title)">
 
     <title th:text="${title}">RevWorkForce</title>
@@ -19,7 +19,7 @@
             margin: 0;
         }
 
-        /* ================= SIDEBAR ================= */
+      
         .sidebar {
             height: 100vh;
             width: 240px;
@@ -54,7 +54,7 @@
             background-color: rgba(255,255,255,0.28);
         }
 
-        /* ================= TOPBAR ================= */
+       
         .topbar {
             position: fixed;
             top: 0;
@@ -108,15 +108,7 @@
             position: relative;
         }
 
-        .notify-dot {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            width: 8px;
-            height: 8px;
-            background: red;
-            border-radius: 50%;
-        }
+      
 
         /* ================= CONTENT ================= */
         .content {
@@ -140,7 +132,7 @@
 </head>
 
 
-<!-- ================= TOPBAR FRAGMENT ================= -->
+
 <div th:fragment="topbar(pageTitle)">
 
 <div class="topbar d-flex justify-content-between align-items-center">
@@ -156,16 +148,15 @@
         </div>
     </a>
 
-    <!-- Right: Notification + Logged in Name -->
+   
     <div class="topbar-actions">
-        <button class="icon-btn" type="button" onclick="openNotifications()" title="Notifications">
-            <i class="bi bi-bell"></i>
-            <span class="notify-dot"></span>
-        </button>
+       
+           
+      
 
 		<span>
 		    Welcome,
-		    <span th:text="${employee != null ? employee.firstName + ' ' + employee.lastName : 'User'}"></span>
+		    <span th:text="${employee != null ? employee.firstName + ' ' + employee.lastName : ''}"></span>
 		</span>
     </div>
 

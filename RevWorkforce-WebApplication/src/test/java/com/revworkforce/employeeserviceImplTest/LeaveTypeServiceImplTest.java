@@ -31,7 +31,7 @@ class LeaveTypeServiceImplTest {
 
 	@Test
 	void testGetAllLeaveTypes() {
-		// Arrange
+		
 		LeaveType leave1 = new LeaveType();
 		leave1.setId(1L);
 		leave1.setTypeName("Sick Leave");
@@ -44,10 +44,8 @@ class LeaveTypeServiceImplTest {
 
 		when(leaveTypeRepository.findAll()).thenReturn(mockList);
 
-		// Act
 		List<LeaveType> result = leaveTypeService.getAllLeaveTypes();
 
-		// Assert
 		assertNotNull(result);
 		assertEquals(2, result.size());
 		assertEquals("Sick Leave", result.get(0).getTypeName());
