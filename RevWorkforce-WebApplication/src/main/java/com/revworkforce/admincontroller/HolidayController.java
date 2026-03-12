@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import com.revworkforce.adminservice.HolidayService;
 import com.revworkforce.model.Holiday;
 
+import jakarta.validation.Valid;
+
 @Controller
 @RequestMapping("/admin/holiday")
 public class HolidayController {
@@ -27,7 +29,7 @@ public class HolidayController {
 
     // ✅ SAVE
     @PostMapping("/save")
-    public String saveHoliday(@ModelAttribute Holiday holiday) {
+    public String saveHoliday(@Valid @ModelAttribute Holiday holiday) {
         holidayService.saveHoliday(holiday);
         return "redirect:/admin/system-config?success=added";
     }
@@ -44,7 +46,7 @@ public class HolidayController {
     // ✅ UPDATE
     @PostMapping("/update/{id}")
     public String updateHoliday(@PathVariable Long id,
-                                @ModelAttribute Holiday holiday) {
+                                @Valid @ModelAttribute Holiday holiday) {
         holidayService.updateHoliday(id, holiday);
         return "redirect:/admin/system-config?success=updated";
     }
