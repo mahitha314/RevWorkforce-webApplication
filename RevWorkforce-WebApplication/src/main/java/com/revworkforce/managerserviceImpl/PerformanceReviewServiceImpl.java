@@ -2,14 +2,17 @@ package com.revworkforce.managerserviceImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.dto.ApiResponse;
+import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.dto.PerformanceReviewDTO;
 import com.revworkforce.managerservice.PerformanceReviewService;
-import com.revworkforce.model.Notification;
+import com.revworkforce.model.Employee;
 import com.revworkforce.model.PerformanceReview;
+import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
-import com.revworkforce.repository.NotificationRepository;
 import com.revworkforce.repository.PerformanceReviewRepository;
 
 @Service
@@ -17,14 +20,17 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 
 	private final PerformanceReviewRepository reviewRepo;
 	private final EmployeeRepository employeeRepo;
-	private final NotificationRepository notificationRepo;
+	private final NotificationService notificationService;
+	private final ActivityLogService activityLogService;
 
 	public PerformanceReviewServiceImpl(PerformanceReviewRepository reviewRepo, EmployeeRepository employeeRepo,
-			NotificationRepository notificationRepo) {
+			NotificationService notificationService, ActivityLogService activityLogService) {
 
 		this.reviewRepo = reviewRepo;
 		this.employeeRepo = employeeRepo;
-		this.notificationRepo = notificationRepo;
+		this.notificationService = notificationService;
+		this.activityLogService = activityLogService;
+
 	}
 
 	@Override
@@ -34,16 +40,12 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 			return new ApiResponse(404, "Manager not found", null);
 		}
 
-		List<PerformanceReview> reviews = reviewRepo.findByEmployee_Manager_Id(managerId);
+		List<PerformanceReviewDTO> reviews = reviewRepo.findByEmployee_Manager_Id(managerId).stream()
+				.map(this::mapToDTO).collect(Collectors.toList());
 
-		List<PerformanceReviewDTO> reviewDTOs = reviews.stream()
-				.map(r -> new PerformanceReviewDTO(r.getId(), r.getEmployee().getId(),
-						r.getEmployee().getFirstName() + " " + r.getEmployee().getLastName(), r.getAccomplishments(),
-						r.getDeliverables(), r.getAreasOfImprovement(), r.getSelfRating(), r.getManagerRating(),
-						r.getManagerFeedback(), r.getStatus(), r.getSubmittedDate()))
-				.toList();
+		activityLogService.log(managerId, "Viewed team performance reviews");
 
-		return new ApiResponse(200, "Team performance reviews fetched", reviewDTOs);
+		return new ApiResponse(200, "Team performance reviews fetched", reviews);
 	}
 
 	@Override
@@ -64,6 +66,10 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 			return new ApiResponse(400, "Review already completed", null);
 		}
 
+		if (!"Submitted".equalsIgnoreCase(review.getStatus())) {
+			return new ApiResponse(400, "Employee has not submitted the review yet", null);
+		}
+
 		if (dto.getManagerRating() == 0) {
 			return new ApiResponse(400, "Manager rating is required", null);
 		}
@@ -78,17 +84,32 @@ public class PerformanceReviewServiceImpl implements PerformanceReviewService {
 		review.setStatus("REVIEWED");
 		reviewRepo.save(review);
 
-		Notification notification = new Notification();
-		notification.setEmployee(review.getEmployee());
+		Employee employee = review.getEmployee();
+
+		NotificationDTO notification = new NotificationDTO();
+		notification.setEmployeeId(review.getEmployee().getEmployeeId());
 		notification.setTitle("Performance Reviewed");
-		notification.setMessage("Your performance review has been evaluated.");
-		notification.setStatus("ACTIVE");
+		notification.setMessage("Your performance review has been evaluated by manager.");
 		notification.setType("PERFORMANCE");
+		notification.setStatus("DELIVERED");
 		notification.setIsRead(false);
 		notification.setCreatedAt(LocalDateTime.now());
-		notificationRepo.save(notification);
+		notification.setReferenceId(review.getId());
 
-		return new ApiResponse(200, "Performance review submitted successfully", review);
+		notificationService.createNotification(notification);
+
+		activityLogService.log(managerId, "Reviewed performance of employee ID: " + employee.getId());
+
+		return new ApiResponse(200, "Performance review submitted successfully", mapToDTO(review));
+	}
+
+	private PerformanceReviewDTO mapToDTO(PerformanceReview review) {
+
+		return new PerformanceReviewDTO(review.getId(), review.getEmployee().getId(),
+				review.getEmployee().getFirstName() + " " + review.getEmployee().getLastName(),
+				review.getAccomplishments(), review.getDeliverables(), review.getAreasOfImprovement(),
+				review.getSelfRating(), review.getManagerRating(), review.getManagerFeedback(), review.getStatus(),
+				review.getSubmittedDate());
 	}
 
 }

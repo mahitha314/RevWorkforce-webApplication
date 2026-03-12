@@ -12,23 +12,28 @@ import com.revworkforce.managerservice.TeamStructureService;
 @RestController
 @RequestMapping("/manager/team")
 public class TeamStructureController {
-
+	
 	private final TeamStructureService service;
-
+	
 	public TeamStructureController(TeamStructureService service) {
 		this.service = service;
 	}
 
-	@GetMapping("/{managerId}")
-	public ResponseEntity<ApiResponse> getTeamStructure(@PathVariable Long managerId) {
+    @GetMapping("/{managerId}")
+    public ResponseEntity<ApiResponse> getTeamStructure(
+            @PathVariable Long managerId) {
 
-		return ResponseEntity.ok(service.getTeamStructure(managerId));
-	}
+        return ResponseEntity.ok(
+                service.getTeamStructure(managerId));
+    }
 
-	@GetMapping("/{managerId}/profile/{employeeId}")
-	public ResponseEntity<ApiResponse> getProfile(@PathVariable Long managerId, @PathVariable Long employeeId) {
+    @GetMapping("/{managerId}/profile/{employeeId}")
+    public ResponseEntity<ApiResponse> getProfile(
+            @PathVariable Long managerId,
+            @PathVariable Long employeeId) {
 
-		return ResponseEntity.ok(service.getTeamMemberProfile(managerId, employeeId));
-	}
+        return ResponseEntity.ok(
+                service.getTeamMemberProfile(managerId, employeeId));
+    }
 
 }

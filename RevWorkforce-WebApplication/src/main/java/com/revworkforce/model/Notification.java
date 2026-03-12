@@ -16,13 +16,13 @@ public class Notification {
 
 	@Column(name = "message", nullable = false, length = 1000)
 	private String message;
-
+	
 	@Column(name = "type", length = 100)
 	private String type;
 
 	@Column(name = "status", nullable = false)
 	private String status;
-
+	
 	@Column(name = "is_read")
 	private Boolean isRead = false;
 
@@ -36,8 +36,7 @@ public class Notification {
 	@Column(name = "reference_id")
 	private Long referenceId;
 
-	public Notification() {
-	}
+	public Notification() {}
 
 	public Notification(Long notificationId, String title, String message, String type, String status, Boolean isRead,
 			LocalDateTime createdAt, Employee employee, Long referenceId) {
@@ -63,6 +62,7 @@ public class Notification {
 
 	public void setTitle(String title) {
 		this.title = title;
+
 	}
 
 	public String getMessage() {

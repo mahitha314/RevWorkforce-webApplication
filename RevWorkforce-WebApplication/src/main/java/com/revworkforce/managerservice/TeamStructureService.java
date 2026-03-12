@@ -6,6 +6,6 @@ public interface TeamStructureService {
 
 	ApiResponse getTeamStructure(Long managerId);
 
-	ApiResponse getTeamMemberProfile(Long managerId, Long employeeId);
-
+    ApiResponse getTeamMemberProfile(Long managerId, Long employeeId);
+	
 }

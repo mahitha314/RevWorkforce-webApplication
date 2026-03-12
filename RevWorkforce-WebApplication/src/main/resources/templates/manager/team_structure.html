@@ -2,12 +2,104 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
+<<<<<<< HEAD
 	<title>Team Structure</title>
 	<link rel="stylesheet" th:href="@{/css/manager.css}">
+=======
+    <th:block th:replace="fragments/header :: header('Team Structure')"></th:block>
+
+    <style>
+        body {
+            background: #eef2f7;
+        }
+
+        .content {
+            margin-left: 260px;
+            margin-top: 90px;
+            padding: 40px;
+        }
+
+        .main-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .count-box {
+            background: linear-gradient(135deg, #4e73df, #224abe);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #4e73df;
+            color: white;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:hover {
+            background: #f1f4ff;
+        }
+
+        .btn-view {
+            background: #4e73df;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-view:hover {
+            background: #224abe;
+        }
+
+        .profile-section {
+            display: none;
+            margin-top: 40px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .profile-section h4 {
+            margin-bottom: 15px;
+        }
+
+    </style>
+>>>>>>> 944634d64525c94d45f2e839b6217a836dd74da4
 </head>
 
 <body>
 
+<<<<<<< HEAD
 
 	<div th:replace="~{fragments/header :: header}"></div>
 	<div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -111,4 +203,152 @@
 
 </body>
 
+=======
+<div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
+<div th:replace="fragments/header :: topbar('Team Structure')"></div>
+
+<div class="content">
+
+    <div class="main-card">
+
+        <h2 class="page-title">My Team Members</h2>
+
+        <!-- Count -->
+        <div id="employeeCount" class="count-box">
+            Loading count...
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="teamTableBody">
+                    <tr>
+                        <td colspan="5">Loading team members...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profileSection" class="profile-section">
+            <h4>Employee Profile</h4>
+            <p><strong>Name:</strong> <span id="profileName"></span></p>
+            <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+            <p><strong>Department:</strong> <span id="profileDepartment"></span></p>
+            <p><strong>Designation:</strong> <span id="profileDesignation"></span></p>
+        </div>
+
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const managerId = /*[[${managerId}]]*/ 0;
+</script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (!managerId) {
+        document.getElementById("teamTableBody").innerHTML =
+            "<tr><td colspan='5'>Manager ID not found.</td></tr>";
+        return;
+    }
+
+    loadTeam();
+});
+
+function loadTeam() {
+
+    fetch(`/manager/team/${managerId}`)
+        .then(res => res.json())
+        .then(result => {
+
+            const team = result.data || [];
+            const tableBody = document.getElementById("teamTableBody");
+            const countBox = document.getElementById("employeeCount");
+
+            tableBody.innerHTML = "";
+            countBox.innerHTML = `Total Employees Assigned: ${team.length}`;
+
+            if (team.length === 0) {
+                tableBody.innerHTML =
+                    "<tr><td colspan='5'>No team members assigned.</td></tr>";
+                return;
+            }
+
+            team.forEach(emp => {
+
+                const fullName =
+                    emp.fullName ||
+                    emp.name ||
+                    ((emp.firstName || "") + " " + (emp.lastName || "")) ||
+                    "N/A";
+
+                const row = `
+                    <tr>
+                        <td>${fullName}</td>
+                        <td>${emp.email || "N/A"}</td>
+                        <td>${emp.department || "N/A"}</td>
+                        <td>${emp.designation || "N/A"}</td>
+                        <td>
+                            <button class="btn-view"
+                                onclick="loadProfile(${emp.id})">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(() => {
+            document.getElementById("teamTableBody").innerHTML =
+                "<tr><td colspan='5'>Error loading team.</td></tr>";
+        });
+}
+
+function loadProfile(employeeId) {
+
+    fetch(`/manager/team/${managerId}/profile/${employeeId}`)
+        .then(res => res.json())
+        .then(result => {
+
+            const emp = result.data;
+
+            const fullName =
+                emp.fullName ||
+                ((emp.firstName || "") + " " + (emp.lastName || "")) ||
+                "N/A";
+
+            document.getElementById("profileName").innerText = fullName;
+            document.getElementById("profileEmail").innerText =
+                emp.email || "N/A";
+            document.getElementById("profileDepartment").innerText =
+                emp.department || "N/A";
+            document.getElementById("profileDesignation").innerText =
+                emp.designation || "N/A";
+
+            document.getElementById("profileSection").style.display = "block";
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        })
+        .catch(() => {
+            alert("Error loading employee details.");
+        });
+}
+
+</script>
+
+</body>
+>>>>>>> 944634d64525c94d45f2e839b6217a836dd74da4
 </html>

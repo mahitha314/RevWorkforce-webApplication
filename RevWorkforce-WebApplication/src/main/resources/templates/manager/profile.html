@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manager Profile</title>
+
+    <!-- Header Fragment (contains global CSS, sidebar styles, topbar styles) -->
+    <th:block th:replace="fragments/header :: header('Manager Profile')"></th:block>
+
+    <style>
+
+    /* ================= PROFILE PAGE ONLY ================= */
+
+    body {
+        background: linear-gradient(135deg, #eef3f9, #ffffff);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Main content area (same spacing as other manager pages) */
+    .content {
+        margin-left: 240px;
+        margin-top: 90px;
+        padding: 40px;
+    }
+
+    /* Profile Container */
+    .profile-container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .profile-card {
+        background: #ffffff;
+        border-radius: 25px;
+        padding: 50px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+        transition: 0.3s ease;
+    }
+
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 35px 75px rgba(0,0,0,0.12);
+    }
+
+    /* Avatar */
+    .avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #198754, #20c997);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: bold;
+        color: white;
+        box-shadow: 0 15px 35px rgba(25,135,84,0.4);
+    }
+
+    .profile-name {
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .role-badge {
+        background: #198754;
+        padding: 6px 18px;
+        border-radius: 50px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: white;
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        padding: 18px;
+        border-radius: 15px;
+        transition: 0.3s ease;
+        height: 100%;
+    }
+
+    .info-box:hover {
+        background: #ffffff;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .label-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .value-text {
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .update-btn {
+        padding: 10px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        background-color: #198754;
+        border: none;
+        color: white;
+        box-shadow: 0 8px 20px rgba(25,135,84,0.3);
+        transition: 0.3s ease;
+    }
+
+    .update-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(25,135,84,0.4);
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 992px) {
+        .content {
+            margin-left: 200px;
+            padding: 25px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .content {
+            margin-left: 0;
+            margin-top: 90px;
+            padding: 20px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            font-size: 28px;
+        }
+
+        .profile-name {
+            font-size: 22px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .profile-card {
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .update-btn {
+            width: 100%;
+        }
+    }
+
+    </style>
+</head>
+
+<body>
+
+<!-- Sidebar (WILL NOT CHANGE NOW) -->
+<div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
+
+<!-- Topbar -->
+<div th:replace="fragments/header :: topbar('Profile')"></div>
+
+<!-- Content -->
+<div class="content">
+
+    <div class="profile-container">
+        <div class="profile-card">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-4">
+
+                <div class="d-flex align-items-center gap-4">
+
+                    <div class="avatar"
+                         th:text="${manager.firstName != null ? manager.firstName.substring(0,1) : 'M'}">
+                    </div>
+
+                    <div>
+                        <div class="profile-name"
+                             th:text="|${manager.firstName} ${manager.lastName}|">
+                        </div>
+
+                        <span class="role-badge"
+                              th:text="${manager.role}">
+                        </span>
+                    </div>
+
+                </div>
+
+                <a th:href="@{/manager/edit-profile}"
+                   class="btn update-btn">
+                    Update Profile
+                </a>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Employee ID</div>
+                        <div class="value-text" th:text="${manager.employeeId}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Email</div>
+                        <div class="value-text" th:text="${manager.email}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Phone</div>
+                        <div class="value-text" th:text="${manager.phoneNumber}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Emergency Contact</div>
+                        <div class="value-text" th:text="${manager.emergencyContact}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Status</div>
+                        <div class="value-text text-success fw-bold" th:text="${manager.status}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Joining Date</div>
+                        <div class="value-text"
+                             th:text="${#temporals.format(manager.joiningDate, 'dd MMM yyyy')}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Salary</div>
+                        <div class="value-text" th:text="${manager.salary}"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Department</div>
+                        <div class="value-text"
+                             th:text="${manager.department != null ? manager.department.name : 'Not Assigned'}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-box">
+                        <div class="label-title">Designation</div>
+                        <div class="value-text"
+                             th:text="${manager.designation != null ? manager.designation.title : 'Not Assigned'}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="info-box">
+                        <div class="label-title">Address</div>
+                        <div class="value-text" th:text="${manager.address}"></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

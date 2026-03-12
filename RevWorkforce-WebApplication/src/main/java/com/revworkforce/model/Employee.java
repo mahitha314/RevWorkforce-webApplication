@@ -2,9 +2,8 @@ package com.revworkforce.model;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -53,7 +52,7 @@ public class Employee {
 
 	@ManyToOne
 	@JoinColumn(name = "department_id", nullable = false)
-	@JsonBackReference
+
 	private Department department;
 
 	@ManyToOne
@@ -66,7 +65,12 @@ public class Employee {
 	private Employee manager;
 
 	@OneToMany(mappedBy = "employee")
+	@JsonManagedReference(value = "employee-leaverequest")
 	private List<LeaveRequest> leaveRequests;
+	
+    @OneToMany(mappedBy = "employee")
+	@JsonManagedReference(value = "employee-leavebalance")
+    private List<LeaveBalance> leaveBalances;
 
 	public Employee() {}
 
@@ -123,10 +127,6 @@ public class Employee {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-	
-	public String getFullName() {
-	    return this.firstName + " " + this.lastName;
 	}
 
 	public String getEmail() {
@@ -233,6 +233,12 @@ public class Employee {
 		this.leaveRequests = leaveRequests;
 	}
 	
-	
+	public List<LeaveBalance> getLeaveBalances() {
+		return leaveBalances;
+	}
+
+	public void setLeaveBalances(List<LeaveBalance> leaveBalances) {
+		this.leaveBalances = leaveBalances;
+	}
 
 }

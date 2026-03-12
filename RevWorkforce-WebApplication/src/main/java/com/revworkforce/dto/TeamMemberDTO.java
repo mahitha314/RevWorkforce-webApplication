@@ -2,27 +2,27 @@ package com.revworkforce.dto;
 
 public class TeamMemberDTO {
 
-	private Long id;
-	private String employeeId;
-	private String fullName;
-	private String email;
-	private String role;
-	private String department;
-	private String designation;
+    private Long id;
+    private String employeeId;
+    private String fullName;
+    private String email;
+    private String role;
+    private String department;
+    private String designation;
 
-	public TeamMemberDTO() {
-	}
+    public TeamMemberDTO() {}
 
-	public TeamMemberDTO(Long id, String employeeId, String fullName, String email, String role, String department,
-			String designation) {
-		this.id = id;
-		this.employeeId = employeeId;
-		this.fullName = fullName;
-		this.email = email;
-		this.role = role;
-		this.department = department;
-		this.designation = designation;
-	}
+    public TeamMemberDTO(Long id, String employeeId, String fullName,
+                         String email, String role,
+                         String department, String designation) {
+        this.id = id;
+        this.employeeId = employeeId;
+        this.fullName = fullName;
+        this.email = email;
+        this.role = role;
+        this.department = department;
+        this.designation = designation;
+    }
 
 	public Long getId() {
 		return id;
@@ -79,5 +79,5 @@ public class TeamMemberDTO {
 	public void setDesignation(String designation) {
 		this.designation = designation;
 	}
-
+    
 }

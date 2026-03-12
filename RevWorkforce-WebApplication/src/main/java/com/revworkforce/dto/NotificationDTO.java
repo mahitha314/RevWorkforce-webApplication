@@ -6,7 +6,8 @@ import jakarta.validation.constraints.*;
 public class NotificationDTO {
 
 	private Long notificationId;
-	private Long employeeId;
+	@NotNull(message = "Employee ID is required")
+	private String employeeId;
 
 	@NotBlank(message = "Title is required")
 	@Size(max = 255, message = "Title cannot exceed 255 characters")
@@ -15,7 +16,9 @@ public class NotificationDTO {
 	@NotBlank(message = "Message cannot be empty")
 	@Size(min = 3, max = 1000, message = "Message must be between 3 and 1000 characters")
 	private String message;
-
+	
+	@Pattern(regexp = "LEAVE|PERFORMANCE|ANNOUNCEMENT|SYSTEM",
+            message = "Type must be LEAVE, PERFORMANCE, ANNOUNCEMENT or SYSTEM")
 	private String type;
 
 	@NotBlank(message = "Status is required")
@@ -34,9 +37,10 @@ public class NotificationDTO {
 	public NotificationDTO() {
 	}
 
-	public NotificationDTO(Long notificationId, String title, String message, String type, String status,
+	public NotificationDTO(Long notificationId, String employeeId, String title, String message, String type, String status,
 			Boolean isRead, LocalDateTime createdAt, Long referenceId) {
 		this.notificationId = notificationId;
+		this.employeeId =employeeId;
 		this.title = title;
 		this.message = message;
 		this.type = type;
@@ -54,11 +58,11 @@ public class NotificationDTO {
 		this.notificationId = notificationId;
 	}
 
-	public Long getEmployeeId() {
+	public String getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(Long employeeId) {
+	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
 	}
 
