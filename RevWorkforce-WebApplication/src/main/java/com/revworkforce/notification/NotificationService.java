@@ -4,8 +4,10 @@ import com.revworkforce.dto.ApiResponse;
 import com.revworkforce.dto.NotificationDTO;
 
 public interface NotificationService {
-	
-	ApiResponse createNotification(NotificationDTO dto);
+
+    ApiResponse createNotification(NotificationDTO dto);
+
+    ApiResponse createNotificationForAll(NotificationDTO dto); // Admin broadcast
 
     ApiResponse getMyNotifications();
 
@@ -16,5 +18,5 @@ public interface NotificationService {
     ApiResponse markAllAsRead();
 
     ApiResponse deleteNotification(Long notificationId);
-	
+
 }

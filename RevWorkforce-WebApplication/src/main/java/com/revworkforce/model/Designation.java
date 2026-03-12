@@ -17,6 +17,7 @@ public class Designation {
 	private String title;
 
 	@OneToMany(mappedBy = "designation", cascade = CascadeType.ALL)
+
 	@JsonIgnore
 	private List<Employee> employees;
 	
@@ -24,6 +25,14 @@ public class Designation {
 	@JoinColumn(name = "department_id", nullable = false)
 	@JsonBackReference
 	private Department department;
+
+	public Department getDepartment() {
+	    return department;
+	}
+
+	public void setDepartment(Department department) {
+	    this.department = department;
+	}
 
 	public Designation() {}
 
@@ -55,14 +64,6 @@ public class Designation {
 
 	public void setEmployees(List<Employee> employees) {
 		this.employees = employees;
-	}
-
-	public Department getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(Department department) {
-		this.department = department;
 	}
 	
 }

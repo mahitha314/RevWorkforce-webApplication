@@ -38,6 +38,8 @@ public class TeamGoalsServiceImpl implements TeamGoalsService {
 
 		List<Goal> goals = goalRepo.findByEmployee_Manager_Id(managerId);
 
+		System.out.println("ActivityLog: Manager " + managerId + " viewed team goals at " + LocalDateTime.now());
+
 		return new ApiResponse(200, "Team goals fetched successfully", goals);
 	}
 
@@ -76,13 +78,17 @@ public class TeamGoalsServiceImpl implements TeamGoalsService {
 		notification.setEmployeeId(goal.getEmployee().getEmployeeId());
 		notification.setTitle("Goal Progress Updated");
 		notification.setMessage("Your goal progress has been updated to " + dto.getProgress() + "%.");
-		notification.setStatus("ACTIVE");
-		notification.setType("GOAL");
+		notification.setType("PERFORMANCE"); // GOAL not allowed in DTO
+		notification.setStatus("DELIVERED");
 		notification.setIsRead(false);
 		notification.setCreatedAt(LocalDateTime.now());
 		notification.setReferenceId(goal.getId());
 
 		notificationService.createNotification(notification);
+
+		System.out.println("ActivityLog: Manager " + managerId + " updated goal " + goal.getId() + " for Employee "
+				+ goal.getEmployee().getEmployeeId() + " to progress " + dto.getProgress() + "% at "
+				+ LocalDateTime.now());
 
 		return new ApiResponse(200, "Goal progress updated successfully", goal);
 	}

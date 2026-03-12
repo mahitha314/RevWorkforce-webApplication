@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Holiday Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <th:block th:replace="~{fragments/header :: header('Holiday Management')}"></th:block>
+
+    <style>
+        html, body { height: 100%; }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #f4f6f9;
+        }
+
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .card { border-radius: 12px; }
+
+        footer { margin-left: 250px; }
+    </style>
+</head>
+
+<body>
+
+
+<th:block th:replace="~{fragments/header :: topbar('Holiday Management')}"></th:block>
+
+<!-- SIDEBAR -->
+<th:block th:replace="~{fragments/sidebar :: sidebar('holiday')}"></th:block>
+
+<div class="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold">Holiday Management</h3>
+            <p class="text-muted mb-0">
+                Add and manage company holidays
+            </p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm p-4">
+
+       
+        <h5 class="mb-3 fw-semibold"
+            th:text="${holiday.id} != null ? 'Edit Holiday' : 'Add New Holiday'">
+        </h5>
+
+        <form th:action="${holiday.id} != null ?
+                         @{/admin/holiday/update/{id}(id=${holiday.id})} :
+                         @{/admin/holiday/save}"
+              th:object="${holiday}"
+              method="post"
+              class="row g-3 mb-4">
+
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="col-md-4">
+                <label class="form-label">Holiday Name</label>
+                <input type="text" th:field="*{holidayName}" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Holiday Date</label>
+                <input type="date" th:field="*{holidayDate}" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Description</label>
+                <input type="text" th:field="*{description}" class="form-control">
+            </div>
+
+            <div class="col-md-2 align-self-end">
+                <button type="submit"
+                        class="btn btn-primary w-100"
+                        th:text="${holiday.id} != null ? 'Update Holiday' : 'Add Holiday'">
+                </button>
+            </div>
+
+        </form>
+
+        
+        <h5 class="mb-3 fw-semibold">Holiday List</h5>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+
+                <thead class="table-dark">
+                <tr>
+                    
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+				<tbody>
+				<tr th:each="holiday : ${holidays}">
+				    
+				    <td th:text="${holiday.holidayName}"></td>
+				    <td th:text="${holiday.holidayDate}"></td>
+				    <td th:text="${holiday.description}"></td>
+				    <td>
+				        <a th:href="@{'/admin/holiday/edit/' + ${holiday.id}}"
+				           class="btn btn-sm btn-warning">
+				            Edit
+				        </a>
+
+						<a href="javascript:void(0);"
+						   th:attr="onclick=|confirmDeleteHoliday(${holiday.id})|"
+						   class="btn btn-sm btn-danger">
+						    Delete
+						</a>
+				    </td>
+				</tr>
+				</tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get("success");
+
+    if (success === "added") {
+        Swal.fire({
+            icon: "success",
+            title: "Holiday Added!",
+            text: "Holiday added successfully.",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }
+
+    if (success === "updated") {
+        Swal.fire({
+            icon: "success",
+            title: "Holiday Updated!",
+            text: "Holiday updated successfully.",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }
+
+    if (success === "deleted") {
+        Swal.fire({
+            icon: "success",
+            title: "Holiday Deleted!",
+            text: "Holiday deleted successfully.",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }
+
+});
+
+
+function confirmDeleteHoliday(id) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This holiday will be deleted.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, delete it"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "/admin/holiday/delete/" + id;
+        }
+    });
+}
+</script>
+</body>
+</html>

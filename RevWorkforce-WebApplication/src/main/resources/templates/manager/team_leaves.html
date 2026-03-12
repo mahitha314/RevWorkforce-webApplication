@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/header :: header('Team Leave Requests')"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+<div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
+
+<div th:replace="fragments/header :: topbar('Team Leave Requests')"></div>
+
+<div class="content">
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-4">Team Leave Requests</h4>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center">
+
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Employee</th>
+                        <th>Leave Type</th>
+                        <th>Dates</th>
+                        <th>Total Days</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="leave : ${leaves}">
+
+                        <td th:text="${leave.employee.firstName + ' ' + leave.employee.lastName}"></td>
+
+                        <td th:text="${leave.leaveType.typeName}"></td>
+
+                        <td>
+                            <span th:text="${leave.startDate}"></span> -
+                            <span th:text="${leave.endDate}"></span>
+                        </td>
+
+                        <td th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(leave.startDate, leave.endDate) + 1}"></td>
+
+                        <td class="text-start">
+                            <span th:title="${leave.reason}"
+                                  th:text="${leave.reason != null and !#strings.isEmpty(leave.reason) ? leave.reason : 'N/A'}">
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-success"
+                                  th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'APPROVED'}"
+                                  th:text="${leave.leaveApproval.status}">
+                            </span>
+
+                            <span class="badge bg-danger"
+                                  th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'REJECTED'}"
+                                  th:text="${leave.leaveApproval.status}">
+                            </span>
+
+                            <span class="badge bg-warning text-dark"
+                                  th:if="${leave.leaveApproval == null}">
+                                PENDING
+                            </span>
+                        </td>
+
+                        <td>
+                            <div th:if="${leave.leaveApproval == null}">
+                                <form th:action="@{/manager/approve/{id}(id=${leave.id})}"
+                                      method="post" style="display:inline">
+                                    <button class="btn btn-success btn-sm">Approve</button>
+                                </form>
+
+                                <form th:action="@{/manager/reject/{id}(id=${leave.id})}"
+                                      method="post" style="display:inline">
+                                    <input type="hidden" name="comments" value="Rejected by Manager"/>
+                                    <button class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            </div>
+
+                            <span th:if="${leave.leaveApproval != null}">-</span>
+                        </td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(leaves)}">
+                        <td colspan="7" class="text-muted">No leave requests found.</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<div th:fragment="managerSidebar">
+
+    <div class="sidebar">
+
+        <h4 class="text-center mb-4">RevWorkForce</h4>
+
+        
+        <a th:href="@{/manager/dashboard}" class="sidebar-link">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+
+		<a th:href="@{/manager/profile}" class="sidebar-link">
+		           <i class="bi bi-person"></i> Profile
+		       </a>
+
+			   <a th:href="@{/manager/team-structure}">
+			       <i class="bi bi-people"></i> My Team
+			   </a>
+        
+		<li class="nav-item">
+		    <a th:href="@{/manager/team-leaves}" class="nav-link">
+		        <i class="bi bi-calendar-check me-2"></i>
+		        Team Leave Requests
+		    </a>
+		</li>
+
+		<a th:href="@{/manager/performance-review}">
+		    <i class="bi bi-star"></i> Performance Reviews
+		</a>
+
+		
+		<a th:href="@{/manager/team-goals}">
+		    <i class="bi bi-bullseye"></i> Goals
+		</a>
+		
+		<a th:href="@{/manager/notifications}"
+		   th:classappend="${view == 'notifications'} ? ' active' : ''">
+		    <i class="bi bi-bell"></i> Notifications
+		</a>
+       
+        <a th:href="@{/logout}">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+
+    </div>
+
+</div>

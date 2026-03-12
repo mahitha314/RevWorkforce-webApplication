@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: header('Admin Profile')}"></head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div th:replace="~{fragments/sidebar :: sidebar('profile')}"></div>
+
+    <!-- TOPBAR -->
+    <div th:replace="~{fragments/header :: topbar('Admin Profile')}"></div>
+
+    <div class="content-wrapper">
+        <div class="container mt-4">
+
+            <div class="profile-card shadow-lg">
+
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <span th:text="${employee.firstName.substring(0,1)}">A</span>
+                    </div>
+                    <div>
+                        <h3 th:text="${employee.firstName + ' ' + employee.lastName}">Admin Name</h3>
+                        <p class="text-muted mb-0" th:text="${employee.role}">ADMIN</p>
+                        <small class="status-badge"
+                               th:text="${employee.status}"
+                               th:classappend="${employee.status == 'ACTIVE'} ? ' active' : ' inactive'">
+                        </small>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6 detail-box">
+                        <label>Employee ID</label>
+                        <p th:text="${employee.employeeId}"></p>
+                    </div>
+
+                    <div class="col-md-6 detail-box">
+                        <label>Email</label>
+                        <p th:text="${employee.email}"></p>
+                    </div>
+
+                    <div class="col-md-6 detail-box">
+                        <label>Phone Number</label>
+                        <p th:text="${employee.phoneNumber}"></p>
+                    </div>
+
+                    <div class="col-md-6 detail-box">
+                        <label>Emergency Contact</label>
+                        <p th:text="${employee.emergencyContact}"></p>
+                    </div>
+
+                    <div class="col-md-6 detail-box">
+                        <label>Department</label>
+                        <p th:text="${employee.department.name}"></p>
+                    </div>
+
+                    <div class="col-md-6 detail-box">
+                        <label>Designation</label>
+                        <p th:text="${employee.designation.title}"></p>
+                    </div>
+
+                    <div class="col-md-6 detail-box">
+                        <label>Joining Date</label>
+                        <p th:text="${employee.joiningDate}"></p>
+                    </div>
+
+                    <div class="col-md-6 detail-box">
+                        <label>Salary</label>
+                        <p>₹ <span th:text="${employee.salary}"></span></p>
+                    </div>
+
+                    <div class="col-md-12 detail-box">
+                        <label>Address</label>
+                        <p th:text="${employee.address}"></p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .content-wrapper {
+            margin-top: 70px;
+            padding-left: 240px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: #0d6efd;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .detail-box:hover {
+            background: #e9f2ff;
+            transform: scale(1.02);
+        }
+
+        .detail-box label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .detail-box p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+
+</body>
+</html>

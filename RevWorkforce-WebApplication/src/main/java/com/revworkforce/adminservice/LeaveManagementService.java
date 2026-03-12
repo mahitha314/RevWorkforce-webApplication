@@ -1,24 +1,27 @@
 package com.revworkforce.adminservice;
 
-import com.revworkforce.dto.AdjustLeaveDTO;
-import com.revworkforce.dto.ApiResponse;
+import java.util.List;
 import com.revworkforce.dto.LeaveBalanceDTO;
 import com.revworkforce.dto.LeaveTypeDTO;
+import com.revworkforce.model.Employee;
+import com.revworkforce.model.LeaveBalance;
 
 public interface LeaveManagementService {
+	
+	LeaveTypeDTO createLeaveType(LeaveTypeDTO dto);
 
-	ApiResponse createLeaveType(LeaveTypeDTO dto);
+	List<LeaveTypeDTO> getAllLeaveTypes();
 
-	ApiResponse getAllLeaveTypes();
+	LeaveBalance assignLeaveToEmployee(Long employeeId, Long leaveTypeId, int totalDays);
 
-	ApiResponse assignLeave(LeaveBalanceDTO dto);
+	LeaveBalance adjustLeave(LeaveBalanceDTO dto);
 
-	ApiResponse adjustLeave(AdjustLeaveDTO dto);
+	List<LeaveBalance> getEmployeeLeaveInfo(Long employeeId);
 
-	ApiResponse getAllEmployeeLeaves();
+	List<LeaveBalance> getDepartmentLeaveReport(Long departmentId);
 
-	ApiResponse getEmployeeLeave(Long empId);
-
-	ApiResponse getDepartmentReport(Long deptId);
+	long countLeaves();
+	
+	List<Employee> getEmployeesNotAssignedToLeaveType(Long leaveTypeId);
 
 }

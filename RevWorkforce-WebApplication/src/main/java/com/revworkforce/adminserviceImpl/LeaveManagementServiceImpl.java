@@ -1,19 +1,20 @@
 package com.revworkforce.adminserviceImpl;
 
+import java.util.List;
+import org.springframework.stereotype.Service;
+import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.adminservice.LeaveManagementService;
-import com.revworkforce.dto.AdjustLeaveDTO;
-import com.revworkforce.dto.ApiResponse;
 import com.revworkforce.dto.LeaveBalanceDTO;
 import com.revworkforce.dto.LeaveTypeDTO;
 import com.revworkforce.dto.NotificationDTO;
-import com.revworkforce.repository.EmployeeRepository;
-import com.revworkforce.repository.LeaveBalanceRepository;
-import com.revworkforce.repository.LeaveTypeRepository;
 import com.revworkforce.model.Employee;
 import com.revworkforce.model.LeaveBalance;
 import com.revworkforce.model.LeaveType;
 import com.revworkforce.notification.NotificationService;
-import org.springframework.stereotype.Service;
+import com.revworkforce.repository.EmployeeRepository;
+import com.revworkforce.repository.LeaveBalanceRepository;
+import com.revworkforce.repository.LeaveTypeRepository;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class LeaveManagementServiceImpl implements LeaveManagementService {
@@ -22,115 +23,135 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 	private final LeaveBalanceRepository leaveBalanceRepository;
 	private final EmployeeRepository employeeRepository;
 	private final NotificationService notificationService;
+	private final ActivityLogService activityLogService;
+	private final HttpServletRequest request;
 
 	public LeaveManagementServiceImpl(LeaveTypeRepository leaveTypeRepository,
 			LeaveBalanceRepository leaveBalanceRepository, EmployeeRepository employeeRepository,
-			NotificationService notificationService) {
+			NotificationService notificationService, ActivityLogService activityLogService,
+			HttpServletRequest request) {
 
 		this.leaveTypeRepository = leaveTypeRepository;
 		this.leaveBalanceRepository = leaveBalanceRepository;
 		this.employeeRepository = employeeRepository;
 		this.notificationService = notificationService;
+		this.activityLogService = activityLogService;
+		this.request = request;
 	}
 
 	@Override
-	public ApiResponse createLeaveType(LeaveTypeDTO dto) {
+	public LeaveTypeDTO createLeaveType(LeaveTypeDTO dto) {
 
 		if (leaveTypeRepository.existsByTypeName(dto.getTypeName())) {
-			return new ApiResponse(400, "Leave type already exists", null);
+			throw new RuntimeException("Leave type already exists.");
 		}
 
 		LeaveType leaveType = new LeaveType();
 		leaveType.setTypeName(dto.getTypeName());
 		leaveType.setTotalDays(dto.getTotalDays());
 
-		leaveTypeRepository.save(leaveType);
+		LeaveType saved = leaveTypeRepository.save(leaveType);
 
-		return new ApiResponse(201, "Leave type created successfully", leaveType);
+		activityLogService.log("Created Leave Type", "Leave Management", "Created leave type: " + saved.getTypeName(),
+				"SUCCESS", request);
+
+		return new LeaveTypeDTO(saved.getId(), saved.getTypeName(), saved.getTotalDays());
 	}
 
 	@Override
-	public ApiResponse getAllLeaveTypes() {
-		return new ApiResponse(200, "Leave types fetched", leaveTypeRepository.findAll());
+	public List<LeaveTypeDTO> getAllLeaveTypes() {
+
+		return leaveTypeRepository.findAll().stream()
+				.map(type -> new LeaveTypeDTO(type.getId(), type.getTypeName(), type.getTotalDays())).toList();
 	}
 
 	@Override
-	public ApiResponse assignLeave(LeaveBalanceDTO dto) {
+	public LeaveBalance assignLeaveToEmployee(Long employeeId, Long leaveTypeId, int totalDays) {
 
-		Employee employee = employeeRepository.findById(dto.getEmployeeId()).orElse(null);
+		Employee employee = employeeRepository.findById(employeeId)
+				.orElseThrow(() -> new RuntimeException("Employee not found"));
 
-		LeaveType leaveType = leaveTypeRepository.findById(dto.getLeaveTypeId()).orElse(null);
+		LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId)
+				.orElseThrow(() -> new RuntimeException("Leave type not found"));
 
-		if (employee == null || leaveType == null) {
-			return new ApiResponse(404, "Employee or LeaveType not found", null);
+		if (leaveBalanceRepository.findByEmployeeAndLeaveType(employee, leaveType).isPresent()) {
+			throw new RuntimeException("Leave already assigned to employee.");
 		}
 
 		LeaveBalance balance = new LeaveBalance();
 		balance.setEmployee(employee);
 		balance.setLeaveType(leaveType);
-		balance.setTotalLeaves(dto.getTotalLeaves());
+		balance.setTotalLeaves(totalDays);
 		balance.setUsedLeaves(0);
-		balance.setRemainingLeaves(dto.getTotalLeaves());
+		balance.setRemainingLeaves(totalDays);
 
-		leaveBalanceRepository.save(balance);
+		LeaveBalance saved = leaveBalanceRepository.save(balance);
 
 		NotificationDTO notification = new NotificationDTO();
 		notification.setEmployeeId(employee.getEmployeeId());
 		notification.setTitle("Leave Assigned");
-		notification.setMessage(
-				"Admin assigned " + dto.getTotalLeaves() + " " + leaveType.getTypeName() + " leaves to you.");
+		notification.setMessage("You have been assigned " + totalDays + " days of " + leaveType.getTypeName());
 		notification.setType("LEAVE");
 		notification.setStatus("ACTIVE");
-		notification.setReferenceId(balance.getId());
 
 		notificationService.createNotification(notification);
 
-		return new ApiResponse(201, "Leave assigned successfully", balance);
+		activityLogService.log("Assigned Leave", "Leave Management",
+				"Assigned " + totalDays + " days of " + leaveType.getTypeName() + " to " + employee.getFirstName(),
+				"SUCCESS", request);
+
+		return saved;
 	}
 
 	@Override
-	public ApiResponse adjustLeave(AdjustLeaveDTO dto) {
+	public LeaveBalance adjustLeave(LeaveBalanceDTO dto) {
 
-		LeaveBalance balance = leaveBalanceRepository.findById(dto.getId()).orElse(null);
+		Employee employee = employeeRepository.findById(dto.getEmployeeId())
+				.orElseThrow(() -> new RuntimeException("Employee not found"));
 
-		if (balance == null) {
-			return new ApiResponse(404, "Leave balance not found", null);
-		}
+		LeaveType leaveType = leaveTypeRepository.findById(dto.getLeaveTypeId())
+				.orElseThrow(() -> new RuntimeException("Leave type not found"));
 
-		if (dto.getRemainingLeaves() < 0) {
-			return new ApiResponse(400, "Invalid leave adjustment", null);
-		}
+		LeaveBalance balance = leaveBalanceRepository.findByEmployeeAndLeaveType(employee, leaveType)
+				.orElseThrow(() -> new RuntimeException("Leave balance not found"));
 
-		balance.setRemainingLeaves(dto.getRemainingLeaves());
-		leaveBalanceRepository.save(balance);
+		balance.setTotalLeaves(balance.getTotalLeaves() + dto.getDays());
+		balance.setRemainingLeaves(balance.getRemainingLeaves() + dto.getDays());
 
-		NotificationDTO notification = new NotificationDTO();
-		notification.setEmployeeId(balance.getEmployee().getEmployeeId());
-		notification.setTitle("Leave Balance Updated");
-		notification.setMessage("Admin adjusted your leave balance. " + "New Remaining Leaves: "
-				+ dto.getRemainingLeaves() + ". Reason: " + dto.getReason());
-		notification.setType("LEAVE");
-		notification.setStatus("ACTIVE");
-		notification.setReferenceId(balance.getId());
+		LeaveBalance updated = leaveBalanceRepository.save(balance);
 
-		notificationService.createNotification(notification);
+		activityLogService.log("Adjusted Leave", "Leave Management", "Adjusted " + dto.getDays() + " days for "
+				+ employee.getFirstName() + " (" + leaveType.getTypeName() + ")", "SUCCESS", request);
 
-		return new ApiResponse(200, "Leave adjusted successfully. Reason: " + dto.getReason(), balance);
+		return updated;
+
 	}
 
 	@Override
-	public ApiResponse getAllEmployeeLeaves() {
-		return new ApiResponse(200, "All employee leave details", leaveBalanceRepository.findAll());
+	public List<LeaveBalance> getEmployeeLeaveInfo(Long employeeId) {
+
+		Employee employee = employeeRepository.findById(employeeId)
+				.orElseThrow(() -> new RuntimeException("Employee not found"));
+		return leaveBalanceRepository.findByEmployee(employee);
 	}
 
 	@Override
-	public ApiResponse getEmployeeLeave(Long empId) {
-		return new ApiResponse(200, "Employee leave details", leaveBalanceRepository.findByEmployeeId(empId));
+	public List<LeaveBalance> getDepartmentLeaveReport(Long departmentId) {
+		return leaveBalanceRepository.findByDepartmentId(departmentId);
 	}
 
 	@Override
-	public ApiResponse getDepartmentReport(Long deptId) {
-		return new ApiResponse(200, "Department leave report", leaveBalanceRepository.findByDepartmentId(deptId));
+	public long countLeaves() {
+		return leaveTypeRepository.count();
+	}
+	
+	@Override
+	public List<Employee> getEmployeesNotAssignedToLeaveType(Long leaveTypeId) {
+
+	    LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId)
+	            .orElseThrow(() -> new RuntimeException("Leave type not found"));
+
+	    return employeeRepository.findEmployeesNotAssignedToLeaveType(leaveType.getId());
 	}
 
 }

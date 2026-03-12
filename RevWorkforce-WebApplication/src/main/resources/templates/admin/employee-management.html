@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: header('Employee Management')}"></head>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<body>
+
+	
+	<div th:replace="~{fragments/sidebar :: sidebar('employee')}"></div>
+
+	
+	<div th:replace="~{fragments/header :: topbar('Employee Management')}"></div>
+
+<div class="content-wrapper">
+    <div class="container mt-4">
+        <div class="row">
+
+           
+            <div class="col-lg-3">
+				<div class="left-panel">
+
+				    <button type="button" id="addBtn"
+				            class="action-btn active-btn w-100 mb-3">
+				        <i class="bi bi-person-plus"></i> Add Employee
+				    </button>
+
+				    <button type="button" id="updateBtn"
+				            class="action-btn w-100 mb-3">
+				        <i class="bi bi-pencil"></i> Update Employee
+				    </button>
+
+				    
+
+				</div>
+            </div>
+
+           
+            <div class="col-lg-9">
+
+                <div id="addSection">
+                    <div class="card form-card shadow border-0">
+                        <div class="card-body p-5">
+
+                            <h4 class="fw-bold mb-4 text-primary">
+                                <i class="bi bi-person-plus"></i> Add Employee
+                            </h4>
+
+                            <form id="addForm">
+                                <div class="row g-4">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Employee ID</label>
+                                        <input class="form-control" name="employeeId" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">First Name</label>
+                                        <input class="form-control" name="firstName" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Last Name</label>
+                                        <input class="form-control" name="lastName" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Password</label>
+                                        <input type="password" class="form-control" name="password" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Role</label>
+                                        <select class="form-select" name="role" required>
+                                            <option value="EMPLOYEE">EMPLOYEE</option>
+                                            <option value="MANAGER">MANAGER</option>
+                                           
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Department</label>
+                                        <select class="form-select" id="departmentId"
+                                                name="departmentId" required></select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Designation</label>
+                                        <select class="form-select" id="designationId"
+                                                name="designationId" required></select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Manager ID</label>
+                                        <select class="form-select" id="managerId"
+                                                name="managerId"></select>
+                                    </div>
+									<div class="col-md-6">
+									    <label class="form-label">Salary</label>
+									    <input type="number" step="0.01"
+									           class="form-control" name="salary" required>
+									</div>
+
+									<div class="col-md-6">
+									    <label class="form-label">Joining Date</label>
+									    <input type="date"
+									           class="form-control"
+									           name="joiningDate"
+									           required>
+									</div>
+                                   
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone Number</label>
+                                        <input class="form-control" name="phoneNumber" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Emergency Contact</label>
+                                        <input class="form-control" name="emergencyContact" required>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label">Address</label>
+                                        <textarea class="form-control" name="address"
+                                                  rows="3" required></textarea>
+                                    </div>
+
+                                </div>
+
+                                <div class="text-center mt-5">
+                                    <button type="submit"
+                                            class="btn btn-primary px-5 py-2">
+                                        Save Employee
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+				
+				<div id="updateSection" style="display:none;">
+				    <div class="card form-card shadow border-0 mt-4">
+				        <div class="card-body p-5">
+
+				            <h4 class="fw-bold mb-4 text-warning">
+				                <i class="bi bi-pencil-square"></i> Update Employee
+				            </h4>
+
+				            <!-- Search Employee -->
+				            <div class="row g-3 mb-4">
+				                <div class="col-md-8">
+				                    <label class="form-label">Employee ID</label>
+				                    <input type="text"
+				                           id="updateEmployeeId"
+				                           class="form-control"
+				                           placeholder="Enter Employee ID">
+				                </div>
+
+				                <div class="col-md-4 d-flex align-items-end">
+				                    <button type="button"
+				                            class="btn btn-warning w-100"
+				                            onclick="searchEmployeeForUpdate()">
+				                        Search
+				                    </button>
+				                </div>
+				            </div>
+
+				            <!-- Update Form -->
+				            <form id="updateForm" style="display:none;">
+				                <div class="row g-4">
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Employee ID</label>
+				                        <input class="form-control"
+				                               name="employeeId"
+				                               id="updateEmpCode"
+				                               required>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">First Name</label>
+				                        <input class="form-control"
+				                               name="firstName"
+				                               id="updateFirstName"
+				                               required>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Last Name</label>
+				                        <input class="form-control"
+				                               name="lastName"
+				                               id="updateLastName"
+				                               required>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Email</label>
+				                        <input type="email"
+				                               class="form-control"
+				                               name="email"
+				                               id="updateEmail"
+				                               required>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Phone Number</label>
+				                        <input class="form-control"
+				                               name="phoneNumber"
+				                               id="updatePhone"
+				                               required>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Emergency Contact</label>
+				                        <input class="form-control"
+				                               name="emergencyContact"
+				                               id="updateEmergencyContact"
+				                               required>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Salary</label>
+				                        <input type="number"
+				                               step="0.01"
+				                               class="form-control"
+				                               name="salary"
+				                               id="updateSalary"
+				                               required>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Joining Date</label>
+				                        <input type="date"
+				                               class="form-control"
+				                               name="joiningDate"
+				                               id="updateJoiningDate"
+				                               required>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Role</label>
+				                        <select class="form-select"
+				                                name="role"
+				                                id="updateRole"
+				                                required>
+				                            <option value="">Select Role</option>
+				                            <option value="EMPLOYEE">EMPLOYEE</option>
+				                            <option value="MANAGER">MANAGER</option>
+				                            <option value="ADMIN">ADMIN</option>
+				                        </select>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Status</label>
+				                        <select class="form-select"
+				                                name="status"
+				                                id="updateStatus"
+				                                required>
+				                            <option value="">Select Status</option>
+				                            <option value="ACTIVE">ACTIVE</option>
+				                            <option value="INACTIVE">INACTIVE</option>
+				                        </select>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Department</label>
+				                        <select class="form-select"
+				                                id="updateDepartmentId"
+				                                name="departmentId"
+				                                required></select>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Designation</label>
+				                        <select class="form-select"
+				                                id="updateDesignationId"
+				                                name="designationId"
+				                                required></select>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Manager</label>
+				                        <select class="form-select"
+				                                id="updateManagerId"
+				                                name="managerId"></select>
+				                    </div>
+
+				                    <div class="col-md-6">
+				                        <label class="form-label">Password</label>
+				                        <input type="password"
+				                               class="form-control"
+				                               name="password"
+				                               id="updatePassword"
+				                               placeholder="Enter password"
+				                               required>
+				                    </div>
+
+				                    <div class="col-12">
+				                        <label class="form-label">Address</label>
+				                        <textarea class="form-control"
+				                                  id="updateAddress"
+				                                  name="address"
+				                                  rows="3"
+				                                  required></textarea>
+				                    </div>
+
+				                </div>
+
+				                <div class="text-center mt-4">
+				                    <button type="submit"
+				                            class="btn btn-warning px-5">
+				                        Update Employee
+				                    </button>
+				                </div>
+				            </form>
+
+				        </div>
+				    </div>
+				</div>
+				
+				
+          
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>
+
+<style>
+	body {
+		background: #f4f6f9;
+	}
+
+	
+	.content-wrapper {
+		margin-top: 70px;
+		padding-left: 240px;
+		/* if sidebar fixed */
+	}
+
+	
+	.left-panel {
+		position: sticky;
+		top: 100px;
+	}
+
+	
+	.action-btn {
+		border: 1px solid #dee2e6;
+		padding: 14px;
+		border-radius: 12px;
+		background: #ffffff;
+		font-weight: 500;
+		font-size: 15px;
+		transition: all 0.2s ease;
+	}
+
+	.action-btn:hover {
+		background: linear-gradient(45deg, #3b82f6, #2563eb);
+		color: white;
+		border-color: transparent;
+		transform: translateY(-2px);
+	}
+
+	.active-btn {
+		background: linear-gradient(45deg, #3b82f6, #2563eb);
+		color: white;
+		border-color: transparent;
+	}
+
+	
+	.form-card {
+		border-radius: 16px;
+	}
+
+	
+	.form-control,
+	.form-select {
+		border-radius: 10px;
+		height: 46px;
+		font-size: 14px;
+	}
+
+	textarea.form-control {
+		height: auto;
+	}
+
+	
+	.btn-gradient {
+		background: linear-gradient(45deg, #3b82f6, #2563eb);
+		border: none;
+		color: white;
+		border-radius: 10px;
+		font-weight: 500;
+		transition: 0.2s ease;
+	}
+
+	.btn-gradient:hover {
+		opacity: 0.9;
+	}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    loadDepartments();
+    loadManagers();
+    loadUpdateDepartments();
+    loadUpdateManagers();
+
+    const addBtn = document.getElementById("addBtn");
+    const updateBtn = document.getElementById("updateBtn");
+
+    const addSection = document.getElementById("addSection");
+    const updateSection = document.getElementById("updateSection");
+
+    showAdd();
+
+    addBtn?.addEventListener("click", showAdd);
+    updateBtn?.addEventListener("click", showUpdate);
+
+    function showAdd() {
+        addSection.style.display = "block";
+        updateSection.style.display = "none";
+
+        addBtn.classList.add("active-btn");
+        updateBtn.classList.remove("active-btn");
+    }
+
+    function showUpdate() {
+        addSection.style.display = "none";
+        updateSection.style.display = "block";
+
+        updateBtn.classList.add("active-btn");
+        addBtn.classList.remove("active-btn");
+    }
+
+    document.getElementById("addForm")?.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!data.email.endsWith("@rev.com")) {
+            Swal.fire("Invalid Email", "Email must end with @rev.com", "error");
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(data.phoneNumber)) {
+            Swal.fire("Invalid Phone", "Phone must be 10 digits", "error");
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(data.emergencyContact)) {
+            Swal.fire("Invalid Emergency Contact", "Emergency contact must be 10 digits", "error");
+            return;
+        }
+
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*?&]).{8,}$/;
+
+        if (!passwordRegex.test(data.password)) {
+            Swal.fire("Weak Password", "Password must contain upper, lower, number & special char", "error");
+            return;
+        }
+
+        data.salary = parseFloat(data.salary);
+        data.departmentId = parseInt(data.departmentId);
+        data.designationId = parseInt(data.designationId);
+        data.managerId = data.managerId ? parseInt(data.managerId) : null;
+
+        fetch("/admin/employees", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(async res => {
+            const response = await res.json();
+
+            if (!res.ok) {
+                Swal.fire("Error", response.message || "Employee save failed", "error");
+                return;
+            }
+
+            Swal.fire("Success", response.message || "Employee added successfully", "success");
+            document.getElementById("addForm").reset();
+        })
+        .catch(() => Swal.fire("Error", "Employee save failed", "error"));
+    });
+
+    
+    document.getElementById("updateForm")?.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const empId = document.getElementById("updateEmployeeId").value.trim();
+
+        if (!empId) {
+            Swal.fire("Error", "Please enter Employee ID to update", "error");
+            return;
+        }
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!data.email.endsWith("@rev.com")) {
+            Swal.fire("Invalid Email", "Email must end with @rev.com", "error");
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(data.phoneNumber)) {
+            Swal.fire("Invalid Phone", "Phone must be 10 digits", "error");
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(data.emergencyContact)) {
+            Swal.fire("Invalid Emergency Contact", "Emergency contact must be 10 digits", "error");
+            return;
+        }
+
+        if (!data.password || data.password.trim() === "") {
+            Swal.fire("Error", "Password is required", "error");
+            return;
+        }
+
+        data.salary = parseFloat(data.salary);
+        data.departmentId = parseInt(data.departmentId);
+        data.designationId = parseInt(data.designationId);
+        data.managerId = data.managerId ? parseInt(data.managerId) : null;
+
+        fetch(`/admin/employees/${empId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(async res => {
+            const response = await res.json();
+
+            if (!res.ok) {
+                Swal.fire("Error", response.message || "Update failed", "error");
+                return;
+            }
+
+            Swal.fire("Updated", response.message || "Employee updated successfully", "success");
+        })
+        .catch(() => Swal.fire("Error", "Update failed", "error"));
+    });
+
+});
+
+
+function loadDepartments() {
+    fetch("/admin/departments")
+    .then(res => res.json())
+    .then(api => {
+        const list = api.data || [];
+        const dept = document.getElementById("departmentId");
+
+        dept.innerHTML = '<option value="">Select Department</option>';
+
+        list.forEach(d => {
+            dept.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+        });
+    });
+}
+
+
+document.getElementById("departmentId")?.addEventListener("change", function () {
+    const deptId = this.value;
+    const desig = document.getElementById("designationId");
+
+    desig.innerHTML = '<option value="">Select Designation</option>';
+
+    if (!deptId) return;
+
+    fetch(`/admin/designations/by-department/${deptId}`)
+    .then(res => res.json())
+    .then(api => {
+        const list = api.data || [];
+
+        list.forEach(d => {
+            desig.innerHTML += `<option value="${d.id}">${d.title}</option>`;
+        });
+    });
+});
+
+
+function loadManagers() {
+    fetch("/admin/managers")
+    .then(res => res.json())
+    .then(api => {
+        const list = api.data || [];
+        const manager = document.getElementById("managerId");
+
+        manager.innerHTML = '<option value="">Select Manager</option>';
+
+        list.forEach(emp => {
+            manager.innerHTML += `<option value="${emp.id}">${emp.firstName} ${emp.lastName}</option>`;
+        });
+    });
+}
+
+
+async function searchEmployeeForUpdate() {
+    const empId = document.getElementById("updateEmployeeId").value.trim();
+
+    if (!empId) {
+        Swal.fire("Enter Employee ID", "", "warning");
+        return;
+    }
+
+    try {
+        const res = await fetch(`/admin/employees/${empId}`);
+        const api = await res.json();
+        const emp = api.data;
+
+        if (!emp) {
+            Swal.fire("Employee not found", "", "error");
+            return;
+        }
+
+        document.getElementById("updateEmpCode").value = emp.employeeId || "";
+        document.getElementById("updateFirstName").value = emp.firstName || "";
+        document.getElementById("updateLastName").value = emp.lastName || "";
+        document.getElementById("updateEmail").value = emp.email || "";
+        document.getElementById("updatePhone").value = emp.phoneNumber || "";
+        document.getElementById("updateEmergencyContact").value = emp.emergencyContact || "";
+        document.getElementById("updateSalary").value = emp.salary || "";
+        document.getElementById("updateJoiningDate").value = emp.joiningDate || "";
+        document.getElementById("updateRole").value = emp.role || "";
+        document.getElementById("updateStatus").value = emp.status || "";
+        document.getElementById("updateAddress").value = emp.address || "";
+        document.getElementById("updatePassword").value = emp.password || "";
+
+        document.getElementById("updateDepartmentId").value = emp.departmentId || "";
+
+        await loadUpdateDesignations(emp.departmentId);
+
+        document.getElementById("updateDesignationId").value = emp.designationId || "";
+        document.getElementById("updateManagerId").value = emp.managerId || "";
+
+        document.getElementById("updateForm").style.display = "block";
+
+    } catch (error) {
+        Swal.fire("Error", "Unable to fetch employee details", "error");
+    }
+}
+
+
+function loadUpdateDepartments() {
+    fetch("/admin/departments")
+    .then(res => res.json())
+    .then(api => {
+        const list = api.data || [];
+        const dept = document.getElementById("updateDepartmentId");
+
+        dept.innerHTML = '<option value="">Select Department</option>';
+
+        list.forEach(d => {
+            dept.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+        });
+    });
+}
+
+
+document.getElementById("updateDepartmentId")?.addEventListener("change", function () {
+    const deptId = this.value;
+    loadUpdateDesignations(deptId);
+});
+
+function loadUpdateDesignations(deptId) {
+    const desig = document.getElementById("updateDesignationId");
+    desig.innerHTML = '<option value="">Select Designation</option>';
+
+    if (!deptId) return Promise.resolve();
+
+    return fetch(`/admin/designations/by-department/${deptId}`)
+    .then(res => res.json())
+    .then(api => {
+        const list = api.data || [];
+
+        list.forEach(d => {
+            desig.innerHTML += `<option value="${d.id}">${d.title}</option>`;
+        });
+    });
+}
+
+
+function loadUpdateManagers() {
+    fetch("/admin/managers")
+    .then(res => res.json())
+    .then(api => {
+        const list = api.data || [];
+        const manager = document.getElementById("updateManagerId");
+
+        manager.innerHTML = '<option value="">Select Manager</option>';
+
+        list.forEach(emp => {
+            manager.innerHTML += `<option value="${emp.id}">${emp.firstName} ${emp.lastName}</option>`;
+        });
+    });
+}
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: header('Update Profile')}"></head>
+
+<body>
+
+
+<div th:replace="~{fragments/employee-sidebar :: sidebar}"></div>
+
+
+<div th:replace="~{fragments/header :: topbar('Update Profile')}"></div>
+
+<div class="content">
+
+    <h3 class="fw-bold mb-4">✏ Update Profile</h3>
+
+  
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+   
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <div class="card shadow-sm border-0 p-4">
+
+        <form th:action="@{/employee/profile/update}"
+              method="post"
+              th:object="${employee}">
+
+            <div class="row g-3">
+
+       
+
+                <div class="col-md-6">
+                    <label class="form-label">First Name</label>
+                    <input class="form-control"
+                           th:value="*{firstName}"
+                           readonly>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Last Name</label>
+                    <input class="form-control"
+                           th:value="*{lastName}"
+                           readonly>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input class="form-control"
+                           th:value="*{email}"
+                           readonly>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Department</label>
+                    <input class="form-control"
+                           th:value="${employee.department?.name}"
+                           readonly>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Designation</label>
+                    <input class="form-control"
+                           th:value="${employee.designation?.title}"
+                           readonly>
+                </div>
+
+                <hr class="mt-4">
+
+               
+                <div class="col-md-6">
+                    <label class="form-label">Phone Number</label>
+                    <input class="form-control"
+                           th:field="*{phoneNumber}"
+                           maxlength="10">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Emergency Contact</label>
+                    <input class="form-control"
+                           th:field="*{emergencyContact}"
+                           maxlength="10">
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label">Address</label>
+                    <input class="form-control"
+                           th:field="*{address}">
+                </div>
+
+                <hr class="mt-4">
+
+             
+
+                <h5 class="fw-bold mt-3">🔐 Change Password</h5>
+
+                <div class="col-md-4">
+                    <label class="form-label">Old Password</label>
+                    <input type="password"
+                           name="oldPassword"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">New Password</label>
+                    <input type="password"
+                           name="newPassword"
+                           id="newPassword"
+                           class="form-control"
+                           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$"
+                           title="Minimum 8 characters, include uppercase, lowercase, number and special character">
+                    <small id="passwordHelp"></small>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password"
+                           name="confirmPassword"
+                           id="confirmPassword"
+                           class="form-control">
+                    <small id="confirmHelp"></small>
+                </div>
+
+                <div class="col-md-12 mt-4">
+                    <button class="btn btn-success">
+                        Save All Changes
+                    </button>
+
+                    <a th:href="@{/employee/profile}"
+                       class="btn btn-secondary ms-2">
+                        Cancel
+                    </a>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+const newPassword = document.getElementById("newPassword");
+const confirmPassword = document.getElementById("confirmPassword");
+const passwordHelp = document.getElementById("passwordHelp");
+const confirmHelp = document.getElementById("confirmHelp");
+
+newPassword.addEventListener("input", function () {
+    const value = newPassword.value;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    if (value.length === 0) {
+        passwordHelp.textContent = "";
+        return;
+    }
+
+    if (regex.test(value)) {
+        passwordHelp.textContent = "Strong password ✔";
+        passwordHelp.className = "text-success";
+    } else {
+        passwordHelp.textContent = "Must contain 8+ chars, uppercase, lowercase, number & special char";
+        passwordHelp.className = "text-danger";
+    }
+});
+
+confirmPassword.addEventListener("input", function () {
+    if (confirmPassword.value.length === 0) {
+        confirmHelp.textContent = "";
+        return;
+    }
+
+    if (confirmPassword.value === newPassword.value) {
+        confirmHelp.textContent = "Passwords match ✔";
+        confirmHelp.className = "text-success";
+    } else {
+        confirmHelp.textContent = "Passwords do not match ✖";
+        confirmHelp.className = "text-danger";
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

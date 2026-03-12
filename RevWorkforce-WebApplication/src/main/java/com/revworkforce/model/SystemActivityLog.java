@@ -27,26 +27,9 @@ public class SystemActivityLog {
     private String description;
 
     private String ipAddress;
-    private String status;
+    private String status; 
 
     private LocalDateTime createdAt = LocalDateTime.now();
-    
-    public SystemActivityLog() {}
-    
-    public SystemActivityLog(Long id, Long userId, String userName, String role, String action, String module,
-			String description, String ipAddress, String status, LocalDateTime createdAt) {
-		super();
-		this.id = id;
-		this.userId = userId;
-		this.userName = userName;
-		this.role = role;
-		this.action = action;
-		this.module = module;
-		this.description = description;
-		this.ipAddress = ipAddress;
-		this.status = status;
-		this.createdAt = createdAt;
-	}
 
 	public Long getId() {
 		return id;
@@ -127,5 +110,22 @@ public class SystemActivityLog {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
-	
+
+	public SystemActivityLog(Long id, Long userId, String userName, String role, String action, String module,
+			String description, String ipAddress, String status, LocalDateTime createdAt) {
+		super();
+		this.id = id;
+		this.userId = userId;
+		this.userName = userName;
+		this.role = role;
+		this.action = action;
+		this.module = module;
+		this.description = description;
+		this.ipAddress = ipAddress;
+		this.status = status;
+		this.createdAt = createdAt;
+	}
+	public SystemActivityLog() {
+	}    
+    
 }

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Team Goals</title>
+    <th:block th:replace="~{fragments/header :: header('Team Goals')}"></th:block>
+
+    <style>
+       
+
+        body {
+            background: #f4f6f9;
+        }
+
+        
+        .content-wrapper {
+            margin-left: 240px;    
+            padding: 30px;
+        }
+
+       
+        .content-wrapper {
+            margin-top: 80px;       
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+
+<div th:replace="~{fragments/header :: topbar('Team Goals')}"></div>
+
+
+<div class="content-wrapper">
+
+    <div class="container-fluid">
+
+        
+        <h4 class="fw-bold text-primary page-title">
+            Team Goals
+        </h4>
+
+        
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center">
+
+                        <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Goal Title</th>
+                            <th>Description</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Deadline</th>
+                            <th style="width:150px;">Progress</th>
+                            <th>Employee</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr th:each="goal : ${goals}">
+                            <td th:text="${goal.id}"></td>
+
+                            <td th:text="${goal.goalTitle}"></td>
+
+                            <td th:text="${goal.goalDescription}"></td>
+
+                            <td>
+                                <span class="badge bg-warning"
+                                      th:text="${goal.priority}">
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-info"
+                                      th:text="${goal.status}">
+                                </span>
+                            </td>
+
+                            <td th:text="${goal.deadline}"></td>
+
+                            <td>
+                                <div class="progress" style="height:18px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         th:style="'width:' + ${goal.progress} + '%;'"
+                                         th:text="${goal.progress + '%'}">
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td th:text="${goal.employee.firstName + ' ' + goal.employee.lastName}"></td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(goals)}">
+                            <td colspan="8" class="text-muted py-4">
+                                No goals available
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

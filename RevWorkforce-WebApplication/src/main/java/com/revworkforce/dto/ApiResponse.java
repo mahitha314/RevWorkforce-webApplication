@@ -45,5 +45,5 @@ public class ApiResponse {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
-    
+
 }

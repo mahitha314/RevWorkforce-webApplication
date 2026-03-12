@@ -2,11 +2,16 @@ package com.revworkforce.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import com.revworkforce.dto.ApiResponse;
+import com.revworkforce.model.Employee;
 
-@RestControllerAdvice
+import jakarta.servlet.http.HttpSession;
+
+@ControllerAdvice
 public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(ResourceNotFoundException.class)
@@ -39,6 +44,17 @@ public class GlobalExceptionHandler {
                 new ApiResponse(500, ex.getMessage(), null),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
+    }
+    
+    @ControllerAdvice
+    public class GlobalControllerAdvice {
+
+        @ModelAttribute
+        public void addEmployeeToModel(Model model, HttpSession session) {
+            Employee employee = (Employee) session.getAttribute("loggedInEmployee");
+            model.addAttribute("employee", employee);
+        }
+
     }
 
 }

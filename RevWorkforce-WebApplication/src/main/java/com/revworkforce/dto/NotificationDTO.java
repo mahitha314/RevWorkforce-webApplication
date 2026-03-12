@@ -62,7 +62,7 @@ public class NotificationDTO {
 		return employeeId;
 	}
 
-	public void setEmployeeId(String string) {
+	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
 	}
 

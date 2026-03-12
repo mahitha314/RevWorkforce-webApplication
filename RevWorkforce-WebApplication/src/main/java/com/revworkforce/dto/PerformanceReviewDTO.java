@@ -12,8 +12,8 @@ public class PerformanceReviewDTO {
 	private String deliverables;
 	private String areasOfImprovement;
 
-	private Integer selfRating;
-	private Integer managerRating;
+	private Integer selfRating; 
+	private Integer managerRating; 
 
 	private String managerFeedback;
 	private String status;
@@ -99,7 +99,7 @@ public class PerformanceReviewDTO {
 		return managerRating;
 	}
 
-	public void setManagerRating(Integer managerRating) { 
+	public void setManagerRating(Integer managerRating) {
 		this.managerRating = managerRating;
 	}
 
@@ -126,5 +126,5 @@ public class PerformanceReviewDTO {
 	public void setSubmittedDate(LocalDate submittedDate) {
 		this.submittedDate = submittedDate;
 	}
-	
+
 }

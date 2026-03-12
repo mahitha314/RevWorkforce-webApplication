@@ -10,19 +10,19 @@ public class Notification {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long notificationId;
-	
+
 	@Column(name = "title", length = 255)
 	private String title;
 
 	@Column(name = "message", nullable = false, length = 1000)
 	private String message;
-	
+
 	@Column(name = "type", length = 100)
 	private String type;
 
 	@Column(name = "status", nullable = false)
 	private String status;
-	
+
 	@Column(name = "is_read")
 	private Boolean isRead = false;
 
@@ -32,14 +32,16 @@ public class Notification {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "employee_id", nullable = false)
 	private Employee employee;
-	
+
 	@Column(name = "reference_id")
 	private Long referenceId;
 
-	public Notification() {}
+	public Notification() {
+	}
 
 	public Notification(Long notificationId, String title, String message, String type, String status, Boolean isRead,
 			LocalDateTime createdAt, Employee employee, Long referenceId) {
+
 		this.notificationId = notificationId;
 		this.title = title;
 		this.message = message;
@@ -53,10 +55,6 @@ public class Notification {
 
 	public Long getNotificationId() {
 		return notificationId;
-	}
-	
-	public void setNotificationId(Long notificationId) {
-		this.notificationId = notificationId;
 	}
 
 	public String getTitle() {
@@ -121,6 +119,10 @@ public class Notification {
 
 	public void setReferenceId(Long referenceId) {
 		this.referenceId = referenceId;
+	}
+
+	public void setNotificationId(Long notificationId) {
+		this.notificationId = notificationId;
 	}
 
 }

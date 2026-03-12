@@ -4,8 +4,7 @@ import jakarta.validation.constraints.*;
 
 public class EmployeeDTO {
 
-	@NotBlank(message = "Employee ID is required")
-	@Pattern(regexp = "^REV\\d{4}$", message = "Employee ID must follow format REV1001")
+	@NotBlank
 	private String employeeId;
 
 	@NotBlank(message = "First name is required")
@@ -20,13 +19,15 @@ public class EmployeeDTO {
 	@Pattern(regexp = "^[a-z0-9._%+-]+@rev\\.com$", message = "Email must be lowercase and end with @rev.com")
 	private String email;
 
-	@NotBlank(message = "Password is required")
-	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{6,15}$", message = "Password must contain 1 uppercase, 1 lowercase, 1 number, 1 special character and be 6-15 characters long")
-	private String password;
-
-	@NotBlank(message = "Role is required")
-	@Pattern(regexp = "ADMIN|MANAGER|EMPLOYEE", message = "Role must be ADMIN, MANAGER or EMPLOYEE")
-	private String role;
+	@NotBlank(message = "Password required")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).{6,}$",
+            message = "Password must contain 1 uppercase, 1 number, 1 special char and min 6 characters"
+    )
+    private String password;
+	
+	@NotBlank
+	private String role; 
 
 	@NotNull(message = "Department is required")
 	private Long departmentId;
@@ -34,15 +35,16 @@ public class EmployeeDTO {
 	@NotNull(message = "Designation is required")
 	private Long designationId;
 
-	private Long managerId;
+	private Long managerId; 
 
 	@NotNull(message = "Salary required")
-	@Positive(message = "Salary must be positive and greater than zero")
+    @Positive(message = "Salary must be positive")
 	private Double salary;
 
 	@NotBlank(message = "Phone number required")
-	@Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
-	private String phoneNumber;
+    @Pattern(regexp = "^[0-9]{10}$",
+            message = "Phone number must be 10 digits")
+    private String phoneNumber;
 
 	@NotBlank(message = "Address is required")
 	@Size(min = 5, max = 200, message = "Address must be between 5 and 200 characters")
