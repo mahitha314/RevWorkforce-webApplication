@@ -15,45 +15,27 @@ import java.util.stream.Collectors;
 @Service
 public class LeaveBalanceServiceImpl implements LeaveBalanceService {
 
-    private final LeaveBalanceRepository leaveBalanceRepo;
-    private final EmployeeRepository employeeRepo;
+	private final LeaveBalanceRepository leaveBalanceRepo;
+	private final EmployeeRepository employeeRepo;
 
-    public LeaveBalanceServiceImpl(
-            LeaveBalanceRepository leaveBalanceRepo,
-            EmployeeRepository employeeRepo) {
+	public LeaveBalanceServiceImpl(LeaveBalanceRepository leaveBalanceRepo, EmployeeRepository employeeRepo) {
 
-        this.leaveBalanceRepo = leaveBalanceRepo;
-        this.employeeRepo = employeeRepo;
-    }
+		this.leaveBalanceRepo = leaveBalanceRepo;
+		this.employeeRepo = employeeRepo;
+	}
 
-    @Override
-    public ApiResponse getEmployeeBalances(Long employeeId) {
+	@Override
+	public ApiResponse getEmployeeBalances(Long employeeId) {
 
-        // ✅ Validate Employee
-        var employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found with id: " + employeeId));
+		var employee = employeeRepo.findById(employeeId)
+				.orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + employeeId));
 
-        // ✅ Fetch Leave Balances
-        List<LeaveBalanceDTO> balances =
-                leaveBalanceRepo.findByEmployee_Id(employeeId)
-                        .stream()
-                        .map(balance -> new LeaveBalanceDTO(
-                                balance.getId(),                                // LeaveBalance ID
-                                employee.getId(),                               // Employee ID
-                                employee.getFirstName(),                             // Employee Name
-                                balance.getLeaveType().getId(),                 // LeaveType ID
-                                balance.getLeaveType().getTypeName(),           // LeaveType Name
-                                balance.getTotalLeaves(),                       // Total Leaves
-                                balance.getUsedLeaves(),                        // Used Leaves
-                                balance.getRemainingLeaves()                    // Remaining Leaves
-                        ))
-                        .collect(Collectors.toList());
+		List<LeaveBalanceDTO> balances = leaveBalanceRepo.findByEmployee_Id(employeeId).stream()
+				.map(balance -> new LeaveBalanceDTO(balance.getId(), employee.getId(), employee.getFirstName(),
+						balance.getLeaveType().getId(), balance.getLeaveType().getTypeName(), balance.getTotalLeaves(),
+						balance.getUsedLeaves(), balance.getRemainingLeaves()))
+				.collect(Collectors.toList());
 
-        return new ApiResponse(
-                200,
-                "Leave balances fetched successfully",
-                balances
-        );
-    }
+		return new ApiResponse(200, "Leave balances fetched successfully", balances);
+	}
 }

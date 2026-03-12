@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: header('Employee Management')}"></head>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<body>
+
+	<!-- Sidebar -->
+	<div th:replace="~{fragments/sidebar :: sidebar('employee')}"></div>
+
+	<!-- Topbar -->
+	<div th:replace="~{fragments/header :: topbar('Employee Management')}"></div>
+<!-- ================= MAIN CONTENT ================= -->
+<div class="content-wrapper">
+    <div class="container mt-4">
+        <div class="row">
+
+            <!-- ===== LEFT ACTION PANEL ===== -->
+            <div class="col-lg-3">
+                <div class="left-panel">
+                    <button type="button" id="addBtn"
+                            class="action-btn active-btn w-100 mb-3">
+                        <i class="bi bi-person-plus"></i> Add Employee
+                    </button>
+
+                 
+                </div>
+            </div>
+
+            <!-- ===== FORM SECTION ===== -->
+            <div class="col-lg-9">
+
+                <!-- ================= ADD SECTION ================= -->
+                <div id="addSection">
+                    <div class="card form-card shadow border-0">
+                        <div class="card-body p-5">
+
+                            <h4 class="fw-bold mb-4 text-primary">
+                                <i class="bi bi-person-plus"></i> Add Employee
+                            </h4>
+
+                            <form id="addForm">
+                                <div class="row g-4">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Employee ID</label>
+                                        <input class="form-control" name="employeeId" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">First Name</label>
+                                        <input class="form-control" name="firstName" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Last Name</label>
+                                        <input class="form-control" name="lastName" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Password</label>
+                                        <input type="password" class="form-control" name="password" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Role</label>
+                                        <select class="form-select" name="role" required>
+                                            <option value="EMPLOYEE">EMPLOYEE</option>
+                                            <option value="MANAGER">MANAGER</option>
+                                            <option value="ADMIN">ADMIN</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Department</label>
+                                        <select class="form-select" id="departmentId"
+                                                name="departmentId" required></select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Designation</label>
+                                        <select class="form-select" id="designationId"
+                                                name="designationId" required></select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Manager ID</label>
+                                        <select class="form-select" id="managerId"
+                                                name="managerId"></select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Salary</label>
+                                        <input type="number" step="0.01"
+                                               class="form-control" name="salary" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone Number</label>
+                                        <input class="form-control" name="phoneNumber" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Emergency Contact</label>
+                                        <input class="form-control" name="emergencyContact" required>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label">Address</label>
+                                        <textarea class="form-control" name="address"
+                                                  rows="3" required></textarea>
+                                    </div>
+
+                                </div>
+
+                                <div class="text-center mt-5">
+                                    <button type="submit"
+                                            class="btn btn-primary px-5 py-2">
+                                        Save Employee
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+				<!-- ================= DELETE SECTION ================= -->
+				<div id="deleteSection" style="display:none;">
+				    <div class="card form-card shadow border-0 mt-4">
+				        <div class="card-body p-5">
+
+				            <h4 class="fw-bold mb-4 text-danger">
+				                <i class="bi bi-trash"></i> Delete Employee
+				            </h4>
+
+				            <div class="row g-4 mb-4">
+				                <div class="col-md-8">
+				                    <label class="form-label">Employee ID</label>
+				                    <input type="search"
+				                           id="deleteEmployeeId"
+				                           class="form-control"
+				                           placeholder="Enter Employee ID">
+				                </div>
+
+				                <div class="col-md-4 d-flex align-items-end">
+				                    <button type="button"
+				                            class="btn btn-danger w-100"
+				                            onclick="searchDeleteEmployee()">
+				                        Search
+				                    </button>
+				                </div>
+				            </div>
+
+				            <div id="deleteResult"
+				                 class="p-3 bg-light rounded border"
+				                 style="min-height:60px;"></div>
+
+				        </div>
+				    </div>
+				</div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>
+<!-- ===== STYLING ===== -->
+<style>
+	body {
+		background: #f4f6f9;
+	}
+
+	/* Layout wrapper */
+	.content-wrapper {
+		margin-top: 70px;
+		padding-left: 240px;
+		/* if sidebar fixed */
+	}
+
+	/* Left panel */
+	.left-panel {
+		position: sticky;
+		top: 100px;
+	}
+
+	/* Action Buttons */
+	.action-btn {
+		border: 1px solid #dee2e6;
+		padding: 14px;
+		border-radius: 12px;
+		background: #ffffff;
+		font-weight: 500;
+		font-size: 15px;
+		transition: all 0.2s ease;
+	}
+
+	.action-btn:hover {
+		background: linear-gradient(45deg, #3b82f6, #2563eb);
+		color: white;
+		border-color: transparent;
+		transform: translateY(-2px);
+	}
+
+	.active-btn {
+		background: linear-gradient(45deg, #3b82f6, #2563eb);
+		color: white;
+		border-color: transparent;
+	}
+
+	/* Card */
+	.form-card {
+		border-radius: 16px;
+	}
+
+	/* Inputs */
+	.form-control,
+	.form-select {
+		border-radius: 10px;
+		height: 46px;
+		font-size: 14px;
+	}
+
+	textarea.form-control {
+		height: auto;
+	}
+
+	/* Gradient Button */
+	.btn-gradient {
+		background: linear-gradient(45deg, #3b82f6, #2563eb);
+		border: none;
+		color: white;
+		border-radius: 10px;
+		font-weight: 500;
+		transition: 0.2s ease;
+	}
+
+	.btn-gradient:hover {
+		opacity: 0.9;
+	}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    loadDepartments();
+    loadManagers();
+
+    const addBtn = document.getElementById("addBtn");
+    const updateBtn = document.getElementById("updateBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    const addSection = document.getElementById("addSection");
+    const updateSection = document.getElementById("updateSection");
+    const deleteSection = document.getElementById("deleteSection");
+
+    showAdd();
+
+    if (addBtn) addBtn.addEventListener("click", showAdd);
+    if (updateBtn) updateBtn.addEventListener("click", showUpdate);
+    if (deleteBtn) deleteBtn.addEventListener("click", showDelete);
+
+    function showAdd() {
+        if (addSection) addSection.style.display = "block";
+        if (updateSection) updateSection.style.display = "none";
+        if (deleteSection) deleteSection.style.display = "none";
+
+        addBtn?.classList.add("active-btn");
+        updateBtn?.classList.remove("active-btn");
+        deleteBtn?.classList.remove("active-btn");
+    }
+
+    function showUpdate() {
+        if (addSection) addSection.style.display = "none";
+        if (updateSection) updateSection.style.display = "block";
+        if (deleteSection) deleteSection.style.display = "none";
+
+        updateBtn?.classList.add("active-btn");
+        addBtn?.classList.remove("active-btn");
+        deleteBtn?.classList.remove("active-btn");
+    }
+
+    function showDelete() {
+        if (addSection) addSection.style.display = "none";
+        if (updateSection) updateSection.style.display = "none";
+        if (deleteSection) deleteSection.style.display = "block";
+
+        deleteBtn?.classList.add("active-btn");
+        addBtn?.classList.remove("active-btn");
+        updateBtn?.classList.remove("active-btn");
+    }
+
+    // ================= SAVE EMPLOYEE WITH VALIDATION =================
+    document.getElementById("addForm").addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // ✅ EMAIL VALIDATION (@rev.com only)
+        if (!data.email.endsWith("@rev.com")) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Email",
+                text: "Email must end with @rev.com"
+            });
+            return;
+        }
+
+        // ✅ PHONE VALIDATION (10 digits only)
+        if (!/^[0-9]{10}$/.test(data.phoneNumber)) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Phone Number",
+                text: "Phone number must be exactly 10 digits"
+            });
+            return;
+        }
+
+        // ✅ PASSWORD VALIDATION
+        const passwordRegex =
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*?&]).{8,}$/;
+
+        if (!passwordRegex.test(data.password)) {
+            Swal.fire({
+                icon: "error",
+                title: "Weak Password",
+                text:
+                    "Password must be 8+ chars, include upper, lower, number & special char"
+            });
+            return;
+        }
+
+        data.salary = parseFloat(data.salary);
+        data.departmentId = parseInt(data.departmentId);
+        data.designationId = parseInt(data.designationId);
+        data.managerId = data.managerId
+            ? parseInt(data.managerId)
+            : null;
+
+        fetch("/admin/employees", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.json();
+        })
+        .then(response => {
+
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: response.message
+            });
+
+            form.reset();
+        })
+        .catch(() => {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Employee save failed"
+            });
+        });
+    });
+
+});
+
+
+// ================= LOAD DEPARTMENTS =================
+function loadDepartments() {
+    fetch("/admin/departments")
+        .then(res => res.json())
+        .then(api => {
+
+            const list = api.data || [];
+            const dept = document.getElementById("departmentId");
+
+            if (!dept) return;
+
+            dept.innerHTML =
+                '<option value="">Select Department</option>';
+
+            list.forEach(d => {
+                dept.innerHTML +=
+                    `<option value="${d.id}">${d.name}</option>`;
+            });
+        });
+}
+
+
+// ================= LOAD DESIGNATIONS =================
+document.getElementById("departmentId")
+?.addEventListener("change", function () {
+
+    const deptId = this.value;
+    const desig = document.getElementById("designationId");
+
+    desig.innerHTML =
+        '<option value="">Select Designation</option>';
+
+    if (!deptId) return;
+
+    fetch(`/admin/designations/by-department/${deptId}`)
+        .then(res => res.json())
+        .then(api => {
+
+            const list = api.data || [];
+
+            list.forEach(d => {
+                desig.innerHTML +=
+                    `<option value="${d.id}">${d.title}</option>`;
+            });
+        });
+});
+
+
+// ================= LOAD MANAGERS =================
+function loadManagers() {
+
+    fetch("/admin/managers")
+        .then(res => res.json())
+        .then(api => {
+
+            const list = api.data || [];
+            const manager = document.getElementById("managerId");
+
+            if (!manager) return;
+
+            manager.innerHTML =
+                '<option value="">Select Manager</option>';
+
+            list.forEach(emp => {
+                manager.innerHTML +=
+                    `<option value="${emp.id}">
+                        ${emp.firstName} ${emp.lastName}
+                    </option>`;
+            });
+        });
+}
+</script>
+
+</body>
+
+</html>

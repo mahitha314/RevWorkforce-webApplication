@@ -1,11 +1,14 @@
 package com.revworkforce.employeeserviceImpl;
 
+import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.dto.ApiResponse;
+import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.dto.PerformanceReviewDTO;
 import com.revworkforce.employeeservice.PerformanceService;
 import com.revworkforce.exception.EmployeeNotFoundException;
 import com.revworkforce.model.Employee;
 import com.revworkforce.model.PerformanceReview;
+import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.PerformanceReviewRepository;
 
@@ -14,20 +17,29 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
+@Transactional
 public class PerformanceServiceImpl implements PerformanceService {
 
-    private final PerformanceReviewRepository reviewRepo;
+	private final PerformanceReviewRepository reviewRepo;
     private final EmployeeRepository employeeRepo;
+    private final NotificationService notificationService;
+    private final ActivityLogService activityLogService;
 
     public PerformanceServiceImpl(PerformanceReviewRepository reviewRepo,
-                                  EmployeeRepository employeeRepo) {
+                                  EmployeeRepository employeeRepo,
+                                  NotificationService notificationService,
+                                  ActivityLogService activityLogService) {
         this.reviewRepo = reviewRepo;
         this.employeeRepo = employeeRepo;
+        this.notificationService = notificationService;
+        this.activityLogService = activityLogService;
     }
 
-    // ================= CREATE SELF REVIEW =================
+   
     @Override
     public ApiResponse createSelfReview(Long employeeId, PerformanceReviewDTO dto) {
 
@@ -47,6 +59,12 @@ public class PerformanceServiceImpl implements PerformanceService {
         review.setSubmittedDate(LocalDate.now());
 
         PerformanceReview saved = reviewRepo.save(review);
+        
+     // Activity Log
+        activityLogService.log(
+                employee.getId(),
+                "Created self performance review draft"
+        );
 
         return new ApiResponse(
                 201,
@@ -55,7 +73,6 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    // ================= GET EMPLOYEE REVIEWS =================
     @Override
     public ApiResponse getEmployeeReviews(Long employeeId) {
 
@@ -76,7 +93,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    // ================= SUBMIT REVIEW =================
+  
     @Override
     public ApiResponse submitReview(Long reviewId) {
 
@@ -88,6 +105,27 @@ public class PerformanceServiceImpl implements PerformanceService {
         review.setSubmittedDate(LocalDate.now());
 
         reviewRepo.save(review);
+        
+        Employee employee = review.getEmployee();
+
+       
+        if (employee.getManager() != null) {
+
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setTitle("Performance Review Submitted");
+            notificationDTO.setMessage(
+                    employee.getFirstName() + " has submitted performance review"
+            );
+            notificationDTO.setReferenceId(employee.getManager().getId());
+
+            notificationService.createNotification(notificationDTO);
+        }
+
+        // Activity Log
+        activityLogService.log(
+                employee.getId(),
+                "Submitted performance review"
+        );
 
         return new ApiResponse(
                 200,
@@ -96,7 +134,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    // ================= DELETE REVIEW =================
+    
     @Override
     public ApiResponse deleteReview(Long reviewId) {
 
@@ -113,6 +151,12 @@ public class PerformanceServiceImpl implements PerformanceService {
         }
 
         reviewRepo.delete(review);
+        
+     // Activity Log
+        activityLogService.log(
+                review.getEmployee().getId(),
+                "Deleted performance review draft"
+        );
 
         return new ApiResponse(
                 200,
@@ -121,7 +165,6 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    // ================= DTO MAPPING =================
     private PerformanceReviewDTO mapToDTO(PerformanceReview review) {
 
         return new PerformanceReviewDTO(

@@ -24,7 +24,7 @@ public class LeaveApproval {
 
 	@Column(name = "approval_date")
 	private LocalDate approvalDate;
-	
+
 	@OneToOne(mappedBy="leaveApproval")
 	@JsonBackReference(value="request-approval")
 	private LeaveRequest leaveRequest;
@@ -85,7 +85,6 @@ public class LeaveApproval {
 
 	public void setLeaveRequest(LeaveRequest leaveRequest) {
 		this.leaveRequest = leaveRequest;
-		
 	}
 
 }

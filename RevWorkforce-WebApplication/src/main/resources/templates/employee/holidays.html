@@ -1,58 +1,79 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments/header :: header('Holiday Calendar')"></head>
+<!-- HEADER -->
+<head th:replace="fragments/header :: header('Holidays')"></head>
 
 <body>
 
-<div th:replace="fragments/sidebar :: sidebar"></div>
-<div th:replace="fragments/header :: topbar"></div>
+<!-- SIDEBAR -->
+<div th:replace="fragments/employee-sidebar :: sidebar"></div>
 
+<!-- TOPBAR -->
+<div th:replace="fragments/header :: topbar('Holidays')"></div>
+
+<!-- MAIN CONTENT -->
 <div class="content">
 
+    <!-- PAGE TITLE -->
     <div class="mb-4">
-        <h3 class="fw-bold">Holiday Calendar</h3>
-        <p class="text-muted">Upcoming Company Holidays</p>
+        <h3 class="fw-bold">Company Holidays</h3>
+        <p class="text-muted">
+            View all official company holidays
+        </p>
     </div>
 
+    <!-- SUCCESS MESSAGE -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- HOLIDAYS TABLE -->
     <div class="card shadow-sm border-0">
 
-        <div class="card-header bg-success text-white fw-bold">
-            Upcoming Holidays
+        <div class="card-header bg-dark text-white fw-bold">
+            Holiday List
         </div>
 
         <div class="card-body">
 
             <div class="table-responsive">
 
-                <table class="table table-bordered table-hover text-center">
+                <table class="table table-bordered table-hover align-middle text-center">
 
                     <thead class="table-light">
-                    <tr>
-                        <th>Date</th>
-                        <th>Day</th>
-                        <th>Holiday</th>
-                        <th>Description</th>
-                    </tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Holiday Name</th>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Description</th>
+                        </tr>
                     </thead>
+					<tbody>
 
-                    <tbody>
+					    <tr th:each="holiday, stat : ${holidays}">
+					        <td th:text="${stat.count}"></td>
 
-                    <tr th:each="holiday : ${holidays}">
-                        <td th:text="${holiday.holidayDate}"></td>
-                        <td th:text="${holiday.holidayDate.dayOfWeek}"></td>
-                        <td th:text="${holiday.holidayName}"></td>
-                        <td th:text="${holiday.description}"></td>
-                    </tr>
+					        <!-- Correct field -->
+					        <td th:text="${holiday.holidayName}"></td>
 
-                    <tr th:if="${#lists.isEmpty(holidays)}">
-                        <td colspan="4" class="text-muted">
-                            No upcoming holidays available.
-                        </td>
-                    </tr>
+					        <!-- Correct field -->
+					        <td th:text="${holiday.holidayDate}"></td>
 
-                    </tbody>
+					        <!-- Calculate Day from Date -->
+					        <td th:text="${holiday.holidayDate.dayOfWeek}"></td>
 
+					        <td th:text="${holiday.description}"></td>
+					    </tr>
+
+					    <tr th:if="${#lists.isEmpty(holidays)}">
+					        <td colspan="5" class="text-muted">
+					            No holidays available.
+					        </td>
+					    </tr>
+
+					</tbody>
                 </table>
 
             </div>
@@ -63,8 +84,10 @@
 
 </div>
 
+<!-- FOOTER -->
 <div th:replace="fragments/footer :: footer"></div>
 
+<!-- BOOTSTRAP JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

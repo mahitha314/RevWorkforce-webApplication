@@ -93,5 +93,4 @@ public class GoalDTO {
 	public void setProgress(Integer progress) {
 		this.progress = progress;
 	}
-	
 }

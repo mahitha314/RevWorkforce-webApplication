@@ -31,17 +31,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> searchEmployees(String keyword) {
 
-        // If search box empty → return all employees
         if (keyword == null || keyword.trim().isEmpty()) {
             return employeeRepo.findAll();
         }
 
-        // Single clean search method
+        String[] parts = keyword.trim().split(" ");
+
+        if (parts.length == 2) {
+            return employeeRepo
+                    .findByFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(
+                            parts[0], parts[1]);
+        }
+
         return employeeRepo
                 .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                        keyword.trim(),
-                        keyword.trim(),
-                        keyword.trim()
-                );
+                        keyword, keyword, keyword);
+
     }
 }

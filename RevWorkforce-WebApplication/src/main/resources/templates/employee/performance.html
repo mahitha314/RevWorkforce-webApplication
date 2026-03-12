@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments/header :: header('Performance Review')"></head>
+<head>
+    <th:block th:replace="fragments/header :: header('Performance Review')"></th:block>
+</head>
 
 <body>
 
-<div th:replace="fragments/sidebar :: sidebar"></div>
-<div th:replace="fragments/header :: topbar"></div>
+<div th:replace="fragments/employee-sidebar :: sidebar"></div>
+<div th:replace="fragments/header :: topbar('Performance Review')"></div>
 
 <div class="content">
 
@@ -36,8 +38,7 @@
             <form id="reviewForm"
                   th:action="@{/employee/performance}"
                   method="post"
-                  th:object="${review}"
-                  novalidate>
+                  th:object="${review}">
 
                 <div class="mb-3">
                     <label class="form-label">Deliverables</label>
@@ -65,7 +66,10 @@
                     <input type="number"
                            id="selfRating"
                            class="form-control"
-                           th:field="*{selfRating}">
+                           min="1"
+                           max="5"
+                           th:field="*{selfRating}"
+                           required>
                 </div>
 
                 <button type="button"
@@ -106,76 +110,65 @@
 
                     <tbody>
 
-						<tr th:each="r : ${reviews}">
+                    <tr th:each="r : ${reviews}">
 
-						    <td th:text="${r.deliverables}"></td>
-						    <td th:text="${r.accomplishments}"></td>
-						    <td th:text="${r.areasOfImprovement}"></td>
+                        <td th:text="${r.deliverables}"></td>
+                        <td th:text="${r.accomplishments}"></td>
+                        <td th:text="${r.areasOfImprovement}"></td>
 
-						    <!-- Self Rating -->
-						    <td>
-						        <span class="badge bg-info text-dark"
-						              th:text="${r.selfRating}">
-						        </span>
-						    </td>
+                        <td>
+                            <span class="badge bg-info text-dark"
+                                  th:text="${r.selfRating}"></span>
+                        </td>
 
-						    <!-- Manager Rating -->
-						    <td>
-						        <span th:if="${r.managerRating > 0}"
-						              class="badge bg-success"
-						              th:text="${r.managerRating}">
-						        </span>
+                        <td>
+                            <span th:if="${r.managerRating > 0}"
+                                  class="badge bg-success"
+                                  th:text="${r.managerRating}"></span>
 
-						        <span th:if="${r.managerRating == 0}"
-						              class="text-muted">
-						            Not Reviewed
-						        </span>
-						    </td>
+                            <span th:if="${r.managerRating == 0}"
+                                  class="text-muted">
+                                Not Reviewed
+                            </span>
+                        </td>
 
-						    <!-- Manager Feedback -->
-						    <td>
-						        <span th:if="${r.managerFeedback != null}"
-						              th:text="${r.managerFeedback}">
-						        </span>
+                        <td>
+                            <span th:if="${r.managerFeedback != null}"
+                                  th:text="${r.managerFeedback}"></span>
 
-						        <span th:if="${r.managerFeedback == null}"
-						              class="text-muted">
-						            Waiting for feedback
-						        </span>
-						    </td>
+                            <span th:if="${r.managerFeedback == null}"
+                                  class="text-muted">
+                                Waiting for feedback
+                            </span>
+                        </td>
 
-						    <!-- Status -->
-						    <td>
+                        <td>
 
-						        <!-- Draft -->
-						        <span th:if="${r.status == 'Draft'}"
-						              class="badge bg-warning text-dark">
-						            Draft
-						        </span>
+                            <span th:if="${r.status == 'Draft'}"
+                                  class="badge bg-warning text-dark">
+                                Draft
+                            </span>
 
-						        <!-- Submitted -->
-						        <span th:if="${r.status == 'Submitted'}"
-						              class="badge bg-primary">
-						            Submitted
-						        </span>
+                            <span th:if="${r.status == 'Submitted'}"
+                                  class="badge bg-primary">
+                                Submitted
+                            </span>
 
-						        <!-- Reviewed -->
-						        <span th:if="${r.status == 'Reviewed'}"
-						              class="badge bg-success">
-						            Reviewed
-						        </span>
+                            <span th:if="${r.status == 'Reviewed'}"
+                                  class="badge bg-success">
+                                Reviewed
+                            </span>
 
-						        <!-- 🔥 SUBMIT BUTTON ONLY FOR DRAFT -->
-						        <div th:if="${r.status == 'Draft'}" class="mt-2">
-						            <a th:href="@{/employee/performance/submit/{id}(id=${r.id})}"
-						               class="btn btn-sm btn-outline-primary">
-						                Submit
-						            </a>
-						        </div>
+                            <div th:if="${r.status == 'Draft'}" class="mt-2">
+                                <a th:href="@{/employee/performance/submit/{id}(id=${r.id})}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Submit
+                                </a>
+                            </div>
 
-						    </td>
+                        </td>
 
-						</tr>
+                    </tr>
 
                     <tr th:if="${#lists.isEmpty(reviews)}">
                         <td colspan="7" class="text-muted">
@@ -196,7 +189,6 @@
 
 <div th:replace="fragments/footer :: footer"></div>
 
-<!-- Rating Validation -->
 <script>
 window.onload = function () {
 
@@ -204,19 +196,11 @@ window.onload = function () {
     const rating = document.getElementById("selfRating");
     const saveBtn = document.getElementById("saveBtn");
 
-    saveBtn.addEventListener("click", function (e) {
+    saveBtn.addEventListener("click", function () {
 
         let value = parseInt(rating.value);
 
-        rating.style.border = "";
-        rating.style.backgroundColor = "";
-
         if (isNaN(value) || value < 1 || value > 5) {
-
-            e.preventDefault();
-
-            rating.style.border = "4px solid red";
-            rating.style.backgroundColor = "#ffdddd";
 
             alert("Rating must be between 1 and 5");
             return;

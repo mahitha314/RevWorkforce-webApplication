@@ -1,5 +1,4 @@
 package com.revworkforce.config;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,92 +9,90 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
+import com.revworkforce.model.Employee;
+import com.revworkforce.security.CustomUserDetails;
 import com.revworkforce.security.CustomUserDetailsService;
 
 @Configuration
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
+	private final CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
-        this.customUserDetailsService = customUserDetailsService;
-    }
+	public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+		this.customUserDetailsService = customUserDetailsService;
+	}
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
+		http.csrf(csrf -> csrf.disable())
 
-            .authorizeHttpRequests(auth -> auth
+				.authorizeHttpRequests(auth -> auth
 
-                // ✅ Public pages
-                .requestMatchers(
-                        "/",
-                        "/login",
-                        "/auth/**",
-                        "/css/**",
-                        "/js/**"
-                ).permitAll()
+						.requestMatchers("/", "/login", "/auth/**", "/css/**", "/js/**").permitAll()
 
-                // ✅ Dashboard Protection
-                .requestMatchers("/admin/admin-dashboard").hasRole("ADMIN")
-                .requestMatchers("/manager-dashboard").hasRole("MANAGER")
-                .requestMatchers("/dashboard")
-                    .hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
+						.requestMatchers("/notifications/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
 
-                // ✅ Role Based APIs
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/manager/**").hasRole("MANAGER")
-                .requestMatchers("/employee/**")
-                    .hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
+						.requestMatchers("/ui/notifications/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
 
-                .anyRequest().authenticated()
-            )
+						.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/manager/**").hasRole("MANAGER")
+						.requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
 
-            // ✅ Enable Session (IMPORTANT FIX)
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-            )
+						.anyRequest().authenticated())
 
-           
-            .formLogin(form -> form
-            	    .loginPage("/login")
-            	    .defaultSuccessUrl("/employee/dashboard", true)
-            	    .permitAll()
-            	)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
-            );
+				.formLogin(form -> form.loginPage("/login").successHandler((request, response, authentication) -> {
 
-        return http.build();
-    }
+					var authorities = authentication.getAuthorities();
 
-    // 🔐 Password Encoder
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+					if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
 
-    // 🔐 Authentication Provider
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+						response.sendRedirect("/admin/dashboard");
+					}
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(customUserDetailsService);
+				else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"))) {
 
-        provider.setPasswordEncoder(passwordEncoder());
+						response.sendRedirect("/manager/dashboard");
+					}
 
-        return provider;
-    }
-    // 🔐 Authentication Manager
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+				else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+
+						CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+						Employee employee = userDetails.getEmployee();
+
+						response.sendRedirect("/employee/dashboard");
+					}
+
+				else {
+						response.sendRedirect("/login?error");
+					}
+				}).permitAll())
+
+				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login?logout").permitAll());
+
+		return http.build();
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailsService);
+
+		provider.setPasswordEncoder(passwordEncoder());
+
+		return provider;
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
+
 }

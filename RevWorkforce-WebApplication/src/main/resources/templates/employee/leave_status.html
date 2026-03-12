@@ -1,71 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header('Leave Status')"></head>
+
+<head th:replace="fragments/header :: header('Leave Management')"></head>
 
 <body>
 
 <div th:replace="fragments/header :: topbar"></div>
 
 <div class="wrapper">
+
     <div th:replace="fragments/sidebar :: sidebar"></div>
 
     <div class="main-content">
 
-		<h3 class="fw-bold mb-4">Leave Status</h3>
-		<div th:replace="fragments/leave-tabs :: leaveTabs('status')"></div>
-        <div class="card shadow-sm p-4">
+        <div class="container-fluid">
 
-            <div th:if="${successMessage}"
-                 class="alert alert-success alert-dismissible fade show">
-                <span th:text="${successMessage}"></span>
-                <button type="button" class="btn-close"
-                        data-bs-dismiss="alert"></button>
+            <h3 class="fw-bold mb-2">Leave Management</h3>
+            <p class="text-muted mb-4">
+                Manage leave applications and track leave records
+            </p>
+
+            <!-- Horizontal Navigation -->
+            <ul class="nav nav-pills mb-4">
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:href="@{/employee/apply-leave}">
+                        Apply Leave
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:href="@{/employee/leave-status}">
+                        Leave Status
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:href="@{/employee/leave-balance}">
+                        Leave Balance
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:href="@{/employee/leave-history}">
+                        Leave History
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="alert alert-info">
+                Select an option above to continue.
             </div>
-
-            <table class="table table-bordered table-hover">
-
-                <thead class="table-dark">
-                <tr>
-                    <th>Leave Type</th>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-
-                <tbody th:if="${leaveRequests != null and !#lists.isEmpty(leaveRequests)}">
-                <tr th:each="leave : ${leaveRequests}">
-                    <td th:text="${leave.leaveType != null ? leave.leaveType.typeName : 'N/A'}"></td>
-                    <td th:text="${leave.startDate}"></td>
-                    <td th:text="${leave.endDate}"></td>
-                    <td>
-                        <span th:text="${leave.status}"
-                              th:classappend="
-                                ${leave.status == 'APPROVED'} ? 'badge bg-success' :
-                                (${leave.status == 'REJECTED'} ? 'badge bg-danger' :
-                                (${leave.status == 'CANCELLED'} ? 'badge bg-secondary' :
-                                'badge bg-warning text-dark'))">
-                        </span>
-                    </td>
-                </tr>
-                </tbody>
-
-                <tbody th:if="${leaveRequests == null or #lists.isEmpty(leaveRequests)}">
-                <tr>
-                    <td colspan="4" class="text-center text-muted">
-                        No Leave Requests Found
-                    </td>
-                </tr>
-                </tbody>
-
-            </table>
 
         </div>
 
     </div>
+
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
