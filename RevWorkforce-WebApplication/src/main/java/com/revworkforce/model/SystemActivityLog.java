@@ -28,7 +28,8 @@ public class SystemActivityLog {
     private String description;
 
     private String ipAddress;
-    private String status; // SUCCESS / FAILED
+
+    private String status; 
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -127,8 +128,6 @@ public class SystemActivityLog {
 		this.createdAt = createdAt;
 	}
 	public SystemActivityLog() {
-	}
-    
-    
+	}    
     
 }

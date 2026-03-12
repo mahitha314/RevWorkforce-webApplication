@@ -8,9 +8,11 @@ import com.revworkforce.model.Notification;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
+//    List<Notification> findByEmployeeEmployeeIdOrderByCreatedAtDesc(String employeeId);
 
     List<Notification> findAllByOrderByCreatedAtDesc();
-    
+//    List<Notification> findByEmployeeEmployeeIdAndIsRead(String employeeId, Boolean isRead);
+
     long countByEmployeeEmployeeIdAndIsRead(String employeeId, Boolean isRead);
     
     List<Notification> findByEmployee_IdOrderByCreatedAtDesc(Long employeeId);

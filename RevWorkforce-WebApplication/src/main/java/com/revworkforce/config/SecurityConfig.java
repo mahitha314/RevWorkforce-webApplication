@@ -10,7 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 import com.revworkforce.model.Employee;
 import com.revworkforce.security.CustomUserDetails;
 import com.revworkforce.security.CustomUserDetailsService;
@@ -31,25 +30,19 @@ public class SecurityConfig {
 
 				.authorizeHttpRequests(auth -> auth
 
-						// ✅ Public pages
 						.requestMatchers("/", "/login", "/auth/**", "/css/**", "/js/**").permitAll()
 
-						// Notifications (REST)
 						.requestMatchers("/notifications/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
 
-						// Notifications (UI)
 						.requestMatchers("/ui/notifications/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
-						
-						// ✅ Role Based APIs
+
 						.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/manager/**").hasRole("MANAGER")
 						.requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
 
 						.anyRequest().authenticated())
 
-				// ✅ Enable Session (IMPORTANT FIX)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
-				// ✅ Use form login for Thymeleaf
 				.formLogin(form -> form.loginPage("/login").successHandler((request, response, authentication) -> {
 
 					var authorities = authentication.getAuthorities();
@@ -83,13 +76,11 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	// 🔐 Password Encoder
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	// 🔐 Authentication Provider
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
 
@@ -100,9 +91,9 @@ public class SecurityConfig {
 		return provider;
 	}
 
-	// 🔐 Authentication Manager
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
+
 }

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
@@ -142,7 +141,7 @@
 
 
 <!-- ================= TOPBAR FRAGMENT ================= -->
-<body th:fragment="topbar(pageTitle)">
+<div th:fragment="topbar(pageTitle)">
 
 <div class="topbar d-flex justify-content-between align-items-center">
 
@@ -165,13 +164,13 @@
         </button>
 
 		<span>
-		    Welcome.
-		    <strong th:text="${employeeName}">User</strong>
+		    Welcome,
+		    <span th:text="${employee != null ? employee.firstName + ' ' + employee.lastName : 'User'}"></span>
 		</span>
     </div>
 
 </div>
 
-</body>
+</div>
 
 </html>

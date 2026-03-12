@@ -14,14 +14,12 @@ public class LeaveBalanceDTO {
     private Integer usedLeaves;
     private Integer remainingLeaves;
 
-    // For adjustment
     private Integer days;
     private String reason;
 
     public LeaveBalanceDTO() {
     }
-
-    // Constructor for report display
+ 
     public LeaveBalanceDTO(Long id,
                            Long employeeId,
                            String employeeName,
@@ -40,8 +38,6 @@ public class LeaveBalanceDTO {
         this.usedLeaves = usedLeaves;
         this.remainingLeaves = remainingLeaves;
     }
-
-    // Getters and Setters below
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

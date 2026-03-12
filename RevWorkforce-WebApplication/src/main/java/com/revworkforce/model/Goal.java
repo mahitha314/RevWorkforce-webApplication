@@ -10,7 +10,9 @@ public class Goal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String goalTitle;
+
 	@Column(nullable = false)
 	private String goalDescription;
 
@@ -31,8 +33,6 @@ public class Goal {
 	private Employee employee;
 
 	public Goal() {}
-
-	
 
 	public Goal(Long id, String goalTitle, String goalDescription, String priority, String status, LocalDate deadline,
 			int progress, Employee employee) {

@@ -82,4 +82,12 @@ public class LeaveApproval {
 		this.approvalDate = approvalDate;
 	}
 
+	public LeaveRequest getLeaveRequest() {
+		return leaveRequest;
+	}
+
+	public void setLeaveRequest(LeaveRequest leaveRequest) {
+		this.leaveRequest = leaveRequest;
+	}
+
 }

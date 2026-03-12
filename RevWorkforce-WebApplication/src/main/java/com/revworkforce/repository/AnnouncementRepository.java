@@ -10,4 +10,5 @@ import com.revworkforce.model.Announcement;
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
 
     List<Announcement> findAllByOrderByPostedDateDesc();
+
 }

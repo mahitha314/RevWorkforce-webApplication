@@ -1,7 +1,6 @@
 package com.revworkforce.model;
 
 import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -107,5 +106,5 @@ public class LeaveRequest {
 	public void setLeaveApproval(LeaveApproval leaveApproval) {
 		this.leaveApproval = leaveApproval;
 	}
-	
+
 }

@@ -1,4 +1,3 @@
-
 package com.revworkforce.repository;
 
 import java.util.List;
@@ -10,6 +9,7 @@ import com.revworkforce.model.Designation;
 
 @Repository
 public interface DesignationRepository extends JpaRepository<Designation, Long>{
+
 	Optional<Designation> findByTitleAndDepartmentId(String title, Long departmentId);
 	List<Designation> findByDepartmentId(Long departmentId);
 }

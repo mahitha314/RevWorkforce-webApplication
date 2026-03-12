@@ -16,14 +16,13 @@ import com.revworkforce.model.LeaveRequest;
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long> {
 
 	List<LeaveRequest> findByEmployee_Manager_Id(Long managerId);
-
-	// ================= NORMAL LIST =================
+	
 	List<LeaveRequest> findByEmployee_Id(Long employeeId);
 
-	// ================= SORT NEWEST FIRST =================
 	List<LeaveRequest> findByEmployee_IdOrderByStartDateDesc(Long employeeId);
+	
+	long countByEmployee_IdAndLeaveApproval_Status(Long employeeId, String status);
 
-	// ================= UNREAD NOTIFICATIONS COUNT =================
 	@Query(value = """
 			SELECT COUNT(*)
 			FROM leave_requests lr

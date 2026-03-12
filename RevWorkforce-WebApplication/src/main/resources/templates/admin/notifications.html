@@ -2,325 +2,239 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Leave Management</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Notifications | RevWorkForce</title>
 
-    <!-- Header Fragment -->
-<th:block th:replace="~{fragments/header :: header('Leave Management')}"></th:block>
+	<!-- Bootstrap -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <!-- YOUR ORIGINAL STYLES (UNCHANGED) -->
-    <style>
-        html, body {
-            height: 100%;
-        }
+	<!-- Include Header Fragment (CSS/Topbar Part) -->
+	<th:block th:replace="~{fragments/header :: header('notifications')}"></th:block>
 
-        body {
-            display: flex;
-            flex-direction: column;
-            background-color: #f4f6f9;
-        }
+	<style>
+		body {
+			background-color: #f5f6fa;
+		}
 
-        .content {
-            flex: 1;
-            margin-left: 250px; /* adjust if sidebar width different */
-            padding: 30px;
-        }
+		/* Main content layout */
+		.content-wrapper {
+			margin-left: 250px;
+			padding: 100px 20px 30px 20px;
+			min-height: 100vh;
+			transition: 0.3s;
+		}
 
-        .card {
-            border-radius: 12px;
-        }
+		/* Responsive */
+		@media (max-width: 991px) {
+			.content-wrapper {
+				margin-left: 0;
+				padding-top: 110px;
+			}
+		}
 
-        .nav-tabs .nav-link.active {
-            font-weight: 600;
-            background-color: #0d6efd;
-            color: white;
-        }
+		.notify-dot {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 8px;
+			height: 8px;
+			background-color: red;
+			border-radius: 50%;
+		}
 
-        .section-title {
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        footer {
-            margin-left: 250px;
-        }
-    </style>
+		.notification-card:hover {
+			background-color: #f8f9fa;
+			transition: 0.3s;
+		}
+	</style>
 </head>
 
 <body>
-	<body>
 
 	<!-- TOPBAR -->
-	<th:block th:replace="~{fragments/header :: topbar('Leave Management')}"></th:block>
+	<div th:replace="fragments/header :: topbar('Notifications')"></div>
 
 	<!-- SIDEBAR -->
-	<th:block th:replace="~{fragments/sidebar :: sidebar('leave')}"></th:block>
-<!-- MAIN CONTENT -->
-<div class="content">
+	<div th:replace="fragments/sidebar :: sidebar(${view})"></div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold">Leave Management</h3>
-            <p class="text-muted mb-0">
-                Manage leave types, assignments and reports
-            </p>
-        </div>
-    </div>
 
-    <div class="card shadow-sm p-4">
+	<!-- ================= MAIN CONTENT ================= -->
+	<div class="content-wrapper">
 
-        <!-- Tabs -->
-        <ul class="nav nav-tabs mb-3" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#leaveType">Leave Types</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#assignLeave">Assign Leave</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#adjustLeave">Adjust Leave</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#employeeView">Employee View</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#departmentReport">Department Report</button>
-            </li>
-        </ul>
+		<div class="container-fluid">
 
-        <div class="tab-content">
+			<div class="row justify-content-center">
 
-            <!-- LEAVE TYPES -->
-            <div class="tab-pane fade show active" id="leaveType">
+				<div class="col-12 col-lg-10 col-xl-9">
 
-                <h5 class="section-title">Create Leave Type</h5>
+					<div class="card shadow border-0 rounded-4">
 
-                <form th:action="@{/admin/leave/type}" method="post" class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <input type="text" name="typeName" class="form-control"
-                               placeholder="Leave Type Name" required>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="number" name="totalDays" class="form-control"
-                               placeholder="Total Days" required>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary w-100">Add Type</button>
-                    </div>
-                </form>
+						<div class="card-body p-4 p-md-5">
 
-                <h5 class="section-title">Available Leave Types</h5>
+							<!-- Title Section -->
+							<div class="d-flex flex-column flex-md-row 
+                                    justify-content-between 
+                                    align-items-md-center mb-4 gap-3">
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle">
-                        <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Leave Type</th>
-                            <th>Total Days</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="type : ${leaveTypes}">
-                            <td th:text="${type.id}"></td>
-                            <td th:text="${type.typeName}"></td>
-                            <td th:text="${type.totalDays}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+								<h3 class="fw-bold mb-0">
+									<i class="bi bi-bell text-primary me-2"></i>
+									My Notifications
+								</h3>
+
+								<div class="d-flex align-items-center gap-3">
+									<span class="fw-semibold">Unread:</span>
+									<span id="unreadCount" class="badge bg-danger fs-6 px-3 py-2">
+										0
+									</span>
+
+									<button class="btn btn-primary btn-sm px-3" onclick="markAll()">
+										Mark All Read
+									</button>
+								</div>
+
+							</div>
+
+							<!-- Notification List -->
+							<div id="notificationContainer" class="mt-3"></div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+	<!-- ================= JAVASCRIPT ================= -->
+	<script>
+
+		document.addEventListener("DOMContentLoaded", function () {
+			loadNotifications();
+			updateBellIndicator();
+		});
+
+		async function loadNotifications() {
+			const response = await fetch("/notifications/my", {credentials: "include"});
+			const result = await response.json();
+
+			const container = document.getElementById("notificationContainer");
+			container.innerHTML = "";
+
+			let unread = 0;
+
+			if (!result.data || result.data.length === 0) {
+				container.innerHTML = `
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-bell fs-1"></i>
+                <p class="mt-3">No notifications available</p>
+            </div>`;
+				document.getElementById("unreadCount").innerText = 0;
+				return;
+			}
+
+			result.data.forEach(n => {
+
+				if (!n.isRead) unread++;
+
+				const card = document.createElement("div");
+				card.className = "card mb-3 shadow-sm notification-card " +
+					(!n.isRead ? "border-start border-4 border-primary" : "");
+
+				card.innerHTML = `
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+                    <h6 class="fw-bold mb-1">
+                        <i class="bi ${getIcon(n.type)}"></i> ${n.title}
+                    </h6>
+                    ${!n.isRead ? '<span class="badge bg-primary">New</span>' : ''}
                 </div>
+
+                <p class="mb-1">${n.message}</p>
+
+                <small class="text-muted">${formatDate(n.createdAt)}</small>
+
+                <div class="mt-3">
+                    ${!n.isRead ?
+						`<button class="btn btn-success btn-sm me-2"
+                            onclick="markRead(${n.notificationId})">
+                            Mark Read
+                        </button>` : ""}
+                    <button class="btn btn-danger btn-sm"
+                        onclick="deleteNotification(${n.notificationId})">
+                        Delete
+                    </button>
+                </div>
+
             </div>
+        `;
 
-            <!-- ASSIGN LEAVE -->
-            <div class="tab-pane fade" id="assignLeave">
+				container.appendChild(card);
+			});
 
-                <h5 class="section-title">Assign Leave To Employee</h5>
+			document.getElementById("unreadCount").innerText = unread;
+		}
 
-                <form th:action="@{/admin/leave/assign}" method="post" class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Employee</label>
-                        <select name="employeeId" class="form-select" required>
-                            <option value="">Select Employee</option>
-                            <option th:each="emp : ${employees}"
-                                    th:value="${emp.id}"
-                                    th:text="${emp.firstName + ' ' + emp.lastName}">
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Leave Type</label>
-                        <select name="leaveTypeId" class="form-select" required>
-                            <option value="">Select Leave Type</option>
-                            <option th:each="type : ${leaveTypes}"
-                                    th:value="${type.id}"
-                                    th:text="${type.typeName}">
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Days</label>
-                        <input type="number" name="totalDays" class="form-control" required>
-                    </div>
-                    <div class="col-md-2 align-self-end">
-                        <button class="btn btn-success w-100">Assign</button>
-                    </div>
-                </form>
-            </div>
+		async function markRead(id) {
+			await fetch(`/notifications/${id}/read`, {
+				method: "PUT",
+				credentials: "include"
+			});
+			loadNotifications();
+			updateBellIndicator();
+		}
 
-            <!-- ADJUST LEAVE -->
-            <div class="tab-pane fade" id="adjustLeave">
+		async function deleteNotification(id) {
+			await fetch(`/notifications/${id}`, {
+				method: "DELETE",
+				credentials: "include"
+			});
+			loadNotifications();
+			updateBellIndicator();
+		}
 
-                <h5 class="section-title">Adjust Leave Balance</h5>
+		async function markAll() {
+			await fetch("/notifications/read-all", {
+				method: "PUT",
+				credentials: "include"
+			});
+			loadNotifications();
+			updateBellIndicator();
+		}
 
-                <form th:action="@{/admin/leave/adjust}" method="post" class="row g-3">
-                    <div class="col-md-3">
-                        <input type="number" name="employeeId" class="form-control"
-                               placeholder="Employee ID" required>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="number" name="leaveTypeId" class="form-control"
-                               placeholder="Leave Type ID" required>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="number" name="days" class="form-control"
-                               placeholder="+ / - Days" required>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" name="reason" class="form-control"
-                               placeholder="Reason" required>
-                    </div>
-                    <div class="col-md-1">
-                        <button class="btn btn-warning w-100">Update</button>
-                    </div>
-                </form>
-            </div>
-			</div>
-			<!-- EMPLOYEE VIEW -->
-			<div class="tab-pane fade" id="employeeView">
+		async function updateBellIndicator() {
+			const response = await fetch("/notifications/my/unread-count", {credentials: "include"});
+			const result = await response.json();
 
-			    <h5 class="section-title">Employee Leave Report</h5>
+			const dot = document.getElementById("notifyDot");
 
-			    <form th:action="@{/admin/leave/employee-view}" method="get" class="row g-3 mb-4">
-			        <div class="col-md-4">
-			            <label class="form-label">Select Employee</label>
-			            <select name="employeeId" class="form-select" required>
-			                <option value="">Select Employee</option>
-			                <option th:each="emp : ${employees}"
-			                        th:value="${emp.id}"
-			                        th:text="${emp.firstName + ' ' + emp.lastName}">
-			                </option>
-			            </select>
-			        </div>
-			        <div class="col-md-2 align-self-end">
-			            <button class="btn btn-primary w-100">View</button>
-			        </div>
-			    </form>
+			if (dot) {
+				dot.style.display = result.data > 0 ? "block" : "none";
+			}
+		}
 
-			    <div class="table-responsive" th:if="${leaveBalances != null}">
-			        <table class="table table-bordered table-hover">
-			            <thead class="table-dark">
-			            <tr>
-			                <th>Leave Type</th>
-			                <th>Total</th>
-			                <th>Used</th>
-			                <th>Remaining</th>
-			            </tr>
-			            </thead>
-			            <tbody>
-			            <tr th:each="balance : ${leaveBalances}">
-			                <td th:text="${balance.leaveTypeName}"></td>
-			                <td th:text="${balance.totalDays}"></td>
-			                <td th:text="${balance.usedDays}"></td>
-			                <td th:text="${balance.remainingDays}"></td>
-			            </tr>
-			            </tbody>
-			        </table>
-			    </div>
+		function formatDate(dateString) {
+			const date = new Date(dateString);
+			return date.toLocaleString();
+		}
 
-			</div>
-			<!-- DEPARTMENT REPORT -->
-			<div class="tab-pane fade" id="departmentReport">
+		function getIcon(type) {
+			switch (type) {
+				case "LEAVE": return "bi-calendar-check";
+				case "ANNOUNCEMENT": return "bi-megaphone";
+				case "HOLIDAY": return "bi-calendar-event";
+				default: return "bi-bell";
+			}
+		}
 
-			    <h5 class="section-title">Department Leave Report</h5>
+	</script>
 
-			    <form th:action="@{/admin/leave/department-view}" method="get" class="row g-3 mb-4">
-			        <div class="col-md-4">
-			            <label class="form-label">Department ID</label>
-			            <input type="number" name="departmentId" class="form-control"
-			                   placeholder="Enter Department ID" required>
-			        </div>
-			        <div class="col-md-2 align-self-end">
-			            <button class="btn btn-info w-100">Generate</button>
-			        </div>
-			    </form>
-
-			    <div class="table-responsive" th:if="${leaveBalances != null}">
-			        <table class="table table-striped table-hover">
-			            <thead class="table-dark">
-			            <tr>
-			                <th>Employee</th>
-			                <th>Leave Type</th>
-			                <th>Total</th>
-			                <th>Used</th>
-			                <th>Remaining</th>
-			            </tr>
-			            </thead>
-			            <tbody>
-			            <tr th:each="balance : ${leaveBalances}">
-			                <td th:text="${balance.employeeName}"></td>
-			                <td th:text="${balance.leaveTypeName}"></td>
-			                <td th:text="${balance.totalDays}"></td>
-			                <td th:text="${balance.usedDays}"></td>
-			                <td th:text="${balance.remainingDays}"></td>
-			            </tr>
-			            </tbody>
-			        </table>
-			    </div>
-
-			</div>
-			
-			<!-- TOAST NOTIFICATION -->
-			<div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
-			    <div id="successToast"
-			         class="toast align-items-center text-white bg-success border-0 shadow"
-			         role="alert"
-			         th:if="${successMessage}"
-			         data-bs-delay="3000">
-			        <div class="d-flex">
-			            <div class="toast-body fw-semibold"
-			                 th:text="${successMessage}">
-			            </div>
-			            <button type="button"
-			                    class="btn-close btn-close-white me-2 m-auto"
-			                    data-bs-dismiss="toast"></button>
-			        </div>
-			    </div>
-			</div>
-    </div>
-</div>
-
-<!-- FOOTER -->
-<th:block th:replace="~{fragments/footer :: footer}"></th:block>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const toastEl = document.getElementById('successToast');
-        if (toastEl) {
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
-    });
-	const urlParams = new URLSearchParams(window.location.search);
-
-	    if (urlParams.has('employeeId')) {
-	        new bootstrap.Tab(document.querySelector('[data-bs-target="#employeeView"]')).show();
-	    }
-
-	    if (urlParams.has('departmentId')) {
-	        new bootstrap.Tab(document.querySelector('[data-bs-target="#departmentReport"]')).show();
-	    }
-</script>
 </body>
+
 </html>

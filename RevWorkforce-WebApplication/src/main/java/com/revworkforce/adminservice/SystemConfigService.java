@@ -7,25 +7,24 @@ import com.revworkforce.model.Designation;
 
 public interface SystemConfigService {
 
-    // ================= DEPARTMENT =================
+	Department saveDepartment(Department department);
 
-    Department saveDepartment(Department department);
+	List<Department> getAllDepartments();
 
-    List<Department> getAllDepartments();
+	Department getDepartmentById(Long id);
 
-    Department getDepartmentById(Long id);
+	void deleteDepartment(Long id);
 
-    void deleteDepartment(Long id);
+	Designation saveDesignation(Long departmentId, Designation designation);
 
-    // ================= DESIGNATION =================
+	List<Designation> getDesignationsByDepartmentId(Long departmentId);
 
-    Designation saveDesignation(Long departmentId, Designation designation);
+	Designation getDesignationById(Long id);
 
-    List<Designation> getDesignationsByDepartmentId(Long departmentId);
+	void deleteDesignation(Long id);
 
-    Designation getDesignationById(Long id);   // ✅ ADD THIS
+	long countDepartments();
 
-    void deleteDesignation(Long id);
-    long countDepartments();
-    long countDesignations();
+	long countDesignations();
+
 }

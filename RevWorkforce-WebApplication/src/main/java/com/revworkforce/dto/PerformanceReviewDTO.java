@@ -1,4 +1,3 @@
-
 package com.revworkforce.dto;
 
 import java.time.LocalDate;
@@ -13,8 +12,8 @@ public class PerformanceReviewDTO {
 	private String deliverables;
 	private String areasOfImprovement;
 
-	private Integer selfRating; // Wrapper
-	private Integer managerRating; // Wrapper
+	private Integer selfRating; 
+	private Integer managerRating; 
 
 	private String managerFeedback;
 	private String status;
@@ -39,8 +38,6 @@ public class PerformanceReviewDTO {
 		this.status = status;
 		this.submittedDate = submittedDate;
 	}
-
-	// Getters & Setters
 
 	public Long getReviewId() {
 		return reviewId;
@@ -102,7 +99,7 @@ public class PerformanceReviewDTO {
 		return managerRating;
 	}
 
-	public void setManagerRating(Integer managerRating) { 
+	public void setManagerRating(Integer managerRating) {
 		this.managerRating = managerRating;
 	}
 
@@ -129,5 +126,4 @@ public class PerformanceReviewDTO {
 	public void setSubmittedDate(LocalDate submittedDate) {
 		this.submittedDate = submittedDate;
 	}
-	
 }

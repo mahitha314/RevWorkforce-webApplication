@@ -33,7 +33,7 @@ public class Notification {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "employee_id", nullable = false)
 	private Employee employee;
-	
+
 	@Column(name = "reference_id")
 	private Long referenceId;
 
@@ -63,6 +63,7 @@ public class Notification {
 
 	public void setTitle(String title) {
 		this.title = title;
+
 	}
 
 	public String getMessage() {

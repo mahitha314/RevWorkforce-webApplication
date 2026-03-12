@@ -1,4 +1,3 @@
-
 package com.revworkforce.managerserviceImpl;
 
 import java.time.LocalDateTime;
@@ -12,27 +11,23 @@ import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.exception.ResourceNotFoundException;
 import com.revworkforce.managerservice.TeamGoalsService;
 import com.revworkforce.model.Goal;
-import com.revworkforce.model.Notification;
 import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.GoalRepository;
-import com.revworkforce.repository.NotificationRepository;
 
 @Service
 public class TeamGoalsServiceImpl implements TeamGoalsService {
 
 	private final GoalRepository goalRepo;
-    private final EmployeeRepository employeeRepo;
-    private final NotificationService notificationService;
+	private final EmployeeRepository employeeRepo;
+	private final NotificationService notificationService;
 
-    public TeamGoalsServiceImpl(GoalRepository goalRepo,
-                                EmployeeRepository employeeRepo,
-                                NotificationService notificationService) {
-        this.goalRepo = goalRepo;
-        this.employeeRepo = employeeRepo;
-        this.notificationService = notificationService;
-    }
-
+	public TeamGoalsServiceImpl(GoalRepository goalRepo, EmployeeRepository employeeRepo,
+			NotificationService notificationService) {
+		this.goalRepo = goalRepo;
+		this.employeeRepo = employeeRepo;
+		this.notificationService = notificationService;
+	}
 
 	@Override
 	public ApiResponse getTeamGoals(Long managerId) {
@@ -43,9 +38,8 @@ public class TeamGoalsServiceImpl implements TeamGoalsService {
 
 		List<Goal> goals = goalRepo.findByEmployee_Manager_Id(managerId);
 
-		 System.out.println("ActivityLog: Manager " + managerId +
-	                " viewed team goals at " + LocalDateTime.now());
-		
+		System.out.println("ActivityLog: Manager " + managerId + " viewed team goals at " + LocalDateTime.now());
+
 		return new ApiResponse(200, "Team goals fetched successfully", goals);
 	}
 
@@ -81,26 +75,20 @@ public class TeamGoalsServiceImpl implements TeamGoalsService {
 		goalRepo.save(goal);
 
 		NotificationDTO notification = new NotificationDTO();
-        notification.setEmployeeId(goal.getEmployee().getEmployeeId());
-        notification.setTitle("Goal Progress Updated");
-        notification.setMessage("Your goal progress has been updated to "
-                + dto.getProgress() + "%.");
-        notification.setType("PERFORMANCE");   // GOAL not allowed in DTO
-        notification.setStatus("DELIVERED");
-        notification.setIsRead(false);
-        notification.setCreatedAt(LocalDateTime.now());
-        notification.setReferenceId(goal.getId());
+		notification.setEmployeeId(goal.getEmployee().getEmployeeId());
+		notification.setTitle("Goal Progress Updated");
+		notification.setMessage("Your goal progress has been updated to " + dto.getProgress() + "%.");
+		notification.setType("PERFORMANCE"); // GOAL not allowed in DTO
+		notification.setStatus("DELIVERED");
+		notification.setIsRead(false);
+		notification.setCreatedAt(LocalDateTime.now());
+		notification.setReferenceId(goal.getId());
 
-        notificationService.createNotification(notification);
+		notificationService.createNotification(notification);
 
-        /* ================= ACTIVITY LOG ================= */
-
-        System.out.println("ActivityLog: Manager " + managerId +
-                " updated goal " + goal.getId() +
-                " for Employee " +
-                goal.getEmployee().getEmployeeId() +
-                " to progress " + dto.getProgress() +
-                "% at " + LocalDateTime.now());
+		System.out.println("ActivityLog: Manager " + managerId + " updated goal " + goal.getId() + " for Employee "
+				+ goal.getEmployee().getEmployeeId() + " to progress " + dto.getProgress() + "% at "
+				+ LocalDateTime.now());
 
 		return new ApiResponse(200, "Goal progress updated successfully", goal);
 	}

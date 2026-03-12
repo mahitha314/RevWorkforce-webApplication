@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +19,7 @@ public class Designation {
 	private String title;
 
 	@OneToMany(mappedBy = "designation", cascade = CascadeType.ALL)
+
 	@JsonIgnore
 	private List<Employee> employees;
 
@@ -34,7 +35,7 @@ public class Designation {
 	public void setDepartment(Department department) {
 	    this.department = department;
 	}
-	
+
 	public Designation() {}
 
 	public Designation(Long id, String title) {

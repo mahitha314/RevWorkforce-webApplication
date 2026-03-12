@@ -1,4 +1,3 @@
-
 package com.revworkforce.model;
 
 import java.util.List;
@@ -17,6 +16,7 @@ public class Department {
 	private String name;
 
 	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+
 	@JsonIgnore
 	private List<Employee> employees;
 
