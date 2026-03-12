@@ -6,21 +6,21 @@
     <th:block th:replace="~{fragments/header :: header('Team Goals')}"></th:block>
 
     <style>
-        /* ===== FIXED LAYOUT STRUCTURE ===== */
+       
 
         body {
             background: #f4f6f9;
         }
 
-        /* Sidebar width must match your sidebar */
+        
         .content-wrapper {
-            margin-left: 240px;     /* sidebar width */
+            margin-left: 240px;    
             padding: 30px;
         }
 
-        /* Topbar height must match your header */
+       
         .content-wrapper {
-            margin-top: 80px;       /* topbar height */
+            margin-top: 80px;       
         }
 
         .page-title {
@@ -36,23 +36,23 @@
 
 <body>
 
-<!-- Sidebar -->
+
 <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
-<!-- Topbar -->
+
 <div th:replace="~{fragments/header :: topbar('Team Goals')}"></div>
 
-<!-- ===== MAIN CONTENT ===== -->
+
 <div class="content-wrapper">
 
     <div class="container-fluid">
 
-        <!-- Page Heading -->
+        
         <h4 class="fw-bold text-primary page-title">
             Team Goals
         </h4>
 
-        <!-- Goals Table Card -->
+        
         <div class="card shadow-sm">
             <div class="card-body">
 

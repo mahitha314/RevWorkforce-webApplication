@@ -147,4 +147,13 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 	public long countLeaves() {
 		return leaveTypeRepository.count();
 	}
+	
+	@Override
+	public List<Employee> getEmployeesNotAssignedToLeaveType(Long leaveTypeId) {
+
+	    LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId)
+	            .orElseThrow(() -> new RuntimeException("Leave type not found"));
+
+	    return employeeRepository.findEmployeesNotAssignedToLeaveType(leaveType.getId());
+	}
 }

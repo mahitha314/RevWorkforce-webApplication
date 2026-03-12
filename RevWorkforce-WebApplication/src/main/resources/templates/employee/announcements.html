@@ -7,20 +7,19 @@
 
 <body>
 
-<!-- Sidebar -->
 <div th:replace="fragments/employee-sidebar :: sidebar"></div>
 
-<!-- Topbar -->
+
 <div th:replace="fragments/header :: topbar('Announcements')"></div>
 
-<!-- MAIN CONTENT -->
+
 <div class="content">
 
     <h3 class="fw-bold mb-4">📢 Announcements</h3>
 
     <div class="card shadow-sm border-0 p-4">
 
-        <!-- If No Announcements -->
+        
         <div th:if="${announcements == null or #lists.isEmpty(announcements)}"
              class="text-center py-4">
 
@@ -31,7 +30,7 @@
 
         </div>
 
-        <!-- If Announcements Exist -->
+        
         <div th:if="${announcements != null and !#lists.isEmpty(announcements)}">
 
             <div class="list-group list-group-flush">

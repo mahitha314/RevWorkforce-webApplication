@@ -7,16 +7,16 @@
     <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Sidebar -->
+   
     <div th:replace="fragments/sidebar :: sidebar"></div>
 
-    <!-- Header -->
+    
     <div th:replace="fragments/header :: header"></div>
 
-    <!-- Main Content -->
+  
     <div class="main" th:insert="~{::content}"></div>
 
-    <!-- Footer -->
+  
     <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
