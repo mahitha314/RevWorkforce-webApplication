@@ -7,26 +7,25 @@
 
 <body>
 
-<!-- TOPBAR -->
+
 <div th:replace="fragments/header :: topbar('My Goals')"></div>
 
-<!-- EMPLOYEE SIDEBAR -->
 <div th:replace="fragments/employee-sidebar :: sidebar"></div>
 
-<!-- CONTENT -->
+
 <div class="content">
 
     <div class="container-fluid">
 
         <h3 class="mb-4">My Goals</h3>
 
-        <!-- SUCCESS MESSAGE -->
+    
         <div th:if="${successMessage}"
              class="alert alert-success"
              th:text="${successMessage}">
         </div>
 
-        <!-- ADD GOAL FORM -->
+     
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-dark text-white">
                 Add New Goal
@@ -94,7 +93,7 @@
             </div>
         </div>
 
-        <!-- GOALS TABLE -->
+       
         <div class="card shadow-sm">
             <div class="card-header bg-dark text-white">
                 Goal List

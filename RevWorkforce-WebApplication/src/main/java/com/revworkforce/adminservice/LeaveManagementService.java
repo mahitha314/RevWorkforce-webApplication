@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.revworkforce.dto.LeaveBalanceDTO;
 import com.revworkforce.dto.LeaveTypeDTO;
+import com.revworkforce.model.Employee;
 import com.revworkforce.model.LeaveBalance;
-import com.revworkforce.model.LeaveType;
 
 public interface LeaveManagementService {
 
@@ -22,5 +22,7 @@ public interface LeaveManagementService {
 	List<LeaveBalance> getDepartmentLeaveReport(Long departmentId);
 
 	long countLeaves();
+
+	List<Employee> getEmployeesNotAssignedToLeaveType(Long leaveTypeId);
 
 }

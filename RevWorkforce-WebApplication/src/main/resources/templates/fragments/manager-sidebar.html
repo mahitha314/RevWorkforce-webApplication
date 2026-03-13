@@ -4,7 +4,7 @@
 
         <h4 class="text-center mb-4">RevWorkForce</h4>
 
-        <!-- Dashboard -->
+        
         <a th:href="@{/manager/dashboard}" class="sidebar-link">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
@@ -16,7 +16,7 @@
 			   <a th:href="@{/manager/team-structure}">
 			       <i class="bi bi-people"></i> My Team
 			   </a>
-        <!-- Leave Requests -->
+        
 		<li class="nav-item">
 		    <a th:href="@{/manager/team-leaves}" class="nav-link">
 		        <i class="bi bi-calendar-check me-2"></i>
@@ -28,7 +28,7 @@
 		    <i class="bi bi-star"></i> Performance Reviews
 		</a>
 
-		<!-- Goals -->
+		
 		<a th:href="@{/manager/team-goals}">
 		    <i class="bi bi-bullseye"></i> Goals
 		</a>
@@ -37,8 +37,7 @@
 		   th:classappend="${view == 'notifications'} ? ' active' : ''">
 		    <i class="bi bi-bell"></i> Notifications
 		</a>
-
-        <!-- Logout -->
+       
         <a th:href="@{/logout}">
             <i class="bi bi-box-arrow-right"></i> Logout
         </a>

@@ -7,16 +7,18 @@
 
 <body>
 
-<!-- Sidebar -->
+
 <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
-<!-- Topbar -->
+
 <div th:replace="~{fragments/header :: topbar('Manager Dashboard')}"></div>
+
 
 <div class="content p-4">
 
     <h2 class="mb-4 fw-bold">Manager Dashboard</h2>
 
+  
     <div class="card shadow-sm p-4 mb-4">
         <h4 class="mb-3">My Team</h4>
 
@@ -33,6 +35,8 @@
         </ul>
     </div>
 
+
+    
     <div class="card shadow-sm p-4 mb-4">
         <h4 class="mb-3">Leave Requests</h4>
 
@@ -67,6 +71,8 @@
             </table>
         </div>
     </div>
+
+
 
     <div class="card shadow-sm p-4 mb-4">
         <h4 class="mb-3">Performance Reviews</h4>
@@ -111,6 +117,7 @@
             No performance reviews found
         </div>
     </div>
+
 
 	<div class="card shadow-sm p-4 mb-4">
 	    <h4 class="mb-3">Team Goals</h4>
