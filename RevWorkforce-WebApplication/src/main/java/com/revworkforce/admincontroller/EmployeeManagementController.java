@@ -14,15 +14,11 @@ import com.revworkforce.model.Employee;
 import com.revworkforce.repository.DepartmentRepository;
 import com.revworkforce.repository.DesignationRepository;
 import com.revworkforce.repository.EmployeeRepository;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.revworkforce.adminservice.EmployeeManagementService;
-import com.revworkforce.dto.ApiResponse;
-import com.revworkforce.dto.EmployeeDTO;
 
 @RestController
 @RequestMapping("/admin")
@@ -87,61 +83,12 @@ public class EmployeeManagementController {
     }
 
    
+    @PostMapping("/employees")
+    public ResponseEntity<ApiResponse> addEmployee(@RequestBody EmployeeDTO dto) {
 
-    @PostMapping("/employees")   
-    public ResponseEntity<ApiResponse> addEmployee(
-            @RequestBody EmployeeDTO dto) {
-
-        try {
-
-            Employee employee = new Employee();
-
-            employee.setEmployeeId(dto.getEmployeeId());
-            employee.setFirstName(dto.getFirstName());
-            employee.setLastName(dto.getLastName());
-            employee.setEmail(dto.getEmail());
-            employee.setPassword(dto.getPassword()); 
-            employee.setRole(dto.getRole());
-            employee.setSalary(dto.getSalary());
-            employee.setPhoneNumber(dto.getPhoneNumber());
-            employee.setEmergencyContact(dto.getEmergencyContact());
-            employee.setAddress(dto.getAddress());
-
-            Department department = departmentRepository.findById(dto.getDepartmentId())
-                    .orElseThrow(() -> new RuntimeException("Department not found"));
-
-            Designation designation = designationRepository.findById(dto.getDesignationId())
-                    .orElseThrow(() -> new RuntimeException("Designation not found"));
-
-            employee.setDepartment(department);
-            employee.setDesignation(designation);
-
-            if (dto.getManagerId() != null) {
-                Employee manager = employeeRepository.findById(dto.getManagerId())
-                        .orElse(null);
-                employee.setManager(manager);
-            }
-
-            employeeRepository.save(employee);
-
-            return ResponseEntity.ok(
-                    new ApiResponse(
-                            200,
-                            "Employee added successfully!",
-                            employee
-                    )
-            );
-
-        } catch (Exception e) {
-
-            return ResponseEntity.status(500)
-                    .body(new ApiResponse(
-                            500,
-                            "Employee save failed: " + e.getMessage(),
-                            null
-                    ));
-        }
+        return employeeManagementService.addEmployee(dto);
     }
+   
 
    
 
@@ -194,23 +141,4 @@ public class EmployeeManagementController {
         return employeeManagementService
                 .changeManager(employeeId, managerId);
     }
-//=======
-//	
-//	private final EmployeeManagementService employeeManagementService;
-//
-//	public EmployeeManagementController(EmployeeManagementService employeeManagementService) {
-//		this.employeeManagementService = employeeManagementService;
-//	}
-//
-//	@PostMapping("/add-employee")
-//	public ResponseEntity<ApiResponse> addEmployee(@Validated @RequestBody EmployeeDTO dto) {
-//		return employeeManagementService.addEmployee(dto);
-//	}
-//
-//	@GetMapping("/all-employees")
-//	public ResponseEntity<ResponseEntity<ApiResponse>> getAllEmployees() {
-//		return ResponseEntity.ok(employeeManagementService.getAllEmployees());
-//	}
-//	
-//>>>>>>> 4f45ab240f530d50f4cbd98df0acde023db2d29c
 }

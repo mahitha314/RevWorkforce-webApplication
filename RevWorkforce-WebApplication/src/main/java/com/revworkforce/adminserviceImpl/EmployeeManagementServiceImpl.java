@@ -133,34 +133,61 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	@Override
 	public ResponseEntity<ApiResponse> updateEmployee(String employeeId, EmployeeDTO dto) {
 
-		Employee existing = employeeRepository.findByEmployeeId(employeeId)
-				.orElseThrow(() -> new RuntimeException("Employee not found"));
+	    // Find employee by employeeId
+	    Employee existing = employeeRepository.findByEmployeeId(employeeId)
+	            .orElseThrow(() -> new RuntimeException("Employee not found"));
 
-		existing.setFirstName(dto.getFirstName());
-		existing.setLastName(dto.getLastName());
-		existing.setEmail(dto.getEmail());
-		existing.setPhoneNumber(dto.getPhoneNumber());
-		existing.setAddress(dto.getAddress());
-		existing.setEmergencyContact(dto.getEmergencyContact());
-		existing.setSalary(dto.getSalary());
-		existing.setRole(dto.getRole());
+	    // Prevent duplicate email
+	    employeeRepository.findByEmail(dto.getEmail())
+	            .filter(e -> !e.getEmployeeId().equals(employeeId))
+	            .ifPresent(e -> {
+	                throw new RuntimeException("Email already in use");
+	            });
 
-		Department dept = departmentRepository.findById(dto.getDepartmentId())
-				.orElseThrow(() -> new RuntimeException("Department not found"));
-		existing.setDepartment(dept);
+	    // Update basic details
+	    existing.setFirstName(dto.getFirstName());
+	    existing.setLastName(dto.getLastName());
+	    existing.setEmail(dto.getEmail());
+	    existing.setPhoneNumber(dto.getPhoneNumber());
+	    existing.setAddress(dto.getAddress());
+	    existing.setEmergencyContact(dto.getEmergencyContact());
+	    existing.setSalary(dto.getSalary());
+	    existing.setRole(dto.getRole());
 
-		Designation des = designationRepository.findById(dto.getDesignationId())
-				.orElseThrow(() -> new RuntimeException("Designation not found"));
-		existing.setDesignation(des);
+	    // Update department
+	    Department dept = departmentRepository.findById(dto.getDepartmentId())
+	            .orElseThrow(() -> new RuntimeException("Department not found"));
+	    existing.setDepartment(dept);
 
-		employeeRepository.save(existing);
+	    // Update designation
+	    Designation des = designationRepository.findById(dto.getDesignationId())
+	            .orElseThrow(() -> new RuntimeException("Designation not found"));
+	    existing.setDesignation(des);
 
-		activityLogService.log("Updated Employee", "Employee Management", "Updated employee " + existing.getFirstName(),
-				"SUCCESS", request);
+	    // Update manager (optional)
+	    if (dto.getManagerId() != null) {
 
-		return ResponseEntity.ok(new ApiResponse(200, "Employee updated successfully", null));
+	        Employee manager = employeeRepository.findById(dto.getManagerId())
+	                .orElseThrow(() -> new RuntimeException("Manager not found"));
+
+	        existing.setManager(manager);
+	    }
+
+	    // Save updated employee
+	    employeeRepository.save(existing);
+
+	    // Activity log
+	    activityLogService.log(
+	            "Updated Employee",
+	            "Employee Management",
+	            "Updated employee " + existing.getFirstName(),
+	            "SUCCESS",
+	            request);
+
+	    // Return response
+	    return ResponseEntity.ok(
+	            new ApiResponse(200, "Employee updated successfully", existing));
 	}
-
 	@Override
 	public ResponseEntity<ApiResponse> deleteEmployee(String employeeId) {
 

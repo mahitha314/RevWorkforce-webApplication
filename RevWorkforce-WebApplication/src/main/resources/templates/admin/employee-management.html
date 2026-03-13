@@ -73,7 +73,7 @@
                                         <select class="form-select" name="role" required>
                                             <option value="EMPLOYEE">EMPLOYEE</option>
                                             <option value="MANAGER">MANAGER</option>
-                                            <option value="ADMIN">ADMIN</option>
+                                           
                                         </select>
                                     </div>
 
@@ -94,12 +94,20 @@
                                         <select class="form-select" id="managerId"
                                                 name="managerId"></select>
                                     </div>
+									<div class="col-md-6">
+									    <label class="form-label">Salary</label>
+									    <input type="number" step="0.01"
+									           class="form-control" name="salary" required>
+									</div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label">Salary</label>
-                                        <input type="number" step="0.01"
-                                               class="form-control" name="salary" required>
-                                    </div>
+									<div class="col-md-6">
+									    <label class="form-label">Joining Date</label>
+									    <input type="date"
+									           class="form-control"
+									           name="joiningDate"
+									           required>
+									</div>
+                                   
 
                                     <div class="col-md-6">
                                         <label class="form-label">Phone Number</label>

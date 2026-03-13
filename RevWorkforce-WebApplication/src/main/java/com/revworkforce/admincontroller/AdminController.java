@@ -1,17 +1,9 @@
 package com.revworkforce.admincontroller;
 
-import com.revworkforce.adminservice.AdminService;
-import com.revworkforce.adminservice.EmployeeManagementService;
-import com.revworkforce.adminservice.HolidayService;
-import com.revworkforce.adminservice.LeaveManagementService;
-import com.revworkforce.adminservice.SystemConfigService;
+import com.revworkforce.adminservice.*;
 import com.revworkforce.dto.LeaveBalanceDTO;
 import com.revworkforce.dto.LeaveTypeDTO;
-import com.revworkforce.model.Department;
-import com.revworkforce.model.Designation;
-import com.revworkforce.model.Employee;
-import com.revworkforce.model.SystemActivityLog;
-//import com.revworkforce.model.Holiday;
+import com.revworkforce.model.*;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.SystemActivityLogRepository;
 
@@ -49,20 +41,23 @@ public class AdminController {
 		this.systemConfigService = systemConfigService;
 		this.logRepository = logRepository;
 		this.employeeManagementService = employeeManagementService;
-
 	}
+	@ModelAttribute("employee")
+	public Employee loggedInEmployee(Authentication authentication) {
 
+	    if (authentication == null)
+	        return null;
+
+	    String username = authentication.getName();
+
+	    return employeeRepository
+	            .findByEmployeeId(username)
+	            .orElse(null);
+	}
 	@GetMapping("/dashboard")
-	public String adminDashboard(Authentication authentication, Model model) {
+	public String adminDashboard(Model model) {
 
 		model.addAttribute("view", "dashboard");
-
-		String email = authentication.getName();
-
-		Employee employee = adminService.getEmployeeByEmail(email)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-
-		model.addAttribute("employee", employee);
 
 		model.addAttribute("totalEmployees", employeeManagementService.countEmployees());
 
@@ -78,23 +73,22 @@ public class AdminController {
 	}
 
 	@GetMapping("/profile")
-	public String profile(Authentication authentication, Model model) {
+	public String profile(Model model) {
 
 		model.addAttribute("view", "profile");
-
-		String email = authentication.getName();
-
-		Employee employee = adminService.getEmployeeByEmail(email)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-
-		model.addAttribute("employee", employee);
 
 		return "admin/profile";
 	}
 
 	@GetMapping("/employee-management")
 	public String employeeManagementPage(Model model) {
+
 		model.addAttribute("view", "employee");
+
+		model.addAttribute("employees", employeeRepository.findAll());
+		model.addAttribute("departments", systemConfigService.getAllDepartments());
+		model.addAttribute("managers", employeeManagementService.getManagers());
+
 		return "admin/employee-management";
 	}
 
@@ -102,6 +96,7 @@ public class AdminController {
 	public String leavePage(Model model) {
 
 		model.addAttribute("view", "leave");
+
 		model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
 		model.addAttribute("employees", employeeRepository.findAll());
 
@@ -141,37 +136,51 @@ public class AdminController {
 		return "redirect:/admin/leave-management";
 	}
 
-	
-
 	@GetMapping("/leave/employee-view")
 	public String viewEmployeeLeave(@RequestParam Long employeeId, Model model) {
 
-	    model.addAttribute("view", "leave");   // 🔥 VERY IMPORTANT
+		model.addAttribute("view", "leave");
 
-	    model.addAttribute("leaveBalances",
-	            leaveService.getEmployeeLeaveInfo(employeeId));
+		model.addAttribute("leaveBalances", leaveService.getEmployeeLeaveInfo(employeeId));
 
-	    model.addAttribute("leaveTypes",
-	            leaveService.getAllLeaveTypes());
+		model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
 
-	    model.addAttribute("employees",
-	            employeeRepository.findAll());
+		model.addAttribute("employees", employeeRepository.findAll());
 
-	    return "admin/leave-management";
+		return "admin/leave-management";
 	}
-	@GetMapping("/system-config")
-	public String systemConfig(@RequestParam(required = false) Long deptId, Model model) {
 
-		model.addAttribute("view", "system-config"); // ✅ add this
+	@GetMapping("/system-config")
+	public String systemConfig(@RequestParam(required = false) Long deptId,
+			@RequestParam(required = false) Long editDeptId, @RequestParam(required = false) Long editDesId,
+			Model model) {
+
+		model.addAttribute("view", "system-config");
 
 		model.addAttribute("departments", systemConfigService.getAllDepartments());
-		model.addAttribute("department", new Department());
-		model.addAttribute("designation", new Designation());
+
+		if (editDeptId != null) {
+			model.addAttribute("department", systemConfigService.getDepartmentById(editDeptId));
+		} else {
+			model.addAttribute("department", new Department());
+		}
 
 		if (deptId != null) {
-			Department selected = systemConfigService.getDepartmentById(deptId);
-			model.addAttribute("selectedDept", selected);
+
+			Department selectedDept = systemConfigService.getDepartmentById(deptId);
+
+			model.addAttribute("selectedDept", selectedDept);
+
 			model.addAttribute("designations", systemConfigService.getDesignationsByDepartmentId(deptId));
+
+			if (editDesId != null) {
+				model.addAttribute("designation", systemConfigService.getDesignationById(editDesId));
+			} else {
+				model.addAttribute("designation", new Designation());
+			}
+
+		} else {
+			model.addAttribute("designation", new Designation());
 		}
 
 		return "admin/system-config";
@@ -180,11 +189,10 @@ public class AdminController {
 	@PostMapping("/departments/save")
 	public String saveDepartment(@ModelAttribute Department department, RedirectAttributes redirectAttributes) {
 
-		if (department.getId() == null) {
+		if (department.getId() == null)
 			redirectAttributes.addFlashAttribute("successMessage", "Department added successfully!");
-		} else {
+		else
 			redirectAttributes.addFlashAttribute("successMessage", "Department updated successfully!");
-		}
 
 		systemConfigService.saveDepartment(department);
 
@@ -205,11 +213,10 @@ public class AdminController {
 	public String saveDesignation(@PathVariable Long deptId, @ModelAttribute Designation designation,
 			RedirectAttributes redirectAttributes) {
 
-		if (designation.getId() == null) {
+		if (designation.getId() == null)
 			redirectAttributes.addFlashAttribute("successMessage", "Designation added successfully!");
-		} else {
+		else
 			redirectAttributes.addFlashAttribute("successMessage", "Designation updated successfully!");
-		}
 
 		systemConfigService.saveDesignation(deptId, designation);
 
@@ -229,34 +236,29 @@ public class AdminController {
 
 	@GetMapping("/logs")
 	public String viewAllLogs(Model model) {
-		model.addAttribute("view", "logs");
-		List<SystemActivityLog> logs = logRepository.findAllByOrderByCreatedAtDesc();
 
-		model.addAttribute("logs", logs);
+		model.addAttribute("view", "logs");
+
+		model.addAttribute("logs", logRepository.findAllByOrderByCreatedAtDesc());
 
 		return "admin/activity-logs";
 	}
 
 	@GetMapping("/logs/search")
-	public String searchLogs(@RequestParam("keyword") String keyword, Model model) {
+	public String searchLogs(@RequestParam String keyword, Model model) {
 
-		List<SystemActivityLog> logs = logRepository.findByUserNameContainingIgnoreCase(keyword);
-
-		model.addAttribute("logs", logs);
+		model.addAttribute("logs", logRepository.findByUserNameContainingIgnoreCase(keyword));
 
 		return "admin/activity-logs";
 	}
 
 	@GetMapping("/logs/filter")
-	public String filterByDate(@RequestParam("from") String fromDate, @RequestParam("to") String toDate, Model model) {
+	public String filterByDate(@RequestParam String from, @RequestParam String to, Model model) {
 
-		LocalDateTime start = LocalDate.parse(fromDate).atStartOfDay();
+		LocalDateTime start = LocalDate.parse(from).atStartOfDay();
+		LocalDateTime end = LocalDate.parse(to).atTime(23, 59, 59);
 
-		LocalDateTime end = LocalDate.parse(toDate).atTime(23, 59, 59);
-
-		List<SystemActivityLog> logs = logRepository.findByCreatedAtBetween(start, end);
-
-		model.addAttribute("logs", logs);
+		model.addAttribute("logs", logRepository.findByCreatedAtBetween(start, end));
 
 		return "admin/activity-logs";
 	}

@@ -3,6 +3,7 @@ package com.revworkforce.admincontroller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.revworkforce.adminservice.HolidayService;
 import com.revworkforce.model.Holiday;
@@ -19,34 +20,56 @@ public class HolidayController {
 
 	@GetMapping
 	public String viewHolidays(Model model) {
+
+		model.addAttribute("view", "holiday"); 
+
 		model.addAttribute("holidays", holidayService.getAllHolidays());
-		model.addAttribute("holiday", new Holiday()); // empty form
+		model.addAttribute("holiday", new Holiday());
+
 		return "admin/holiday-management";
 	}
 
 	@PostMapping("/save")
-	public String saveHoliday(@ModelAttribute Holiday holiday) {
+	public String saveHoliday(@ModelAttribute Holiday holiday, RedirectAttributes redirectAttributes) {
+
 		holidayService.saveHoliday(holiday);
-		return "redirect:/admin/system-config?success=added";
+
+		redirectAttributes.addFlashAttribute("successMessage", "Holiday added successfully!");
+
+		return "redirect:/admin/holiday";
 	}
 
 	@GetMapping("/edit/{id}")
 	public String editHoliday(@PathVariable Long id, Model model) {
+
+		model.addAttribute("view", "holiday");
+
 		Holiday holiday = holidayService.getHolidayById(id);
+
 		model.addAttribute("holiday", holiday);
 		model.addAttribute("holidays", holidayService.getAllHolidays());
+
 		return "admin/holiday-management";
 	}
 
 	@PostMapping("/update/{id}")
-	public String updateHoliday(@PathVariable Long id, @ModelAttribute Holiday holiday) {
+	public String updateHoliday(@PathVariable Long id, @ModelAttribute Holiday holiday,
+			RedirectAttributes redirectAttributes) {
+
 		holidayService.updateHoliday(id, holiday);
-		return "redirect:/admin/system-config?success=updated";
+
+		redirectAttributes.addFlashAttribute("successMessage", "Holiday updated successfully!");
+
+		return "redirect:/admin/holiday";
 	}
 
 	@GetMapping("/delete/{id}")
-	public String deleteHoliday(@PathVariable Long id) {
+	public String deleteHoliday(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+
 		holidayService.deleteHoliday(id);
-		return "redirect:/admin/system-config?success=deleted";
+
+		redirectAttributes.addFlashAttribute("successMessage", "Holiday deleted successfully!");
+
+		return "redirect:/admin/holiday";
 	}
 }

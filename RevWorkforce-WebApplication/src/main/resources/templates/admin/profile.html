@@ -20,10 +20,10 @@
         </div>
     </a>
 
-    <span>
-        Welcome,
-        <strong th:text="${employee.firstName}"></strong>
-    </span>
+	<span>
+	    Welcome,
+	    <strong th:text="${employee.firstName + ' ' + employee.lastName}"></strong>
+	</span>
 </div>
 
 <!-- MAIN CONTENT -->
