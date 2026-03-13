@@ -3,205 +3,163 @@
 
 <head>
     <th:block th:replace="fragments/header :: header('My Goals')"></th:block>
-
-    <style>
-        .progress{
-            height:20px;
-        }
-
-        .progress-bar{
-            transition: width 0.6s ease;
-            font-size:12px;
-            font-weight:600;
-        }
-    </style>
 </head>
 
 <body>
 
-<!-- TOPBAR -->
+
 <div th:replace="fragments/header :: topbar('My Goals')"></div>
 
-<!-- EMPLOYEE SIDEBAR -->
 <div th:replace="fragments/employee-sidebar :: sidebar"></div>
 
-<!-- CONTENT -->
+
 <div class="content">
 
-<div class="container-fluid">
+    <div class="container-fluid">
 
-<h3 class="mb-4">My Goals</h3>
+        <h3 class="mb-4">My Goals</h3>
 
-<!-- SUCCESS MESSAGE -->
-<div th:if="${successMessage}"
-     class="alert alert-success"
-     th:text="${successMessage}">
-</div>
+    
+        <div th:if="${successMessage}"
+             class="alert alert-success"
+             th:text="${successMessage}">
+        </div>
 
-<!-- ADD GOAL FORM -->
-<div class="card shadow-sm mb-4">
+     
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                Add New Goal
+            </div>
 
-<div class="card-header bg-dark text-white">
-Add New Goal
-</div>
+            <div class="card-body">
 
-<div class="card-body">
+                <form th:action="@{/employee/goals}" method="post">
 
-<form th:action="@{/employee/goals}" method="post">
+                    <div class="mb-3">
+                        <label>Goal Title</label>
+                        <input type="text"
+                               name="goalTitle"
+                               class="form-control"
+                               required>
+                    </div>
 
-<div class="mb-3">
-<label>Goal Title</label>
-<input type="text"
-       name="goalTitle"
-       class="form-control"
-       required>
-</div>
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <textarea name="goalDescription"
+                                  class="form-control"
+                                  rows="3"
+                                  required></textarea>
+                    </div>
 
-<div class="mb-3">
-<label>Description</label>
-<textarea name="goalDescription"
-          class="form-control"
-          rows="3"
-          required></textarea>
-</div>
+                    <div class="mb-3">
+                        <label>Priority</label>
+                        <select name="priority"
+                                class="form-control"
+                                required>
+                            <option value="">Select Priority</option>
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="HIGH">High</option>
+                        </select>
+                    </div>
 
-<div class="mb-3">
-<label>Priority</label>
-<select name="priority"
-        class="form-control"
-        required>
-<option value="">Select Priority</option>
-<option value="LOW">Low</option>
-<option value="MEDIUM">Medium</option>
-<option value="HIGH">High</option>
-</select>
-</div>
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select name="status"
+                                class="form-control"
+                                required>
+                            <option value="">Select Status</option>
+                            <option value="NOT_STARTED">Not Started</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="COMPLETED">Completed</option>
+                        </select>
+                    </div>
 
-<div class="mb-3">
-<label>Status</label>
-<select name="status"
-        class="form-control"
-        required>
-<option value="">Select Status</option>
-<option value="NOT_STARTED">Not Started</option>
-<option value="IN_PROGRESS">In Progress</option>
-<option value="COMPLETED">Completed</option>
-</select>
-</div>
+                    <div class="mb-3">
+                        <label>Deadline</label>
+                        <input type="date"
+                               name="deadline"
+                               class="form-control"
+                               required>
+                    </div>
 
-<div class="mb-3">
-<label>Deadline</label>
-<input type="date"
-       name="deadline"
-       class="form-control"
-       required>
-</div>
+                    <button type="submit"
+                            class="btn btn-dark">
+                        Add Goal
+                    </button>
 
-<button type="submit"
-        class="btn btn-dark">
-Add Goal
-</button>
+                </form>
 
-</form>
+            </div>
+        </div>
 
-</div>
-</div>
+       
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                Goal List
+            </div>
 
-<!-- GOALS TABLE -->
-<div class="card shadow-sm">
+            <div class="card-body">
 
-<div class="card-header bg-dark text-white">
-Goal List
-</div>
+                <table class="table table-bordered">
 
-<div class="card-body">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Deadline</th>
+                            <th>Progress</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
 
-<table class="table table-bordered">
+                    <tbody>
 
-<thead>
-<tr>
-<th>Title</th>
-<th>Description</th>
-<th>Priority</th>
-<th>Status</th>
-<th>Deadline</th>
-<th style="width:220px;">Progress</th>
-<th>Update</th>
-</tr>
-</thead>
+                        <tr th:each="goal : ${goals}">
+                            <td th:text="${goal.goalTitle}"></td>
+                            <td th:text="${goal.goalDescription}"></td>
+                            <td th:text="${goal.priority}"></td>
+                            <td th:text="${goal.status}"></td>
+                            <td th:text="${goal.deadline}"></td>
+                            <td th:text="${goal.progress + '%'}"></td>
 
-<tbody>
+                            <td>
+                                <form th:action="@{/employee/goals/update-progress/{id}(id=${goal.id})}"
+                                      method="post">
 
-<tr th:each="goal : ${goals}">
+                                    <input type="number"
+                                           name="progress"
+                                           min="0"
+                                           max="100"
+                                           class="form-control mb-2"
+                                           required>
 
-<td th:text="${goal.goalTitle}"></td>
-<td th:text="${goal.goalDescription}"></td>
-<td th:text="${goal.priority}"></td>
-<td th:text="${goal.status}"></td>
-<td th:text="${goal.deadline}"></td>
+                                    <button type="submit"
+                                            class="btn btn-sm btn-primary">
+                                        Update
+                                    </button>
 
-<!-- PROGRESS BAR -->
-<td>
+                                </form>
+                            </td>
+                        </tr>
 
-<div class="progress">
+                        <tr th:if="${#lists.isEmpty(goals)}">
+                            <td colspan="7"
+                                class="text-center">
+                                No goals added yet
+                            </td>
+                        </tr>
 
-<div class="progress-bar text-dark"
+                    </tbody>
 
-     th:style="'width:' + ${goal.progress} + '%'"
+                </table>
 
-     th:classappend="
-        ${goal.progress <= 35} ? ' bg-danger' :
-        (${goal.progress < 100} ? ' bg-warning' : ' bg-success')">
+            </div>
+        </div>
 
-<span th:text="${goal.progress + '%'}"></span>
-
-</div>
-
-</div>
-
-</td>
-
-<!-- UPDATE PROGRESS -->
-<td>
-
-<form th:action="@{/employee/goals/update-progress/{id}(id=${goal.id})}"
-      method="post">
-
-<input type="number"
-       name="progress"
-       min="0"
-       max="100"
-       class="form-control mb-2"
-       required>
-
-<button type="submit"
-        class="btn btn-sm btn-primary">
-Update
-</button>
-
-</form>
-
-</td>
-
-</tr>
-
-<tr th:if="${#lists.isEmpty(goals)}">
-
-<td colspan="7" class="text-center">
-No goals added yet
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-</div>
-
-</div>
-
+    </div>
 </div>
 
 </body>

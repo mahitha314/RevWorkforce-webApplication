@@ -1,180 +1,186 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Edit Profile</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<head th:replace="~{fragments/header :: header('Update Profile')}"></head>
 
-    <style>
-        body {
-            overflow-x: hidden;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            min-height: 100vh;
-        }
-
-        /* Content area */
-        .content-wrapper {
-            flex-grow: 1;
-        }
-
-        @media (max-width: 991px) {
-            .sidebar {
-                position: fixed;
-                z-index: 1050;
-                left: -250px;
-                transition: 0.3s;
-            }
-
-            .sidebar.active {
-                left: 0;
-            }
-        }
-    </style>
-</head>
 <body>
 
-<div class="d-flex">
+    <!-- SIDEBAR -->
+    <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
-    <!-- Sidebar -->
-    <div class="sidebar bg-dark text-white p-3" id="sidebar">
-        <h4 class="text-white mb-4">Manager</h4>
+    <!-- TOPBAR -->
+    <div th:replace="~{fragments/header :: topbar('Update Profile')}"></div>
 
-        <ul class="nav flex-column">
-            <li class="nav-item mb-2">
-                <a th:href="@{/manager/dashboard}" class="nav-link text-white">Dashboard</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a th:href="@{/manager/profile}" class="nav-link text-white">Profile</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a th:href="@{/logout}" class="nav-link text-white">Logout</a>
-            </li>
-        </ul>
-    </div>
+    <div class="content">
 
-    <!-- Main Content -->
-    <div class="content-wrapper">
+        <h3 class="fw-bold mb-4">✏ Update Profile</h3>
 
-        <!-- Header -->
-        <nav class="navbar navbar-light bg-white shadow-sm px-4">
-            <button class="btn btn-outline-secondary d-lg-none"
-                    onclick="toggleSidebar()">☰</button>
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <span th:text="${errorMessage}"></span>
+        </div>
 
-            <span class="navbar-brand mb-0 h5">Edit Profile</span>
-        </nav>
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
 
-        <!-- Page Content -->
-        <div class="container-fluid p-4 bg-light min-vh-100">
+        <div class="card shadow-sm border-0 p-4">
 
-            <div th:if="${error}" class="alert alert-danger">
-                <span th:text="${error}"></span>
-            </div>
+            <form th:action="@{/manager/update-profile}"
+                  method="post"
+                  th:object="${manager}">
 
-            <div class="card shadow rounded-4 border-0 p-4 bg-white">
+                <div class="row g-3">
 
-                <form th:action="@{/manager/update-profile}"
-                      th:object="${manager}"
-                      method="post">
-
-                    <input type="hidden" th:field="*{id}"/>
-
-                    <h5 class="text-primary mb-3">Personal Information</h5>
-
-                    <div class="row g-3">
-
-                        <div class="col-md-6">
-                            <label class="form-label">First Name</label>
-                            <input type="text" class="form-control"
-                                   th:field="*{firstName}" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Last Name</label>
-                            <input type="text" class="form-control"
-                                   th:field="*{lastName}" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control"
-                                   th:field="*{email}" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Phone</label>
-                            <input type="text" class="form-control"
-                                   th:field="*{phoneNumber}">
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control"
-                                      th:field="*{address}" rows="3"></textarea>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Emergency Contact</label>
-                            <input type="text" class="form-control"
-                                   th:field="*{emergencyContact}">
-                        </div>
+                    <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <input class="form-control"
+                               th:value="*{firstName}"
+                               readonly>
                     </div>
 
-                    <hr class="my-4">
-
-                    <h5 class="text-danger mb-3">Change Password</h5>
-
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Current Password</label>
-                            <input type="password" name="currentPassword"
-                                   class="form-control">
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">New Password</label>
-                            <input type="password" name="newPassword"
-                                   class="form-control">
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Confirm Password</label>
-                            <input type="password" name="confirmPassword"
-                                   class="form-control">
-                        </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <input class="form-control"
+                               th:value="*{lastName}"
+                               readonly>
                     </div>
 
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary px-4">
-                            Save Changes
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input class="form-control"
+                               th:value="*{email}"
+                               readonly>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Department</label>
+                        <input class="form-control"
+                               th:value="${manager.department?.name}"
+                               readonly>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Designation</label>
+                        <input class="form-control"
+                               th:value="${manager.designation?.title}"
+                               readonly>
+                    </div>
+
+                    <hr class="mt-4">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input class="form-control"
+                               th:field="*{phoneNumber}"
+                               maxlength="10">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Emergency Contact</label>
+                        <input class="form-control"
+                               th:field="*{emergencyContact}"
+                               maxlength="10">
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Address</label>
+                        <input class="form-control"
+                               th:field="*{address}">
+                    </div>
+
+                    <hr class="mt-4">
+
+                    <h5 class="fw-bold mt-3">🔐 Change Password</h5>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Current Password</label>
+                        <input type="password"
+                               name="currentPassword"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">New Password</label>
+                        <input type="password"
+                               name="newPassword"
+                               id="newPassword"
+                               class="form-control"
+                               pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$"
+                               title="Minimum 8 characters, include uppercase, lowercase, number and special character">
+                        <small id="passwordHelp"></small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password"
+                               name="confirmPassword"
+                               id="confirmPassword"
+                               class="form-control">
+                        <small id="confirmHelp"></small>
+                    </div>
+
+                    <div class="col-md-12 mt-4">
+                        <button type="submit" class="btn btn-success">
+                            Save All Changes
                         </button>
+
                         <a th:href="@{/manager/profile}"
-                           class="btn btn-secondary px-4">
+                           class="btn btn-secondary ms-2">
                             Cancel
                         </a>
                     </div>
 
-                </form>
+                </div>
 
-            </div>
+            </form>
 
         </div>
 
     </div>
 
-</div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
-<script>
-    function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("active");
-    }
-</script>
+    <script>
+        const newPassword = document.getElementById("newPassword");
+        const confirmPassword = document.getElementById("confirmPassword");
+        const passwordHelp = document.getElementById("passwordHelp");
+        const confirmHelp = document.getElementById("confirmHelp");
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        newPassword.addEventListener("input", function () {
+            const value = newPassword.value;
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+            if (value.length === 0) {
+                passwordHelp.textContent = "";
+                return;
+            }
+
+            if (regex.test(value)) {
+                passwordHelp.textContent = "Strong password ✔";
+                passwordHelp.className = "text-success";
+            } else {
+                passwordHelp.textContent = "Must contain 8+ chars, uppercase, lowercase, number & special char";
+                passwordHelp.className = "text-danger";
+            }
+        });
+
+        confirmPassword.addEventListener("input", function () {
+            if (confirmPassword.value.length === 0) {
+                confirmHelp.textContent = "";
+                return;
+            }
+
+            if (confirmPassword.value === newPassword.value) {
+                confirmHelp.textContent = "Passwords match ✔";
+                confirmHelp.className = "text-success";
+            } else {
+                confirmHelp.textContent = "Passwords do not match ✖";
+                confirmHelp.className = "text-danger";
+            }
+        });
+    </script>
 
 </body>
 </html>

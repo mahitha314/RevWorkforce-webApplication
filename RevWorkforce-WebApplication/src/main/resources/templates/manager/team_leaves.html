@@ -8,13 +8,10 @@
 
 <body>
 
-<!-- Sidebar -->
 <div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
 
-<!-- Topbar -->
 <div th:replace="fragments/header :: topbar('Team Leave Requests')"></div>
 
-<!-- Main Content (IMPORTANT: use class="content") -->
 <div class="content">
 
     <div class="card shadow-sm">
@@ -31,6 +28,7 @@
                         <th>Leave Type</th>
                         <th>Dates</th>
                         <th>Total Days</th>
+                        <th>Reason</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -50,6 +48,12 @@
                         </td>
 
                         <td th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(leave.startDate, leave.endDate) + 1}"></td>
+
+                        <td class="text-start">
+                            <span th:title="${leave.reason}"
+                                  th:text="${leave.reason != null and !#strings.isEmpty(leave.reason) ? leave.reason : 'N/A'}">
+                            </span>
+                        </td>
 
                         <td>
                             <span class="badge bg-success"
@@ -85,6 +89,10 @@
                             <span th:if="${leave.leaveApproval != null}">-</span>
                         </td>
 
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(leaves)}">
+                        <td colspan="7" class="text-muted">No leave requests found.</td>
                     </tr>
 
                     </tbody>

@@ -14,6 +14,7 @@ import com.revworkforce.exception.ResourceNotFoundException;
 import com.revworkforce.managerservice.TeamLeavesService;
 import com.revworkforce.model.Employee;
 import com.revworkforce.model.LeaveApproval;
+import com.revworkforce.model.LeaveBalance;
 import com.revworkforce.model.LeaveRequest;
 import com.revworkforce.model.Notification;
 import com.revworkforce.notification.NotificationService;
@@ -81,55 +82,69 @@ public class TeamLeavesServiceImpl implements TeamLeavesService {
 	@Transactional
 	public ApiResponse approveLeave(Long managerId, Long leaveId, String comments) {
 
-		LeaveRequest request = leaveRequestRepo.findById(leaveId).orElse(null);
+	    LeaveRequest request = leaveRequestRepo.findById(leaveId).orElse(null);
 
-		if (request == null) {
-			return new ApiResponse(404, "Leave not found", null);
-		}
+	    if (request == null) {
+	        return new ApiResponse(404, "Leave not found", null);
+	    }
 
-		if (request.getLeaveApproval() != null) {
-			return new ApiResponse(400, "Leave already processed", null);
-		}
+	    if (request.getLeaveApproval() != null) {
+	        return new ApiResponse(400, "Leave already processed", null);
+	    }
 
-		if (request.getEmployee().getManager() == null
-				|| !request.getEmployee().getManager().getId().equals(managerId)) {
+	    if (request.getEmployee().getManager() == null ||
+	        !request.getEmployee().getManager().getId().equals(managerId)) {
 
-			return new ApiResponse(403, "Unauthorized to approve this leave", null);
-		}
+	        return new ApiResponse(403, "Unauthorized to approve this leave", null);
+	    }
 
-		Employee manager = employeeRepo.findById(managerId).orElse(null);
-		if (manager == null) {
-			return new ApiResponse(404, "Manager not found", null);
-		}
+	    Employee manager = employeeRepo.findById(managerId).orElse(null);
 
-		LeaveApproval approval = new LeaveApproval();
-		approval.setManager(manager);
-		approval.setStatus("APPROVED");
-		approval.setComments(comments);
-		approval.setApprovalDate(LocalDate.now());
+	    LeaveApproval approval = new LeaveApproval();
+	    approval.setManager(manager);
+	    approval.setStatus("APPROVED");
+	    approval.setComments(comments);
+	    approval.setApprovalDate(LocalDate.now());
 
-		approvalRepo.save(approval);
+	    approvalRepo.save(approval);
 
-		request.setLeaveApproval(approval);
-		leaveRequestRepo.save(request);
+	    request.setLeaveApproval(approval);
+	    leaveRequestRepo.save(request);
 
-		NotificationDTO notification = new NotificationDTO();
-		notification.setEmployeeId(request.getEmployee().getEmployeeId());
-		notification.setTitle("Leave Approved");
-		notification.setMessage("Your leave request has been approved.");
-		notification.setType("LEAVE");
-		notification.setStatus("APPROVED");
-		notification.setIsRead(false);
-		notification.setCreatedAt(LocalDateTime.now());
-		notification.setReferenceId(request.getId());
+	    // UPDATE LEAVE BALANCE
+	    LeaveBalance balance = leaveBalanceRepo
+	            .findByEmployee_IdAndLeaveType_Id(
+	                    request.getEmployee().getId(),
+	                    request.getLeaveType().getId())
+	            .orElseThrow(() -> new RuntimeException("Leave balance not found"));
 
-		notificationService.createNotification(notification);
+	    long days = java.time.temporal.ChronoUnit.DAYS.between(
+	            request.getStartDate(),
+	            request.getEndDate()
+	    ) + 1;
 
-		// ========== ACTIVITY LOG ==========
-		activityLogService.log(managerId,
-				"Approved leave ID " + leaveId + " for employee ID " + request.getEmployee().getId());
+	    balance.setUsedLeaves(balance.getUsedLeaves() + (int) days);
+	    balance.setRemainingLeaves(balance.getRemainingLeaves() - (int) days);
 
-		return new ApiResponse(200, "Leave approved successfully", request);
+	    leaveBalanceRepo.save(balance);
+
+	    NotificationDTO notification = new NotificationDTO();
+	    notification.setEmployeeId(request.getEmployee().getEmployeeId());
+	    notification.setTitle("Leave Approved");
+	    notification.setMessage("Your leave request has been approved.");
+	    notification.setType("LEAVE");
+	    notification.setStatus("APPROVED");
+	    notification.setIsRead(false);
+	    notification.setCreatedAt(LocalDateTime.now());
+	    notification.setReferenceId(request.getId());
+
+	    notificationService.createNotification(notification);
+
+	    activityLogService.log(managerId,
+	            "Approved leave ID " + leaveId +
+	            " for employee ID " + request.getEmployee().getId());
+
+	    return new ApiResponse(200, "Leave approved successfully", request);
 	}
 
 	@Override

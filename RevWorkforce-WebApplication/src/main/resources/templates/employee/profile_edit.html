@@ -5,22 +5,22 @@
 
 <body>
 
-<!-- Sidebar -->
+
 <div th:replace="~{fragments/employee-sidebar :: sidebar}"></div>
 
-<!-- Topbar -->
+
 <div th:replace="~{fragments/header :: topbar('Update Profile')}"></div>
 
 <div class="content">
 
     <h3 class="fw-bold mb-4">✏ Update Profile</h3>
 
-    <!-- Error Message -->
+  
     <div th:if="${errorMessage}" class="alert alert-danger">
         <span th:text="${errorMessage}"></span>
     </div>
 
-    <!-- Success Message -->
+   
     <div th:if="${successMessage}" class="alert alert-success">
         <span th:text="${successMessage}"></span>
     </div>
@@ -72,8 +72,7 @@
 
                 <hr class="mt-4">
 
-                <!-- ===== EDITABLE FIELDS ===== -->
-
+               
                 <div class="col-md-6">
                     <label class="form-label">Phone Number</label>
                     <input class="form-control"
@@ -96,7 +95,7 @@
 
                 <hr class="mt-4">
 
-                <!-- ===== PASSWORD SECTION ===== -->
+             
 
                 <h5 class="fw-bold mt-3">🔐 Change Password</h5>
 

@@ -40,9 +40,21 @@ public class EmployeeManagementController {
         this.departmentRepository = departmentRepository;
         this.employeeRepository = employeeRepository;
     }
+    @PutMapping("/employees/{employeeId}")
+    public ResponseEntity<ApiResponse> updateEmployee(
+            @PathVariable String employeeId,
+            @RequestBody EmployeeDTO dto) {
 
+        return employeeManagementService.updateEmployee(employeeId, dto);
+    }
    
+    @DeleteMapping("/employees/{employeeId}")
+    public ResponseEntity<ApiResponse> deleteEmployee(
+            @PathVariable String employeeId) {
 
+        return employeeManagementService.deleteEmployee(employeeId);
+    }
+    
     @GetMapping("/departments")
     public ResponseEntity<ApiResponse> getAllDepartments() {
 
@@ -141,4 +153,5 @@ public class EmployeeManagementController {
         return employeeManagementService
                 .changeManager(employeeId, managerId);
     }
+
 }

@@ -133,18 +133,18 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	@Override
 	public ResponseEntity<ApiResponse> updateEmployee(String employeeId, EmployeeDTO dto) {
 
-	    // Find employee by employeeId
+	    
 	    Employee existing = employeeRepository.findByEmployeeId(employeeId)
 	            .orElseThrow(() -> new RuntimeException("Employee not found"));
 
-	    // Prevent duplicate email
+	   
 	    employeeRepository.findByEmail(dto.getEmail())
 	            .filter(e -> !e.getEmployeeId().equals(employeeId))
 	            .ifPresent(e -> {
 	                throw new RuntimeException("Email already in use");
 	            });
 
-	    // Update basic details
+	    
 	    existing.setFirstName(dto.getFirstName());
 	    existing.setLastName(dto.getLastName());
 	    existing.setEmail(dto.getEmail());
@@ -154,17 +154,17 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	    existing.setSalary(dto.getSalary());
 	    existing.setRole(dto.getRole());
 
-	    // Update department
+	  
 	    Department dept = departmentRepository.findById(dto.getDepartmentId())
 	            .orElseThrow(() -> new RuntimeException("Department not found"));
 	    existing.setDepartment(dept);
 
-	    // Update designation
+	   
 	    Designation des = designationRepository.findById(dto.getDesignationId())
 	            .orElseThrow(() -> new RuntimeException("Designation not found"));
 	    existing.setDesignation(des);
 
-	    // Update manager (optional)
+	    
 	    if (dto.getManagerId() != null) {
 
 	        Employee manager = employeeRepository.findById(dto.getManagerId())
@@ -173,10 +173,10 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	        existing.setManager(manager);
 	    }
 
-	    // Save updated employee
+	    
 	    employeeRepository.save(existing);
 
-	    // Activity log
+	   
 	    activityLogService.log(
 	            "Updated Employee",
 	            "Employee Management",
@@ -184,7 +184,7 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	            "SUCCESS",
 	            request);
 
-	    // Return response
+	   
 	    return ResponseEntity.ok(
 	            new ApiResponse(200, "Employee updated successfully", existing));
 	}

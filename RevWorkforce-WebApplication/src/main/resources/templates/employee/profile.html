@@ -16,7 +16,7 @@
 
 <div class="content p-4">
 
-    <!-- Page Header -->
+   
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold">👤 My Profile</h3>
 
@@ -26,7 +26,7 @@
         </a>
     </div>
 
-    <!-- Success Message -->
+    
     <div th:if="${successMessage}"
          class="alert alert-success"
          th:text="${successMessage}">
@@ -35,7 +35,7 @@
    
     <div class="card shadow-sm border-0 p-4">
 
-        <!-- Null Safety Check -->
+       
         <div th:if="${employee != null}" class="row g-3">
 
             <div class="col-md-6">
@@ -80,7 +80,7 @@
 
         </div>
 
-        <!-- If Employee Not Loaded -->
+        
         <div th:if="${employee == null}" class="text-center text-muted py-4">
             Employee details not available.
         </div>

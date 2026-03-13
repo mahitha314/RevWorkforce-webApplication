@@ -4,10 +4,10 @@
 <head>
     <title>Team Performance Reviews</title>
 
-    <!-- Global Header -->
+
     <th:block th:replace="~{fragments/header :: header('Team Performance Reviews')}"></th:block>
 
-    <!-- SweetAlert -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -15,7 +15,7 @@
             background: #f4f6f9;
         }
 
-        /* ===== FIXED LAYOUT STRUCTURE ===== */
+    
 
         .content-wrapper {
             margin-left: 240px;   /* sidebar width */
@@ -54,13 +54,13 @@
 
 <body>
 
-    <!-- Sidebar -->
+  
     <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
-    <!-- Topbar -->
+    
     <div th:replace="~{fragments/header :: topbar('Team Performance Reviews')}"></div>
 
-    <!-- ===== MAIN CONTENT ===== -->
+   
     <div class="content-wrapper">
 
         <div class="container-fluid">
@@ -75,7 +75,7 @@
 
     </div>
 
-    <!-- Get Manager ID -->
+    
     <script th:inline="javascript">
         let managerId = /*[[${managerId}]]*/ 0;
     </script>

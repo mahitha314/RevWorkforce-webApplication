@@ -48,7 +48,7 @@ public class ActivityLogServiceImplTest {
 	@Test
 	public void log_Positive() {
 
-		// Arrange
+		
 		Employee employee = new Employee();
 		employee.setId(1L);
 		employee.setFirstName("Mahitha");
@@ -60,10 +60,9 @@ public class ActivityLogServiceImplTest {
 
 		ArgumentCaptor<SystemActivityLog> captor = ArgumentCaptor.forClass(SystemActivityLog.class);
 
-		// Act
 		activityLogService.log("CREATE", "ADMIN_MODULE", "Created employee", "SUCCESS", httpServletRequest);
 
-		// Assert
+		
 		verify(repository, times(1)).save(captor.capture());
 
 		SystemActivityLog savedLog = captor.getValue();

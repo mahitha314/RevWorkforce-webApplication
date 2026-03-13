@@ -2,343 +2,309 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<title>System Configuration</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SystemConfiguration</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<th:block th:replace="~{fragments/header :: header('System Configuration')}"></th:block>
 
-<th:block th:replace="~{fragments/header :: header('System Configuration')}"></th:block>
-
-<style>
-
-.card{
-border-radius:10px;
-}
-
-.section-title{
-font-weight:600;
-font-size:18px;
-}
-
-.dept-link{
-cursor:pointer;
-text-decoration:none;
-}
-
-.dept-link:hover{
-text-decoration:underline;
-}
-
-</style>
+    <style>
+        .card {
+            border-radius: 10px;
+        }
+        .section-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .dept-link {
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .dept-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
+	
+	<th:block th:replace="~{fragments/header :: topbar('System Configuration')}"></th:block>
+
+
+	<th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
+	<div class="content">
+	<div class="container-fluid mt-4">
+		
+		<div th:if="${successMessage}" 
+		     class="alert alert-success alert-dismissible fade show mt-3" 
+		     role="alert">
+
+		    <span th:text="${successMessage}"></span>
+
+		    <button type="button" class="btn-close"
+		            data-bs-dismiss="alert"></button>
+		</div>
+	    <div class="row">
+
+	       
+	        <div class="col-md-5">
+
+	            <div class="card shadow-sm">
+	                <div class="card-header bg-primary text-white">
+	                    <span class="section-title">Department Management</span>
+	                </div>
+
+	                <div class="card-body">
+
+	                   
+						<form th:action="@{/admin/departments/save}"
+						      method="post"
+						      th:object="${department}">
+
+						  
+						    <input type="hidden" th:field="*{id}" />
+
+						    <div class="mb-3">
+						        <label class="form-label">Department Name</label>
+						        <input type="text"
+						               class="form-control"
+						               th:field="*{name}"
+						               placeholder="Enter department name"
+						               required>
+						    </div>
+
+						  
+						    <button type="submit"
+						            class="btn btn-success w-100"
+						            th:if="${department.id == null}">
+						        Add Department
+						    </button>
+
+						    
+						    <button type="submit"
+						            class="btn btn-primary w-100"
+						            th:if="${department.id != null}">
+						        Update Department
+						    </button>
+
+						   
+						    <a th:href="@{/admin/system-config}"
+						       class="btn btn-secondary w-100 mt-2"
+						       th:if="${department.id != null}">
+						        Delete
+						    </a>
+
+						</form>
+
+	                    <hr>
+
+	                   
+	                    <h6 class="mb-3">Existing Departments</h6>
+
+						<table class="table table-bordered table-hover">
+						    <thead class="table-light">
+						        <tr>
+						            <th>Department Name</th>
+						            <th width="180">Action</th>
+						        </tr>
+						    </thead>
+
+						    <tbody>
+						        <tr th:each="dept : ${departments}">
+
+						            
+						            <td>
+						                <a class="fw-bold text-decoration-none"
+						                   th:href="@{/admin/system-config(deptId=${dept.id})}"
+						                   th:text="${dept.name}">
+						                </a>
+						            </td>
+
+						           
+						            <td>
+
+						               
+						                <a th:href="@{/admin/system-config(editDeptId=${dept.id})}"
+						                   class="btn btn-sm btn-warning me-2">
+						                    Edit
+						                </a>
+
+						            
+										<a href="javascript:void(0);"
+										   th:attr="onclick=|confirmDeleteDept(${dept.id})|"
+										   class="btn btn-sm btn-danger">
+										    Delete
+										</a>
+
+						            </td>
+
+						        </tr>
+						    </tbody>
+						</table>
+
+	                </div>
+	            </div>
+
+	        </div>
+
+
+
+	        <div class="col-md-7">
+
+	            <div th:if="${selectedDept != null}">
+
+	                <div class="card shadow-sm">
+	                    <div class="card-header bg-secondary text-white">
+	                        <span class="section-title">
+	                            Designations -
+	                            <span th:text="${selectedDept.name}"></span>
+	                        </span>
+	                    </div>
+
+	                    <div class="card-body">
+
+	                       
+							<form th:action="@{/admin/departments/designation/save/{deptId}(deptId=${selectedDept.id})}"
+							      method="post"
+							      th:object="${designation}">
 
-<!-- TOPBAR -->
-<th:block th:replace="~{fragments/header :: topbar('System Configuration')}"></th:block>
+							  
+							    <input type="hidden" th:field="*{id}" />
 
-<!-- SIDEBAR -->
-<th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
-
-<div class="content">
-
-<div class="container-fluid mt-4">
-
-<!-- SUCCESS MESSAGE -->
-
-<div th:if="${successMessage}"
-     class="alert alert-success alert-dismissible fade show"
-     role="alert">
-
-<span th:text="${successMessage}"></span>
-
-<button type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"></button>
-
-</div>
-
-<div class="row">
-
-<!-- ================= LEFT SIDE : DEPARTMENTS ================= -->
-
-<div class="col-md-5">
-
-<div class="card shadow-sm">
-
-<div class="card-header bg-primary text-white">
-<span class="section-title">Department Management</span>
-</div>
-
-<div class="card-body">
-
-<!-- ADD / UPDATE DEPARTMENT -->
-
-<form th:action="@{/admin/departments/save}"
-      method="post"
-      th:object="${department}">
-
-<input type="hidden" th:field="*{id}"/>
-
-<div class="mb-3">
-
-<label class="form-label">Department Name</label>
-
-<input type="text"
-       class="form-control"
-       th:field="*{name}"
-       placeholder="Enter department name"
-       required>
-
-</div>
-
-<button type="submit"
-        class="btn btn-success w-100"
-        th:if="${department.id == null}">
-Add Department
-</button>
-
-<button type="submit"
-        class="btn btn-primary w-100"
-        th:if="${department.id != null}">
-Update Department
-</button>
-
-<a th:href="@{/admin/system-config}"
-   class="btn btn-secondary w-100 mt-2"
-   th:if="${department.id != null}">
-Cancel
-</a>
-
-</form>
-
-<hr>
-
-<h6 class="mb-3">Existing Departments</h6>
-
-<table class="table table-bordered table-hover">
-
-<thead class="table-light">
-
-<tr>
-<th>Department Name</th>
-<th width="180">Action</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr th:each="dept : ${departments}">
-
-<td>
-
-<a th:href="@{/admin/system-config(deptId=${dept.id})}"
-   class="fw-bold text-primary text-decoration-none"
-   th:text="${dept.name}">
-</a>
-
-</td>
-
-<td>
-
-<a th:href="@{/admin/system-config(editDeptId=${dept.id})}"
-   class="btn btn-sm btn-warning me-2">
-Edit
-</a>
-
-<a href="javascript:void(0);"
-   th:attr="onclick=|confirmDeleteDept(${dept.id})|"
-   class="btn btn-sm btn-danger">
-Delete
-</a>
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-</div>
-</div>
-
-
-<!-- ================= RIGHT SIDE : DESIGNATIONS ================= -->
-
-<div class="col-md-7">
-
-<!-- SHOW ONLY IF DEPARTMENT SELECTED -->
-
-<div th:if="${selectedDept != null}">
-
-<div class="card shadow-sm">
-
-<div class="card-header bg-secondary text-white">
-
-<span class="section-title">
-Designations - <span th:text="${selectedDept.name}"></span>
-</span>
-
-</div>
-
-<div class="card-body">
-
-<!-- ADD / UPDATE DESIGNATION -->
-
-<form th:action="@{/admin/departments/designation/save/{deptId}(deptId=${selectedDept.id})}"
-      method="post"
-      th:object="${designation}">
-
-<input type="hidden" th:field="*{id}"/>
-
-<div class="mb-3">
-
-<label class="form-label">Designation Title</label>
-
-<input type="text"
-       class="form-control"
-       th:field="*{title}"
-       placeholder="Enter designation title"
-       required>
-
-</div>
-
-<button type="submit"
-        class="btn btn-success w-100"
-        th:if="${designation.id == null}">
-Add Designation
-</button>
-
-<button type="submit"
-        class="btn btn-primary w-100"
-        th:if="${designation.id != null}">
-Update Designation
-</button>
-
-<a th:href="@{/admin/system-config(deptId=${selectedDept.id})}"
-   class="btn btn-secondary w-100 mt-2"
-   th:if="${designation.id != null}">
-Cancel
-</a>
-
-</form>
-
-<hr>
-
-<h6 class="mb-3">Existing Designations</h6>
-
-<table class="table table-bordered table-hover">
-
-<thead class="table-light">
-
-<tr>
-<th>Title</th>
-<th width="120">Action</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr th:each="des : ${designations}">
-
-<td th:text="${des.title}"></td>
-
-<td>
-
-<a th:href="@{/admin/system-config(deptId=${selectedDept.id},editDesId=${des.id})}"
-   class="btn btn-sm btn-warning me-2">
-Edit
-</a>
-
-<a href="javascript:void(0);"
-   th:attr="onclick=|confirmDeleteDes(${des.id},${selectedDept.id})|"
-   class="btn btn-sm btn-danger">
-Delete
-</a>
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-</div>
-
-</div>
-
-<!-- MESSAGE IF NO DEPARTMENT SELECTED -->
-
-<div th:if="${selectedDept == null}">
-
-<div class="alert alert-warning">
-Select a department from the left to manage its designations.
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- FOOTER -->
-
-<div th:replace="~{fragments/footer :: footer}"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-
-function confirmDeleteDept(id){
-
-Swal.fire({
-title:"Are you sure?",
-text:"This will permanently delete this department!",
-icon:"warning",
-showCancelButton:true,
-confirmButtonColor:"#d33",
-cancelButtonColor:"#6c757d",
-confirmButtonText:"Yes, Delete"
-}).then((result)=>{
-
-if(result.isConfirmed){
-window.location.href="/admin/departments/delete/"+id;
-}
-
-});
-
-}
-
-function confirmDeleteDes(id,deptId){
-
-Swal.fire({
-title:"Are you sure?",
-text:"This will permanently delete this designation!",
-icon:"warning",
-showCancelButton:true,
-confirmButtonColor:"#d33",
-cancelButtonColor:"#6c757d",
-confirmButtonText:"Yes, Delete"
-}).then((result)=>{
-
-if(result.isConfirmed){
-window.location.href="/admin/departments/designation/delete/"+id+"/"+deptId;
-}
-
-});
-
-}
-
-</script>
-
-</body>
-</html>
+							    <div class="mb-3">
+							        <label class="form-label">Designation Title</label>
+							        <input type="text"
+							               class="form-control"
+							               th:field="*{title}"
+							               placeholder="Enter designation title"
+							               required>
+							    </div>
+
+							    
+							    <button type="submit"
+							            class="btn btn-success w-100"
+							            th:if="${designation.id == null}">
+							        Add Designation
+							    </button>
+
+							    
+							    <button type="submit"
+							            class="btn btn-primary w-100"
+							            th:if="${designation.id != null}">
+							        Update Designation
+							    </button>
+
+							  
+							    <a th:href="@{/admin/system-config(deptId=${selectedDept.id})}"
+							       class="btn btn-secondary w-100 mt-2"
+							       th:if="${designation.id != null}">
+							        Cancel
+							    </a>
+
+							</form>
+
+	                        <hr>
+
+	                       
+	                        <h6 class="mb-3">Existing Designations</h6>
+
+	                        <table class="table table-bordered table-hover">
+	                            <thead class="table-light">
+	                            <tr>
+	                                <th>Title</th>
+	                                <th width="120">Action</th>
+	                            </tr>
+	                            </thead>
+
+	                            <tbody>
+	                            <tr th:each="des : ${designations}">
+	                                <td th:text="${des.title}"></td>
+
+									<td>
+
+									    
+									    <a th:href="@{/admin/system-config(
+									            deptId=${selectedDept.id},
+									            editDesId=${des.id})}"
+									       class="btn btn-sm btn-warning">
+									        Edit
+									    </a>
+
+									   
+										<a href="javascript:void(0);"
+										   th:attr="onclick=|confirmDeleteDes(${des.id}, ${selectedDept.id})|"
+										   class="btn btn-sm btn-danger">
+										    Delete
+										</a>
+
+									</td>
+	                            </tr>
+	                            </tbody>
+	                        </table>
+
+	                    </div>
+	                </div>
+
+	            </div>
+
+	           
+	            <div th:if="${selectedDept == null}">
+	                <div class="alert alert-warning">
+	                    Select a department from the left to manage its designations.
+	                </div>
+	            </div>
+
+	        </div>
+
+	    </div>
+
+	</div>
+	</div>
+
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<script>
+
+	function confirmDeleteDept(id) {
+
+	    Swal.fire({
+	        title: "Are you sure?",
+	        text: "This will permanently delete this department!",
+	        icon: "warning",
+	        showCancelButton: true,
+	        confirmButtonColor: "#d33",
+	        cancelButtonColor: "#6c757d",
+	        confirmButtonText: "Yes, Delete"
+	    }).then((result) => {
+
+	        if (result.isConfirmed) {
+	            window.location.href = "/admin/departments/delete/" + id;
+	        }
+	    });
+	}
+
+
+	function confirmDeleteDes(id, deptId) {
+
+	    Swal.fire({
+	        title: "Are you sure?",
+	        text: "This will permanently delete this designation!",
+	        icon: "warning",
+	        showCancelButton: true,
+	        confirmButtonColor: "#d33",
+	        cancelButtonColor: "#6c757d",
+	        confirmButtonText: "Yes, Delete"
+	    }).then((result) => {
+
+	        if (result.isConfirmed) {
+	            window.location.href =
+	                "/admin/departments/designation/delete/" + id + "/" + deptId;
+	        }
+	    });
+	}
+
+	</script>
+	</body>
+	</html>

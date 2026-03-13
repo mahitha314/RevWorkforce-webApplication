@@ -9,12 +9,12 @@
 	           overflow-x: hidden;
 	       }
 
-	       /* FIXED LAYOUT STRUCTURE */
+	      
 	       .layout {
 	           display: flex;
 	       }
 
-	       /* MAIN CONTENT AREA */
+	       
 	       .main-content {
 	           margin-top: 60px;      /* Topbar height */
 	           margin-left: 250px;    /* Sidebar width */
@@ -23,7 +23,7 @@
 	           transition: all 0.3s ease;
 	       }
 
-	       /* RESPONSIVE FIX */
+	      
 	       @media (max-width: 768px) {
 	           .main-content {
 	               margin-left: 0;
@@ -31,7 +31,6 @@
 	           }
 	       }
 
-	       /* Ensure tables never overflow */
 	       .table-responsive {
 	           overflow-x: auto;
 	       }
@@ -40,22 +39,22 @@
 
 <body>
 
-<!-- TOPBAR -->
+
 <div th:replace="~{fragments/header :: topbar('Leave Management')}"></div>
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
+  
     <div th:replace="~{fragments/employee-sidebar :: sidebar}"></div>
 
-    <!-- MAIN CONTENT -->
+   
     <div class="main-content">
 
         <div class="container-fluid">
 
             <h4 class="mb-4">Leave Management</h4>
 
-            <!-- NAVIGATION TABS -->
+            
             <ul class="nav nav-pills mb-4 flex-wrap gap-2">
 
                 <li class="nav-item">
@@ -98,7 +97,7 @@
 
             <div class="tab-content">
 
-                <!-- ================= APPLY LEAVE ================= -->
+                
                 <div class="tab-pane fade show active" id="apply">
 
                     <div class="card shadow-sm">
@@ -168,7 +167,7 @@
 
                 </div>
 
-                <!-- ================= LEAVE BALANCE ================= -->
+           
                 <div class="tab-pane fade" id="balance">
 
                     <div class="card shadow-sm">
@@ -206,7 +205,7 @@
                     </div>
 
                 </div>
-		<!-- ================= LEAVE STATUS ================= -->
+		
 		<div class="tab-pane fade" id="status">
 
 		    <div class="card shadow-sm">
@@ -230,22 +229,22 @@
 		                    <td th:text="${leave.startDate}"></td>
 		                    <td th:text="${leave.endDate}"></td>
 
-		                    <!-- STATUS COLUMN -->
+		                    
 		                    <td>
 
-		                        <!-- Pending -->
+		                       
 		                        <span th:if="${leave.leaveApproval == null}"
 		                              class="badge bg-warning text-dark">
 		                            Pending
 		                        </span>
 
-		                        <!-- Approved -->
+		                       
 		                        <span th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'APPROVED'}"
 		                              class="badge bg-success">
 		                            Approved
 		                        </span>
 
-		                        <!-- Rejected -->
+		                        
 		                        <span th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'REJECTED'}"
 		                              class="badge bg-danger">
 		                            Rejected
@@ -253,10 +252,10 @@
 
 		                    </td>
 
-		                    <!-- ACTION COLUMN -->
+		                    
 		                    <td>
 
-		                        <!-- Cancel Only If Pending -->
+		                      
 		                        <form th:if="${leave.leaveApproval == null}"
 		                              th:action="@{'/employee/cancel/' + ${leave.id}}"
 		                              method="post">
@@ -267,14 +266,14 @@
 		                            </button>
 		                        </form>
 
-		                        <!-- If Not Pending -->
+		                      
 		                        <span th:if="${leave.leaveApproval != null}">-</span>
 
 		                    </td>
 
 		                </tr>
 
-		                <!-- Empty Message -->
+		              
 		                <tr th:if="${#lists.isEmpty(leaves)}">
 		                    <td colspan="5" class="text-muted">
 		                        No Leave Requests Found
@@ -289,7 +288,7 @@
 		    </div>
 
 		</div>
-        <!-- ================= LEAVE HISTORY ================= -->
+       
         <div class="tab-pane fade" id="history">
 
             <div class="card shadow-sm">
