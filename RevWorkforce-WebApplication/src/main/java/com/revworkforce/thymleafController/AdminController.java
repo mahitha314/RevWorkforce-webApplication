@@ -1,4 +1,4 @@
-package com.revworkforce.admincontroller;
+package com.revworkforce.thymleafController;
 
 import com.revworkforce.adminservice.AdminService;
 import com.revworkforce.adminservice.AnnouncementService;
@@ -110,7 +110,8 @@ public class AdminController {
 	    model.addAttribute("employee", employee);
 
 	    List<Employee> employees = employeeRepository.findAll();
-	    model.addAttribute("employees", employees);
+	    model.addAttribute("employees", 
+	    		employees);
 
 	    List<Department> departments = systemConfigService.getAllDepartments();
 	    model.addAttribute("departments", departments);

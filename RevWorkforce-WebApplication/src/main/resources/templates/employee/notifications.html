@@ -15,13 +15,72 @@
             min-height: 100vh;
             transition: 0.3s;
         }
+		@media (max-width: 991px) {
+		           .content-wrapper {
+		               margin-left: 0;
+		               padding: 95px 15px 25px 15px;
+		           }
+		       }
 
-        @media (max-width: 991px) {
-            .content-wrapper {
-                margin-left: 0;
-                padding-top: 110px;
-            }
-        }
+		       @media (max-width: 767px) {
+		           .card-body {
+		               padding: 1rem !important;
+		           }
+
+		           .top-section {
+		               flex-direction: column;
+		               align-items: flex-start !important;
+		           }
+
+		           .top-right-controls {
+		               width: 100%;
+		               justify-content: flex-start;
+		           }
+
+		           .top-right-controls .btn {
+		               width: 100%;
+		           }
+
+		           .notification-meta {
+		               flex-direction: column;
+		               align-items: flex-start !important;
+		               gap: 8px;
+		           }
+
+		           .notification-actions .btn {
+		               width: 100%;
+		           }
+
+		           h3 {
+		               font-size: 1.25rem;
+		           }
+		       }
+
+		       @media (max-width: 576px) {
+		           .content-wrapper {
+		               padding: 90px 10px 20px 10px;
+		           }
+
+		           .badge.fs-6 {
+		               font-size: 0.85rem !important;
+		           }
+
+		           .notification-card .card-body {
+		               padding: 0.9rem;
+		           }
+
+		           .notification-title {
+		               font-size: 0.95rem;
+		           }
+
+		           .notification-message {
+		               font-size: 0.9rem;
+		           }
+
+		           small.text-muted {
+		               font-size: 0.78rem;
+		           }
+		       }
 
         .notification-card:hover {
             background-color: #f8f9fa;

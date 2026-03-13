@@ -1,6 +1,7 @@
 package com.revworkforce.security;
 
 import java.io.IOException;
+
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import com.revworkforce.util.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -18,10 +20,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
-    
+
     public JwtAuthFilter(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
-    	this.jwtUtil = jwtUtil;
-    	this.customUserDetailsService = customUserDetailsService;
+        this.jwtUtil = jwtUtil;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
@@ -32,7 +34,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-       
         if (path.equals("/login") ||
             path.startsWith("/auth") ||
             path.startsWith("/css") ||
@@ -42,20 +43,31 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String header = request.getHeader("Authorization");
-
         String token = null;
         String email = null;
 
-        if(header != null && header.startsWith("Bearer ")){
+        
+        final String header = request.getHeader("Authorization");
+
+        if (header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
+        }
+
+       
+        if (token == null) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                token = (String) session.getAttribute("JWT_TOKEN");
+            }
+        }
+
+        
+        if (token != null) {
             try {
-            	email = jwtUtil.extractUsername(token);
-            } 
-            catch (ExpiredJwtException e) {
+                email = jwtUtil.extractUsername(token);
+            } catch (ExpiredJwtException e) {
                 System.out.println("JWT Token expired. Please login again.");
-            } 
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("Invalid JWT Token.");
             }
         }
@@ -65,20 +77,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             UserDetails userDetails =
                     customUserDetailsService.loadUserByUsername(email);
-
             if (jwtUtil.validateToken(token)) {
+
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
                                 userDetails.getAuthorities());
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request));
 
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authToken);
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+              
+                HttpSession session = request.getSession();
+                session.setAttribute("JWT_TOKEN", token);
             }
+           
         }
 
         filterChain.doFilter(request, response);
