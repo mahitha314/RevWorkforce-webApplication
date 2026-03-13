@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "leave_balances",uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "leave_type_id"}))
+@Table(name = "leave_balances", uniqueConstraints = @UniqueConstraint(columnNames = { "employee_id", "leave_type_id" }))
 public class LeaveBalance {
 
 	@Id
@@ -30,7 +30,8 @@ public class LeaveBalance {
 	@JsonBackReference(value = "leavetype-leavebalance")
 	private LeaveType leaveType;
 
-	public LeaveBalance() {}
+	public LeaveBalance() {
+	}
 
 	public LeaveBalance(Long id, int totalLeaves, int usedLeaves, int remainingLeaves, Employee employee,
 			LeaveType leaveType) {

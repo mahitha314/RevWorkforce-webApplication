@@ -5,12 +5,12 @@ import com.revworkforce.dto.GoalDTO;
 
 public interface GoalService {
 
-    ApiResponse createGoal(Long employeeId, GoalDTO dto);
+	ApiResponse createGoal(Long employeeId, GoalDTO dto);
 
-    ApiResponse getEmployeeGoals(Long employeeId);
+	ApiResponse getEmployeeGoals(Long employeeId);
 
-    ApiResponse updateGoalProgress(Long goalId, Integer progress);
+	ApiResponse updateGoalProgress(Long goalId, Integer progress);
 
-    ApiResponse deleteGoal(Long goalId);
-    
+	ApiResponse deleteGoal(Long goalId);
+
 }

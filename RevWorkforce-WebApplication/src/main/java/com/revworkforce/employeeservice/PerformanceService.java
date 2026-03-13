@@ -5,11 +5,12 @@ import com.revworkforce.dto.PerformanceReviewDTO;
 
 public interface PerformanceService {
 
-    ApiResponse createSelfReview(Long employeeId, PerformanceReviewDTO dto);
+	ApiResponse createSelfReview(Long employeeId, PerformanceReviewDTO dto);
 
-    ApiResponse getEmployeeReviews(Long employeeId);
+	ApiResponse getEmployeeReviews(Long employeeId);
 
-    ApiResponse submitReview(Long reviewId);
+	ApiResponse submitReview(Long reviewId);
 
-    ApiResponse deleteReview(Long reviewId);
+	ApiResponse deleteReview(Long reviewId);
+	
 }

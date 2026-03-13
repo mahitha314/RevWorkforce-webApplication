@@ -9,10 +9,10 @@ import com.revworkforce.model.Holiday;
 @Repository
 public interface HolidayRepository extends JpaRepository<Holiday, Long> {
 
-    boolean existsByHolidayDate(LocalDate holidayDate);
+	boolean existsByHolidayDate(LocalDate holidayDate);
 
-    List<Holiday> findAllByOrderByHolidayDateAsc();
-    
-    List<Holiday> findByHolidayDateGreaterThanEqualOrderByHolidayDateAsc(LocalDate date);
+	List<Holiday> findAllByOrderByHolidayDateAsc();
+
+	List<Holiday> findByHolidayDateGreaterThanEqualOrderByHolidayDateAsc(LocalDate date);
 
 }

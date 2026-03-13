@@ -20,14 +20,11 @@ public class EmployeeDTO {
 	private String email;
 
 	@NotBlank(message = "Password required")
-    @Pattern(
-            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).{6,}$",
-            message = "Password must contain 1 uppercase, 1 number, 1 special char and min 6 characters"
-    )
-    private String password;
-	
+	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).{6,}$", message = "Password must contain 1 uppercase, 1 number, 1 special char and min 6 characters")
+	private String password;
+
 	@NotBlank
-	private String role; 
+	private String role;
 
 	@NotNull(message = "Department is required")
 	private Long departmentId;
@@ -35,16 +32,15 @@ public class EmployeeDTO {
 	@NotNull(message = "Designation is required")
 	private Long designationId;
 
-	private Long managerId; 
+	private Long managerId;
 
 	@NotNull(message = "Salary required")
-    @Positive(message = "Salary must be positive")
+	@Positive(message = "Salary must be positive")
 	private Double salary;
 
 	@NotBlank(message = "Phone number required")
-    @Pattern(regexp = "^[0-9]{10}$",
-            message = "Phone number must be 10 digits")
-    private String phoneNumber;
+	@Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
+	private String phoneNumber;
 
 	@NotBlank(message = "Address is required")
 	@Size(min = 5, max = 200, message = "Address must be between 5 and 200 characters")

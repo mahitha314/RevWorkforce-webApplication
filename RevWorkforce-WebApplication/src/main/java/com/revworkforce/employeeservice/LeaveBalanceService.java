@@ -4,6 +4,6 @@ import com.revworkforce.dto.ApiResponse;
 
 public interface LeaveBalanceService {
 
-    ApiResponse getEmployeeBalances(Long employeeId);
-    
+	ApiResponse getEmployeeBalances(Long employeeId);
+
 }

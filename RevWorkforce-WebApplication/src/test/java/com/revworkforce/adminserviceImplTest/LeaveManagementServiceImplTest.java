@@ -12,19 +12,15 @@ import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.LeaveBalanceRepository;
 import com.revworkforce.repository.LeaveTypeRepository;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -183,4 +179,5 @@ public class LeaveManagementServiceImplTest {
 
 		assertEquals(5, service.countLeaves());
 	}
+
 }

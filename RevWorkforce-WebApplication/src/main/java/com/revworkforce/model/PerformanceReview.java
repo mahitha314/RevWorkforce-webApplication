@@ -39,7 +39,8 @@ public class PerformanceReview {
 	@JoinColumn(name = "employee_id", nullable = false)
 	private Employee employee;
 
-	public PerformanceReview() {}
+	public PerformanceReview() {
+	}
 
 	public PerformanceReview(Long id, String accomplishments, String deliverables, String areasOfImprovement,
 			int selfRating, int managerRating, String managerFeedback, String status, LocalDate submittedDate,

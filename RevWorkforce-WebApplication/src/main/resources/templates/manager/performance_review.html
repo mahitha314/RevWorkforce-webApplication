@@ -4,22 +4,18 @@
 <head>
     <title>Team Performance Reviews</title>
 
-
     <th:block th:replace="~{fragments/header :: header('Team Performance Reviews')}"></th:block>
-
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         body {
             background: #f4f6f9;
-        }
-
-    
+        }   
 
         .content-wrapper {
-            margin-left: 240px;   /* sidebar width */
-            margin-top: 80px;     /* topbar height */
+            margin-left: 240px;   
+            margin-top: 80px;     
             padding: 30px;
         }
 
@@ -53,14 +49,11 @@
 </head>
 
 <body>
-
   
     <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
-
-    
-    <div th:replace="~{fragments/header :: topbar('Team Performance Reviews')}"></div>
-
    
+    <div th:replace="~{fragments/header :: topbar('Team Performance Reviews')}"></div>
+ 
     <div class="content-wrapper">
 
         <div class="container-fluid">
@@ -75,7 +68,6 @@
 
     </div>
 
-    
     <script th:inline="javascript">
         let managerId = /*[[${managerId}]]*/ 0;
     </script>

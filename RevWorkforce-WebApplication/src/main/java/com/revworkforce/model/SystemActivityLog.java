@@ -12,24 +12,24 @@ import jakarta.persistence.Table;
 @Table(name = "system_activity_logs")
 public class SystemActivityLog {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private Long userId;
-    private String userName;
-    private String role;
+	private Long userId;
+	private String userName;
+	private String role;
 
-    private String action;
-    private String module;
+	private String action;
+	private String module;
 
-    @Column(length = 1000)
-    private String description;
+	@Column(length = 1000)
+	private String description;
 
-    private String ipAddress;
-    private String status; 
+	private String ipAddress;
+	private String status;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+	private LocalDateTime createdAt = LocalDateTime.now();
 
 	public Long getId() {
 		return id;
@@ -125,7 +125,8 @@ public class SystemActivityLog {
 		this.status = status;
 		this.createdAt = createdAt;
 	}
+
 	public SystemActivityLog() {
-	}    
-    
+	}
+
 }

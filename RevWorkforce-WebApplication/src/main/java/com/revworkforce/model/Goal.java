@@ -32,7 +32,8 @@ public class Goal {
 	@JoinColumn(name = "employee_id", nullable = false)
 	private Employee employee;
 
-	public Goal() {}
+	public Goal() {
+	}
 
 	public Goal(Long id, String goalTitle, String goalDescription, String priority, String status, LocalDate deadline,
 			int progress, Employee employee) {

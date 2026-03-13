@@ -24,12 +24,13 @@ public class LeaveApproval {
 
 	@Column(name = "approval_date")
 	private LocalDate approvalDate;
-	
-	@OneToOne(mappedBy="leaveApproval")
-	@JsonBackReference(value="request-approval")
+
+	@OneToOne(mappedBy = "leaveApproval")
+	@JsonBackReference(value = "request-approval")
 	private LeaveRequest leaveRequest;
 
-	public LeaveApproval() {}
+	public LeaveApproval() {
+	}
 
 	public LeaveApproval(Long id, Employee manager, String status, String comments, LocalDate approvalDate) {
 		this.id = id;

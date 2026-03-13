@@ -6,54 +6,45 @@ import com.revworkforce.employeeservice.LeaveBalanceService;
 import com.revworkforce.exception.EmployeeNotFoundException;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.LeaveBalanceRepository;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class LeaveBalanceServiceImpl implements LeaveBalanceService {
 
-    private final LeaveBalanceRepository leaveBalanceRepo;
-    private final EmployeeRepository employeeRepo;
+	private static final Logger logger = LogManager.getLogger(LeaveBalanceServiceImpl.class);
 
-    public LeaveBalanceServiceImpl(
-            LeaveBalanceRepository leaveBalanceRepo,
-            EmployeeRepository employeeRepo) {
+	private final LeaveBalanceRepository leaveBalanceRepo;
+	private final EmployeeRepository employeeRepo;
 
-        this.leaveBalanceRepo = leaveBalanceRepo;
-        this.employeeRepo = employeeRepo;
-    }
+	public LeaveBalanceServiceImpl(LeaveBalanceRepository leaveBalanceRepo, EmployeeRepository employeeRepo) {
 
-    @Override
-    public ApiResponse getEmployeeBalances(Long employeeId) {
+		this.leaveBalanceRepo = leaveBalanceRepo;
+		this.employeeRepo = employeeRepo;
+	}
 
-        // ✅ Validate Employee
-        var employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found with id: " + employeeId));
+	@Override
+	public ApiResponse getEmployeeBalances(Long employeeId) {
 
-        // ✅ Fetch Leave Balances
-        List<LeaveBalanceDTO> balances =
-                leaveBalanceRepo.findByEmployee_Id(employeeId)
-                        .stream()
-                        .map(balance -> new LeaveBalanceDTO(
-                                balance.getId(),                                // LeaveBalance ID
-                                employee.getId(),                               // Employee ID
-                                employee.getFirstName(),                         // Employee Name
-                                balance.getLeaveType().getId(),                 // LeaveType ID
-                                balance.getLeaveType().getTypeName(),          
-                                balance.getTotalLeaves(),                       // Total Leaves
-                                balance.getUsedLeaves(),                      
-                                balance.getRemainingLeaves()                    
-                        ))
-                        .collect(Collectors.toList());
+		logger.info("Fetching leave balances for employee {}", employeeId);
 
-        return new ApiResponse(
-                200,
-                "Leave balances fetched successfully",
-                balances
-        );
-    }
+		var employee = employeeRepo.findById(employeeId).orElseThrow(() -> {
+			logger.error("Employee not found with id {}", employeeId);
+			return new EmployeeNotFoundException("Employee not found with id: " + employeeId);
+		});
+
+		List<LeaveBalanceDTO> balances = leaveBalanceRepo.findByEmployee_Id(employeeId).stream()
+				.map(balance -> new LeaveBalanceDTO(balance.getId(), employee.getId(), employee.getFirstName(),
+						balance.getLeaveType().getId(), balance.getLeaveType().getTypeName(), balance.getTotalLeaves(),
+						balance.getUsedLeaves(), balance.getRemainingLeaves()))
+				.collect(Collectors.toList());
+
+		logger.debug("Total leave balances fetched {}", balances.size());
+
+		return new ApiResponse(200, "Leave balances fetched successfully", balances);
+	}
+	
 }

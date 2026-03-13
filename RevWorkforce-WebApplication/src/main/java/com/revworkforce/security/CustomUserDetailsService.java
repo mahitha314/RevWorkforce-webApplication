@@ -9,18 +9,18 @@ import com.revworkforce.repository.EmployeeRepository;
 public class CustomUserDetailsService implements UserDetailsService {
 
 	private final EmployeeRepository employeeRepository;
-	
+
 	public CustomUserDetailsService(EmployeeRepository employeeRepository) {
 		this.employeeRepository = employeeRepository;
 	}
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Employee employee = employeeRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		Employee employee = employeeRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return new CustomUserDetails(employee);
-    }
+		return new CustomUserDetails(employee);
+	}
 
 }

@@ -34,10 +34,11 @@ public class LeaveRequest {
 
 	@OneToOne
 	@JoinColumn(name = "approval_id")
-	@JsonManagedReference(value="request-approval")
+	@JsonManagedReference(value = "request-approval")
 	private LeaveApproval leaveApproval;
 
-	public LeaveRequest() {}
+	public LeaveRequest() {
+	}
 
 	public LeaveRequest(Long id, LocalDate startDate, LocalDate endDate, String reason, Employee employee,
 			LeaveType leaveType, LeaveApproval leaveApproval) {

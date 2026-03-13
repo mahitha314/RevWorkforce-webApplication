@@ -1,6 +1,8 @@
 package com.revworkforce.adminserviceImpl;
 
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.revworkforce.adminservice.ActivityLogService;
@@ -15,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @Transactional
 public class HolidayServiceImpl implements HolidayService {
 
+	private static final Logger logger = LogManager.getLogger(HolidayServiceImpl.class);
+
 	private final HolidayRepository holidayRepository;
 	private final NotificationService notificationService;
 	private final ActivityLogService activityLogService;
@@ -22,6 +26,7 @@ public class HolidayServiceImpl implements HolidayService {
 
 	public HolidayServiceImpl(HolidayRepository holidayRepository, NotificationService notificationService,
 			ActivityLogService activityLogService, HttpServletRequest request) {
+
 		this.holidayRepository = holidayRepository;
 		this.notificationService = notificationService;
 		this.activityLogService = activityLogService;
@@ -31,11 +36,16 @@ public class HolidayServiceImpl implements HolidayService {
 	@Override
 	public Holiday saveHoliday(Holiday holiday) {
 
+		logger.info("Adding new holiday {}", holiday.getHolidayName());
+
 		if (holidayRepository.existsByHolidayDate(holiday.getHolidayDate())) {
+			logger.warn("Holiday already exists on date {}", holiday.getHolidayDate());
 			throw new RuntimeException("Holiday already exists for this date.");
 		}
 
 		Holiday saved = holidayRepository.save(holiday);
+
+		logger.info("Holiday saved successfully {}", saved.getHolidayName());
 
 		NotificationDTO dto = new NotificationDTO();
 		dto.setTitle("New Holiday Added");
@@ -54,10 +64,14 @@ public class HolidayServiceImpl implements HolidayService {
 	@Override
 	public Holiday updateHoliday(Long id, Holiday holiday) {
 
+		logger.info("Updating holiday with id {}", id);
+
 		Holiday existing = holidayRepository.findById(id).orElseThrow(() -> new RuntimeException("Holiday not found"));
 
 		if (!existing.getHolidayDate().equals(holiday.getHolidayDate())
 				&& holidayRepository.existsByHolidayDate(holiday.getHolidayDate())) {
+
+			logger.warn("Another holiday already exists on date {}", holiday.getHolidayDate());
 			throw new RuntimeException("Another holiday already exists on this date.");
 		}
 
@@ -67,6 +81,8 @@ public class HolidayServiceImpl implements HolidayService {
 
 		Holiday updated = holidayRepository.save(existing);
 
+		logger.info("Holiday updated successfully {}", updated.getHolidayName());
+
 		activityLogService.log("Holiday Updated", "Holiday Management", "Updated holiday " + updated.getHolidayName(),
 				"SUCCESS", request);
 
@@ -75,9 +91,14 @@ public class HolidayServiceImpl implements HolidayService {
 
 	@Override
 	public void deleteHoliday(Long id) {
+
+		logger.info("Deleting holiday with id {}", id);
+
 		Holiday holiday = holidayRepository.findById(id).orElseThrow(() -> new RuntimeException("Holiday not found"));
 
 		holidayRepository.delete(holiday);
+
+		logger.info("Holiday deleted successfully {}", holiday.getHolidayName());
 
 		activityLogService.log("Holiday Deleted", "Holiday Management", "Deleted holiday " + holiday.getHolidayName(),
 				"SUCCESS", request);
@@ -85,11 +106,21 @@ public class HolidayServiceImpl implements HolidayService {
 
 	@Override
 	public List<Holiday> getAllHolidays() {
-		return holidayRepository.findAllByOrderByHolidayDateAsc();
+
+		logger.info("Fetching all holidays");
+
+		List<Holiday> holidays = holidayRepository.findAllByOrderByHolidayDateAsc();
+
+		logger.debug("Total holidays fetched {}", holidays.size());
+
+		return holidays;
 	}
 
 	@Override
 	public Holiday getHolidayById(Long id) {
+
+		logger.info("Fetching holiday by id {}", id);
+
 		return holidayRepository.findById(id).orElseThrow(() -> new RuntimeException("Holiday not found"));
 	}
 	

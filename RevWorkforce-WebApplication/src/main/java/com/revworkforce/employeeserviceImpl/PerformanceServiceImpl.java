@@ -11,176 +11,150 @@ import com.revworkforce.model.PerformanceReview;
 import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.PerformanceReviewRepository;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 @Transactional
 public class PerformanceServiceImpl implements PerformanceService {
 
+	private static final Logger logger = LogManager.getLogger(PerformanceServiceImpl.class);
+
 	private final PerformanceReviewRepository reviewRepo;
-    private final EmployeeRepository employeeRepo;
-    private final NotificationService notificationService;
-    private final ActivityLogService activityLogService;
+	private final EmployeeRepository employeeRepo;
+	private final NotificationService notificationService;
+	private final ActivityLogService activityLogService;
 
-    public PerformanceServiceImpl(PerformanceReviewRepository reviewRepo,
-                                  EmployeeRepository employeeRepo,
-                                  NotificationService notificationService,
-                                  ActivityLogService activityLogService) {
-        this.reviewRepo = reviewRepo;
-        this.employeeRepo = employeeRepo;
-        this.notificationService = notificationService;
-        this.activityLogService = activityLogService;
-    }
+	public PerformanceServiceImpl(PerformanceReviewRepository reviewRepo, EmployeeRepository employeeRepo,
+			NotificationService notificationService, ActivityLogService activityLogService) {
+		this.reviewRepo = reviewRepo;
+		this.employeeRepo = employeeRepo;
+		this.notificationService = notificationService;
+		this.activityLogService = activityLogService;
+	}
 
-   
-    @Override
-    public ApiResponse createSelfReview(Long employeeId, PerformanceReviewDTO dto) {
+	@Override
+	public ApiResponse createSelfReview(Long employeeId, PerformanceReviewDTO dto) {
 
-        Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+		logger.info("Creating self review for employee {}", employeeId);
 
-        PerformanceReview review = new PerformanceReview();
-        review.setEmployee(employee);
-        review.setAccomplishments(dto.getAccomplishments());
-        review.setDeliverables(dto.getDeliverables());
-        review.setAreasOfImprovement(dto.getAreasOfImprovement());
-        review.setSelfRating(dto.getSelfRating());
-        review.setManagerRating(0);
-        review.setManagerFeedback(null);
-        review.setStatus("Draft");
-        review.setSubmittedDate(LocalDate.now());
+		Employee employee = employeeRepo.findById(employeeId).orElseThrow(() -> {
+			logger.error("Employee not found {}", employeeId);
+			return new EmployeeNotFoundException("Employee not found");
+		});
 
-        PerformanceReview saved = reviewRepo.save(review);
-        
-     // Activity Log
-        activityLogService.log(
-                employee.getId(),
-                "Created self performance review draft"
-        );
+		PerformanceReview review = new PerformanceReview();
+		review.setEmployee(employee);
+		review.setAccomplishments(dto.getAccomplishments());
+		review.setDeliverables(dto.getDeliverables());
+		review.setAreasOfImprovement(dto.getAreasOfImprovement());
+		review.setSelfRating(dto.getSelfRating());
+		review.setManagerRating(0);
+		review.setManagerFeedback(null);
+		review.setStatus("Draft");
+		review.setSubmittedDate(LocalDate.now());
 
-        return new ApiResponse(
-                201,
-                "Self review created successfully",
-                mapToDTO(saved)
-        );
-    }
+		PerformanceReview saved = reviewRepo.save(review);
 
-    @Override
-    public ApiResponse getEmployeeReviews(Long employeeId) {
+		logger.info("Self review draft created with id {}", saved.getId());
 
-        employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+		activityLogService.log(employee.getId(), "Created self performance review draft");
 
-        List<PerformanceReviewDTO> reviews =
-                reviewRepo.findByEmployee_Id(employeeId)
-                        .stream()
-                        .map(this::mapToDTO)
-                        .collect(Collectors.toList());
+		return new ApiResponse(201, "Self review created successfully", mapToDTO(saved));
+	}
 
-        return new ApiResponse(
-                200,
-                "Performance reviews fetched successfully",
-                reviews
-        );
-    }
+	@Override
+	public ApiResponse getEmployeeReviews(Long employeeId) {
 
-  
-    @Override
-    public ApiResponse submitReview(Long reviewId) {
+		logger.info("Fetching performance reviews for employee {}", employeeId);
 
-        PerformanceReview review = reviewRepo.findById(reviewId)
-                .orElseThrow(() ->
-                        new RuntimeException("Review not found"));
+		employeeRepo.findById(employeeId).orElseThrow(() -> {
+			logger.error("Employee not found {}", employeeId);
+			return new EmployeeNotFoundException("Employee not found");
+		});
 
-        review.setStatus("Submitted");
-        review.setSubmittedDate(LocalDate.now());
+		List<PerformanceReviewDTO> reviews = reviewRepo.findByEmployee_Id(employeeId).stream().map(this::mapToDTO)
+				.collect(Collectors.toList());
 
-        reviewRepo.save(review);
-        
-        Employee employee = review.getEmployee();
+		logger.debug("Total reviews fetched {}", reviews.size());
 
-       
-        if (employee.getManager() != null) {
+		return new ApiResponse(200, "Performance reviews fetched successfully", reviews);
+	}
 
-            NotificationDTO notificationDTO = new NotificationDTO();
-            notificationDTO.setTitle("Performance Review Submitted");
-            notificationDTO.setMessage(
-                    employee.getFirstName() + " has submitted performance review"
-            );
-            notificationDTO.setReferenceId(employee.getManager().getId());
+	@Override
+	public ApiResponse submitReview(Long reviewId) {
 
-            notificationService.createNotification(notificationDTO);
-        }
+		logger.info("Submitting performance review {}", reviewId);
 
-        // Activity Log
-        activityLogService.log(
-                employee.getId(),
-                "Submitted performance review"
-        );
+		PerformanceReview review = reviewRepo.findById(reviewId).orElseThrow(() -> {
+			logger.error("Review not found {}", reviewId);
+			return new RuntimeException("Review not found");
+		});
 
-        return new ApiResponse(
-                200,
-                "Review submitted successfully",
-                null
-        );
-    }
+		review.setStatus("Submitted");
+		review.setSubmittedDate(LocalDate.now());
 
-    
-    @Override
-    public ApiResponse deleteReview(Long reviewId) {
+		reviewRepo.save(review);
 
-        PerformanceReview review = reviewRepo.findById(reviewId)
-                .orElseThrow(() ->
-                        new RuntimeException("Review not found"));
+		logger.info("Performance review submitted successfully {}", reviewId);
 
-        if ("Submitted".equalsIgnoreCase(review.getStatus())) {
-            return new ApiResponse(
-                    400,
-                    "Submitted review cannot be deleted",
-                    null
-            );
-        }
+		Employee employee = review.getEmployee();
 
-        reviewRepo.delete(review);
-        
-     // Activity Log
-        activityLogService.log(
-                review.getEmployee().getId(),
-                "Deleted performance review draft"
-        );
+		if (employee.getManager() != null) {
 
-        return new ApiResponse(
-                200,
-                "Review deleted successfully",
-                null
-        );
-    }
+			logger.info("Sending notification to manager for review submission");
 
-   
-    private PerformanceReviewDTO mapToDTO(PerformanceReview review) {
+			NotificationDTO notificationDTO = new NotificationDTO();
+			notificationDTO.setTitle("Performance Review Submitted");
+			notificationDTO.setMessage(employee.getFirstName() + " has submitted performance review");
+			notificationDTO.setReferenceId(employee.getManager().getId());
 
-        return new PerformanceReviewDTO(
-                review.getId(),
-                review.getEmployee().getId(),
-                review.getEmployee().getFirstName() + " " +
-                        review.getEmployee().getLastName(),
-                review.getAccomplishments(),
-                review.getDeliverables(),
-                review.getAreasOfImprovement(),
-                review.getSelfRating(),
-                review.getManagerRating(),
-                review.getManagerFeedback(),
-                review.getStatus(),
-                review.getSubmittedDate()
-        );
-    }
+			notificationService.createNotification(notificationDTO);
+		}
+
+		activityLogService.log(employee.getId(), "Submitted performance review");
+
+		return new ApiResponse(200, "Review submitted successfully", null);
+	}
+
+	@Override
+	public ApiResponse deleteReview(Long reviewId) {
+
+		logger.info("Deleting performance review {}", reviewId);
+
+		PerformanceReview review = reviewRepo.findById(reviewId).orElseThrow(() -> {
+			logger.error("Review not found {}", reviewId);
+			return new RuntimeException("Review not found");
+		});
+
+		if ("Submitted".equalsIgnoreCase(review.getStatus())) {
+
+			logger.warn("Attempt to delete submitted review {}", reviewId);
+
+			return new ApiResponse(400, "Submitted review cannot be deleted", null);
+		}
+
+		reviewRepo.delete(review);
+
+		logger.info("Performance review deleted successfully {}", reviewId);
+
+		activityLogService.log(review.getEmployee().getId(), "Deleted performance review draft");
+
+		return new ApiResponse(200, "Review deleted successfully", null);
+	}
+
+	private PerformanceReviewDTO mapToDTO(PerformanceReview review) {
+
+		return new PerformanceReviewDTO(review.getId(), review.getEmployee().getId(),
+				review.getEmployee().getFirstName() + " " + review.getEmployee().getLastName(),
+				review.getAccomplishments(), review.getDeliverables(), review.getAreasOfImprovement(),
+				review.getSelfRating(), review.getManagerRating(), review.getManagerFeedback(), review.getStatus(),
+				review.getSubmittedDate());
+	}
+	
 }

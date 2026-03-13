@@ -12,8 +12,8 @@ public class PerformanceReviewDTO {
 	private String deliverables;
 	private String areasOfImprovement;
 
-	private Integer selfRating; 
-	private Integer managerRating; 
+	private Integer selfRating;
+	private Integer managerRating;
 
 	private String managerFeedback;
 	private String status;
@@ -91,11 +91,11 @@ public class PerformanceReviewDTO {
 		return selfRating;
 	}
 
-	public void setSelfRating(Integer selfRating) { 
+	public void setSelfRating(Integer selfRating) {
 		this.selfRating = selfRating;
 	}
 
-	public Integer getManagerRating() { 
+	public Integer getManagerRating() {
 		return managerRating;
 	}
 

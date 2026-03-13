@@ -7,9 +7,10 @@ import org.springframework.stereotype.Repository;
 import com.revworkforce.model.Designation;
 
 @Repository
-public interface DesignationRepository extends JpaRepository<Designation, Long>{
+public interface DesignationRepository extends JpaRepository<Designation, Long> {
 
 	Optional<Designation> findByTitleAndDepartmentId(String title, Long departmentId);
+
 	List<Designation> findByDepartmentId(Long departmentId);
-	
+
 }

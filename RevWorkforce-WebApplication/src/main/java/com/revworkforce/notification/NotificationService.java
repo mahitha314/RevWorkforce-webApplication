@@ -5,18 +5,18 @@ import com.revworkforce.dto.NotificationDTO;
 
 public interface NotificationService {
 
-    ApiResponse createNotification(NotificationDTO dto);
+	ApiResponse createNotification(NotificationDTO dto);
 
-    ApiResponse createNotificationForAll(NotificationDTO dto); // Admin broadcast
+	ApiResponse createNotificationForAll(NotificationDTO dto); // Admin broadcast
 
-    ApiResponse getMyNotifications();
+	ApiResponse getMyNotifications();
 
-    ApiResponse getUnreadCount();
+	ApiResponse getUnreadCount();
 
-    ApiResponse markAsRead(Long notificationId);
+	ApiResponse markAsRead(Long notificationId);
 
-    ApiResponse markAllAsRead();
+	ApiResponse markAllAsRead();
 
-    ApiResponse deleteNotification(Long notificationId);
+	ApiResponse deleteNotification(Long notificationId);
 
 }

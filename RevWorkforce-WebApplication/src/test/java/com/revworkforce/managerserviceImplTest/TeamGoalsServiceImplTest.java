@@ -9,17 +9,13 @@ import com.revworkforce.model.Goal;
 import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.GoalRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -207,4 +203,5 @@ class TeamGoalsServiceImplTest {
 		assertEquals(1L, summary.get("inProgressGoals"));
 		assertEquals(1L, summary.get("assignedGoals"));
 	}
+
 }

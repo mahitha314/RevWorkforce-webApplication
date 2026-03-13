@@ -26,7 +26,8 @@ public class LeaveType {
 	@JsonManagedReference(value = "leavetype-leaverequest")
 	private List<LeaveRequest> leaveRequests;
 
-	public LeaveType() {}
+	public LeaveType() {
+	}
 
 	public LeaveType(Long id, String typeName, int totalDays) {
 		this.id = id;

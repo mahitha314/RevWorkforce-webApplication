@@ -10,35 +10,27 @@ import com.revworkforce.managerservice.PerformanceReviewService;
 @RequestMapping("/manager/performance")
 public class PerformanceReviewController {
 
-    private final PerformanceReviewService service;
+	private final PerformanceReviewService service;
 
-    public PerformanceReviewController(PerformanceReviewService service) {
-        this.service = service;
-    }
+	public PerformanceReviewController(PerformanceReviewService service) {
+		this.service = service;
+	}
 
-    @GetMapping("/{managerId}")
-    public ResponseEntity<ApiResponse> getReviews(
-            @PathVariable Long managerId) {
+	@GetMapping("/{managerId}")
+	public ResponseEntity<ApiResponse> getReviews(@PathVariable Long managerId) {
 
-        ApiResponse response =
-                service.getTeamPerformanceReviews(managerId);
+		ApiResponse response = service.getTeamPerformanceReviews(managerId);
 
-        return ResponseEntity
-                .status(response.getStatus())
-                .body(response);
-    }
+		return ResponseEntity.status(response.getStatus()).body(response);
+	}
 
-    @PostMapping("/review/{managerId}")
-    public ResponseEntity<ApiResponse> submitReview(
-            @PathVariable Long managerId,
-            @RequestBody PerformanceReviewDTO dto) {
+	@PostMapping("/review/{managerId}")
+	public ResponseEntity<ApiResponse> submitReview(@PathVariable Long managerId,
+			@RequestBody PerformanceReviewDTO dto) {
 
-        ApiResponse response =
-                service.submitManagerFeedback(managerId, dto);
+		ApiResponse response = service.submitManagerFeedback(managerId, dto);
 
-        return ResponseEntity
-                .status(response.getStatus())
-                .body(response);
-    }
-    
+		return ResponseEntity.status(response.getStatus()).body(response);
+	}
+
 }

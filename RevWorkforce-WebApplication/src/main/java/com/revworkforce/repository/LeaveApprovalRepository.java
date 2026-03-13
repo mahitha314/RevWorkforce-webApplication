@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.revworkforce.model.LeaveApproval;
 
 @Repository
-public interface LeaveApprovalRepository extends JpaRepository<LeaveApproval, Long>{
+public interface LeaveApprovalRepository extends JpaRepository<LeaveApproval, Long> {
 
 }

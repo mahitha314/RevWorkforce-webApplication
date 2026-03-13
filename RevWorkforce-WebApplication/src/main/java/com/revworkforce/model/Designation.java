@@ -20,21 +20,22 @@ public class Designation {
 
 	@JsonIgnore
 	private List<Employee> employees;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "department_id", nullable = false)
 	@JsonBackReference
 	private Department department;
 
 	public Department getDepartment() {
-	    return department;
+		return department;
 	}
 
 	public void setDepartment(Department department) {
-	    this.department = department;
+		this.department = department;
 	}
 
-	public Designation() {}
+	public Designation() {
+	}
 
 	public Designation(Long id, String title, Department department) {
 		this.id = id;
@@ -65,5 +66,5 @@ public class Designation {
 	public void setEmployees(List<Employee> employees) {
 		this.employees = employees;
 	}
-	
+
 }

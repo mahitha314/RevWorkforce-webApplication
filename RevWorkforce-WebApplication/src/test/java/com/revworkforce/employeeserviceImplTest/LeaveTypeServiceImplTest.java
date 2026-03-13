@@ -3,16 +3,13 @@ package com.revworkforce.employeeserviceImplTest;
 import com.revworkforce.model.LeaveType;
 import com.revworkforce.repository.LeaveTypeRepository;
 import com.revworkforce.employeeserviceImpl.LeaveTypeServiceImpl;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,7 +28,7 @@ class LeaveTypeServiceImplTest {
 
 	@Test
 	void testGetAllLeaveTypes() {
-		
+
 		LeaveType leave1 = new LeaveType();
 		leave1.setId(1L);
 		leave1.setTypeName("Sick Leave");
@@ -52,4 +49,5 @@ class LeaveTypeServiceImplTest {
 
 		verify(leaveTypeRepository, times(1)).findAll();
 	}
+
 }

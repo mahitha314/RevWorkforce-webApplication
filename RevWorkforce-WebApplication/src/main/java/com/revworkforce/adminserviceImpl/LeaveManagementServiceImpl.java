@@ -1,6 +1,8 @@
 package com.revworkforce.adminserviceImpl;
 
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.adminservice.LeaveManagementService;
@@ -18,6 +20,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class LeaveManagementServiceImpl implements LeaveManagementService {
+
+	private static final Logger logger = LogManager.getLogger(LeaveManagementServiceImpl.class);
 
 	private final LeaveTypeRepository leaveTypeRepository;
 	private final LeaveBalanceRepository leaveBalanceRepository;
@@ -42,7 +46,10 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 	@Override
 	public LeaveTypeDTO createLeaveType(LeaveTypeDTO dto) {
 
+		logger.info("Creating leave type {}", dto.getTypeName());
+
 		if (leaveTypeRepository.existsByTypeName(dto.getTypeName())) {
+			logger.warn("Leave type already exists {}", dto.getTypeName());
 			throw new RuntimeException("Leave type already exists.");
 		}
 
@@ -51,6 +58,8 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 		leaveType.setTotalDays(dto.getTotalDays());
 
 		LeaveType saved = leaveTypeRepository.save(leaveType);
+
+		logger.info("Leave type created successfully {}", saved.getTypeName());
 
 		activityLogService.log("Created Leave Type", "Leave Management", "Created leave type: " + saved.getTypeName(),
 				"SUCCESS", request);
@@ -61,12 +70,20 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 	@Override
 	public List<LeaveTypeDTO> getAllLeaveTypes() {
 
-		return leaveTypeRepository.findAll().stream()
+		logger.info("Fetching all leave types");
+
+		List<LeaveTypeDTO> types = leaveTypeRepository.findAll().stream()
 				.map(type -> new LeaveTypeDTO(type.getId(), type.getTypeName(), type.getTotalDays())).toList();
+
+		logger.debug("Total leave types fetched {}", types.size());
+
+		return types;
 	}
 
 	@Override
 	public LeaveBalance assignLeaveToEmployee(Long employeeId, Long leaveTypeId, int totalDays) {
+
+		logger.info("Assigning leave {} days for employee {}", totalDays, employeeId);
 
 		Employee employee = employeeRepository.findById(employeeId)
 				.orElseThrow(() -> new RuntimeException("Employee not found"));
@@ -75,6 +92,7 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 				.orElseThrow(() -> new RuntimeException("Leave type not found"));
 
 		if (leaveBalanceRepository.findByEmployeeAndLeaveType(employee, leaveType).isPresent()) {
+			logger.warn("Leave already assigned for employee {}", employeeId);
 			throw new RuntimeException("Leave already assigned to employee.");
 		}
 
@@ -86,6 +104,8 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 		balance.setRemainingLeaves(totalDays);
 
 		LeaveBalance saved = leaveBalanceRepository.save(balance);
+
+		logger.info("Leave assigned successfully to {}", employee.getFirstName());
 
 		NotificationDTO notification = new NotificationDTO();
 		notification.setEmployeeId(employee.getEmployeeId());
@@ -106,6 +126,8 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 	@Override
 	public LeaveBalance adjustLeave(LeaveBalanceDTO dto) {
 
+		logger.info("Adjusting leave for employee {}", dto.getEmployeeId());
+
 		Employee employee = employeeRepository.findById(dto.getEmployeeId())
 				.orElseThrow(() -> new RuntimeException("Employee not found"));
 
@@ -120,38 +142,50 @@ public class LeaveManagementServiceImpl implements LeaveManagementService {
 
 		LeaveBalance updated = leaveBalanceRepository.save(balance);
 
+		logger.info("Leave adjusted successfully for {}", employee.getFirstName());
+
 		activityLogService.log("Adjusted Leave", "Leave Management", "Adjusted " + dto.getDays() + " days for "
 				+ employee.getFirstName() + " (" + leaveType.getTypeName() + ")", "SUCCESS", request);
 
 		return updated;
-
 	}
 
 	@Override
 	public List<LeaveBalance> getEmployeeLeaveInfo(Long employeeId) {
 
+		logger.info("Fetching leave info for employee {}", employeeId);
+
 		Employee employee = employeeRepository.findById(employeeId)
 				.orElseThrow(() -> new RuntimeException("Employee not found"));
+
 		return leaveBalanceRepository.findByEmployee(employee);
 	}
 
 	@Override
 	public List<LeaveBalance> getDepartmentLeaveReport(Long departmentId) {
+
+		logger.info("Fetching leave report for department {}", departmentId);
+
 		return leaveBalanceRepository.findByDepartmentId(departmentId);
 	}
 
 	@Override
 	public long countLeaves() {
+
+		logger.debug("Counting total leave types");
+
 		return leaveTypeRepository.count();
 	}
-	
+
 	@Override
 	public List<Employee> getEmployeesNotAssignedToLeaveType(Long leaveTypeId) {
 
-	    LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId)
-	            .orElseThrow(() -> new RuntimeException("Leave type not found"));
+		logger.info("Fetching employees not assigned to leave type {}", leaveTypeId);
 
-	    return employeeRepository.findEmployeesNotAssignedToLeaveType(leaveType.getId());
+		LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId)
+				.orElseThrow(() -> new RuntimeException("Leave type not found"));
+
+		return employeeRepository.findEmployeesNotAssignedToLeaveType(leaveType.getId());
 	}
 
 }

@@ -20,7 +20,8 @@ public class Department {
 	@JsonIgnore
 	private List<Employee> employees;
 
-	public Department() {}
+	public Department() {
+	}
 
 	public Department(Long id, String name) {
 		this.id = id;

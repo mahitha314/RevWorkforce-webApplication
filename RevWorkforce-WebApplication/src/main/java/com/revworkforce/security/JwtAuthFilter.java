@@ -10,77 +10,61 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.revworkforce.util.JwtUtil;
-
 import io.jsonwebtoken.ExpiredJwtException;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService customUserDetailsService;
-    
-    public JwtAuthFilter(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
-    	this.jwtUtil = jwtUtil;
-    	this.customUserDetailsService = customUserDetailsService;
-    }
+	private final JwtUtil jwtUtil;
+	private final CustomUserDetailsService customUserDetailsService;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+	public JwtAuthFilter(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
+		this.jwtUtil = jwtUtil;
+		this.customUserDetailsService = customUserDetailsService;
+	}
 
-        String path = request.getServletPath();
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 
-       
-        if (path.equals("/login") ||
-            path.startsWith("/auth") ||
-            path.startsWith("/css") ||
-            path.startsWith("/js")) {
+		String path = request.getServletPath();
 
-            filterChain.doFilter(request, response);
-            return;
-        }
+		if (path.equals("/login") || path.startsWith("/auth") || path.startsWith("/css") || path.startsWith("/js")) {
 
-        final String header = request.getHeader("Authorization");
+			filterChain.doFilter(request, response);
+			return;
+		}
 
-        String token = null;
-        String email = null;
+		final String header = request.getHeader("Authorization");
 
-        if(header != null && header.startsWith("Bearer ")){
-            token = header.substring(7);
-            try {
-            	email = jwtUtil.extractUsername(token);
-            } 
-            catch (ExpiredJwtException e) {
-                System.out.println("JWT Token expired. Please login again.");
-            } 
-            catch (Exception e) {
-                System.out.println("Invalid JWT Token.");
-            }
-        }
+		String token = null;
+		String email = null;
 
-        if (email != null &&
-            SecurityContextHolder.getContext().getAuthentication() == null) {
+		if (header != null && header.startsWith("Bearer ")) {
+			token = header.substring(7);
+			try {
+				email = jwtUtil.extractUsername(token);
+			} catch (ExpiredJwtException e) {
+				System.out.println("JWT Token expired. Please login again.");
+			} catch (Exception e) {
+				System.out.println("Invalid JWT Token.");
+			}
+		}
 
-            UserDetails userDetails =
-                    customUserDetailsService.loadUserByUsername(email);
+		if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            if (jwtUtil.validateToken(token)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request));
+			UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authToken);
-            }
-        }
+			if (jwtUtil.validateToken(token)) {
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+						null, userDetails.getAuthorities());
+				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        filterChain.doFilter(request, response);
-    }
+				SecurityContextHolder.getContext().setAuthentication(authToken);
+			}
+		}
+
+		filterChain.doFilter(request, response);
+	}
+
 }

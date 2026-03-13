@@ -4,6 +4,6 @@ import com.revworkforce.dto.ApiResponse;
 
 public interface HolidayService {
 
-    ApiResponse getAllHolidays();
+	ApiResponse getAllHolidays();
 
 }

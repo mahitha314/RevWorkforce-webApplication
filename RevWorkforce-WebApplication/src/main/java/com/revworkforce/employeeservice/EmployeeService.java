@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface EmployeeService {
 
-    Optional<Employee> findByEmail(String email);
+	Optional<Employee> findByEmail(String email);
 
-    List<Employee> getAllEmployees();
+	List<Employee> getAllEmployees();
 
-    List<Employee> searchEmployees(String keyword);
+	List<Employee> searchEmployees(String keyword);
 }

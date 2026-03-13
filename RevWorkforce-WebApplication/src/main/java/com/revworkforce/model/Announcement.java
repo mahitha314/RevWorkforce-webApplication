@@ -20,7 +20,8 @@ public class Announcement {
 	@Column(name = "posted_date")
 	private LocalDate postedDate;
 
-	public Announcement() {}
+	public Announcement() {
+	}
 
 	public Announcement(Long id, String title, String message, LocalDate postedDate) {
 		this.id = id;

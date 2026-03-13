@@ -9,18 +9,14 @@ import com.revworkforce.model.PerformanceReview;
 import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.PerformanceReviewRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.Collections;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -179,4 +175,5 @@ class PerformanceReviewServiceImplTest {
 		verify(notificationService, times(1)).createNotification(any());
 		verify(activityLogService, times(1)).log(eq(100L), anyString());
 	}
+
 }

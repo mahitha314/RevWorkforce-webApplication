@@ -6,9 +6,7 @@ import com.revworkforce.notification.NotificationService;
 import com.revworkforce.adminservice.ActivityLogService;
 import com.revworkforce.adminserviceImpl.AnnouncementServiceImpl;
 import com.revworkforce.repository.AnnouncementRepository;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,7 +78,6 @@ public class AnnouncementServiceImplTest {
 				any(HttpServletRequest.class));
 	}
 
-	
 	@Test
 	public void updateAnnouncement_Positive() {
 

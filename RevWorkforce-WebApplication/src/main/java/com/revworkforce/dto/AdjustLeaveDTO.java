@@ -5,8 +5,9 @@ public class AdjustLeaveDTO {
 	private Long id;
 	private int remainingLeaves;
 	private String reason;
-	
-	public AdjustLeaveDTO() {}
+
+	public AdjustLeaveDTO() {
+	}
 
 	public Long getId() {
 		return id;

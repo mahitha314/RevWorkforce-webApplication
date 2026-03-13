@@ -20,7 +20,8 @@ public class Holiday {
 	@Column(name = "description")
 	private String description;
 
-	public Holiday() {}
+	public Holiday() {
+	}
 
 	public Holiday(Long id, String holidayName, LocalDate holidayDate, String description) {
 		this.id = id;

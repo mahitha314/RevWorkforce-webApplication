@@ -8,13 +8,10 @@ import com.revworkforce.employeeservice.LeaveRequestService;
 import com.revworkforce.model.*;
 import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.*;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,207 +19,174 @@ import java.util.stream.Collectors;
 @Service
 public class LeaveRequestServiceImpl implements LeaveRequestService {
 
+	private static final Logger logger = LogManager.getLogger(LeaveRequestServiceImpl.class);
+
 	private final LeaveRequestRepository leaveRequestRepo;
-    private final EmployeeRepository employeeRepo;
-    private final LeaveTypeRepository leaveTypeRepo;
-    private final NotificationService notificationService;
-    private final ActivityLogService activityLogService;
-    private final HttpServletRequest request;
+	private final EmployeeRepository employeeRepo;
+	private final LeaveTypeRepository leaveTypeRepo;
+	private final NotificationService notificationService;
+	private final ActivityLogService activityLogService;
+	private final HttpServletRequest request;
 
-    public LeaveRequestServiceImpl(
-            LeaveRequestRepository leaveRequestRepo,
-            EmployeeRepository employeeRepo,
-            LeaveTypeRepository leaveTypeRepo,
-            NotificationService notificationService,
-            ActivityLogService activityLogService,
-            HttpServletRequest request) {
+	public LeaveRequestServiceImpl(LeaveRequestRepository leaveRequestRepo, EmployeeRepository employeeRepo,
+			LeaveTypeRepository leaveTypeRepo, NotificationService notificationService,
+			ActivityLogService activityLogService, HttpServletRequest request) {
 
-        this.leaveRequestRepo = leaveRequestRepo;
-        this.employeeRepo = employeeRepo;
-        this.leaveTypeRepo = leaveTypeRepo;
-        this.notificationService = notificationService;
-        this.activityLogService = activityLogService;
-        this.request = request;
-    }
+		this.leaveRequestRepo = leaveRequestRepo;
+		this.employeeRepo = employeeRepo;
+		this.leaveTypeRepo = leaveTypeRepo;
+		this.notificationService = notificationService;
+		this.activityLogService = activityLogService;
+		this.request = request;
+	}
 
-    
-    @Override
-    public ApiResponse applyLeave(LeaveRequestDTO dto) {
+	@Override
+	public ApiResponse applyLeave(LeaveRequestDTO dto) {
 
-        Employee employee = employeeRepo.findById(dto.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+		logger.info("Applying leave for employee {}", dto.getEmployeeId());
 
-        LeaveType leaveType = leaveTypeRepo.findById(dto.getLeaveTypeId())
-                .orElseThrow(() -> new RuntimeException("Leave type not found"));
+		Employee employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> {
+			logger.error("Employee not found {}", dto.getEmployeeId());
+			return new RuntimeException("Employee not found");
+		});
 
-        LeaveRequest request = new LeaveRequest();
-        request.setEmployee(employee);
-        request.setLeaveType(leaveType);
-        request.setStartDate(dto.getStartDate());
-        request.setEndDate(dto.getEndDate());
-        request.setReason(dto.getReason());
+		LeaveType leaveType = leaveTypeRepo.findById(dto.getLeaveTypeId()).orElseThrow(() -> {
+			logger.error("Leave type not found {}", dto.getLeaveTypeId());
+			return new RuntimeException("Leave type not found");
+		});
 
-       
-        LeaveApproval approval = new LeaveApproval();
-        approval.setStatus("PENDING");
-        approval.setLeaveRequest(request);
+		LeaveRequest request = new LeaveRequest();
+		request.setEmployee(employee);
+		request.setLeaveType(leaveType);
+		request.setStartDate(dto.getStartDate());
+		request.setEndDate(dto.getEndDate());
+		request.setReason(dto.getReason());
 
-        request.setLeaveApproval(approval);
+		LeaveApproval approval = new LeaveApproval();
+		approval.setStatus("PENDING");
+		approval.setLeaveRequest(request);
 
-        leaveRequestRepo.save(request);
+		request.setLeaveApproval(approval);
 
-     // Notify Manager
-        NotificationDTO notification = new NotificationDTO();
-        notification.setTitle("New Leave Request");
-        notification.setMessage(employee.getFirstName()
-                + " applied for leave from "
-                + dto.getStartDate() + " to " + dto.getEndDate());
-        notification.setType("LEAVE");
-        notification.setStatus("ACTIVE");
+		leaveRequestRepo.save(request);
 
-        notificationService.createNotificationForAll(notification); // change if manager-specific
+		logger.info("Leave request saved for employee {}", employee.getEmployeeId());
 
-        //  Activity Log
-        activityLogService.log(
-                "LEAVE_APPLIED",
-                "Leave Management",
-                "Employee " + employee.getFirstName()
-                        + " applied leave",
-                "SUCCESS",
-                request
-                
-        );
+		NotificationDTO notification = new NotificationDTO();
+		notification.setTitle("New Leave Request");
+		notification.setMessage(
+				employee.getFirstName() + " applied for leave from " + dto.getStartDate() + " to " + dto.getEndDate());
+		notification.setType("LEAVE");
+		notification.setStatus("ACTIVE");
 
-        return new ApiResponse(201,
-                "Leave Applied Successfully",
-                null);
-    }
+		notificationService.createNotificationForAll(notification);
 
-    @Override
-    public ApiResponse cancelLeave(Long leaveId) {
+		activityLogService.log("LEAVE_APPLIED", "Leave Management",
+				"Employee " + employee.getFirstName() + " applied leave", "SUCCESS", request);
 
-        LeaveRequest request = leaveRequestRepo.findById(leaveId)
-                .orElseThrow(() -> new RuntimeException("Leave not found"));
+		return new ApiResponse(201, "Leave Applied Successfully", null);
+	}
 
-        if (request.getLeaveApproval() != null &&
-                !request.getLeaveApproval().getStatus().equalsIgnoreCase("PENDING")) {
+	@Override
+	public ApiResponse cancelLeave(Long leaveId) {
 
-            return new ApiResponse(400,
-                    "Only Pending Leave Can Be Cancelled",
-                    null);
-        }
+		logger.info("Cancelling leave {}", leaveId);
 
-        if (request.getLeaveApproval() != null) {
-            request.getLeaveApproval().setStatus("CANCELLED");
-        }
+		LeaveRequest request = leaveRequestRepo.findById(leaveId).orElseThrow(() -> {
+			logger.error("Leave not found {}", leaveId);
+			return new RuntimeException("Leave not found");
+		});
 
-        leaveRequestRepo.save(request);
-        
-        // Notify Manager
-        NotificationDTO notification = new NotificationDTO();
-        notification.setTitle("Leave Cancelled");
-        notification.setMessage(request.getEmployee().getFirstName()
-                + " cancelled their leave request.");
-        notification.setType("LEAVE");
-        notification.setStatus("ACTIVE");
+		if (request.getLeaveApproval() != null && !request.getLeaveApproval().getStatus().equalsIgnoreCase("PENDING")) {
 
-        notificationService.createNotificationForAll(notification);
+			logger.warn("Attempt to cancel non-pending leave {}", leaveId);
 
-        // Activity Log
-        activityLogService.log(
-                "LEAVE_CANCELLED",
-                "Leave Management",
-                "Leave cancelled by "
-                        + request.getEmployee().getFirstName(),
-                "SUCCESS",
-                request
-        );
+			return new ApiResponse(400, "Only Pending Leave Can Be Cancelled", null);
+		}
 
-        return new ApiResponse(200,
-                "Leave Cancelled Successfully",
-                null);
-    }
+		if (request.getLeaveApproval() != null) {
+			request.getLeaveApproval().setStatus("CANCELLED");
+		}
 
-   
-    @Override
-    public ApiResponse getLeaveHistory(Long employeeId) {
+		leaveRequestRepo.save(request);
 
-    	List<LeaveRequest> leaves =
-                leaveRequestRepo.findByEmployee_IdOrderByStartDateDesc(employeeId);
+		logger.info("Leave cancelled successfully {}", leaveId);
 
-        List<LeaveRequestDTO> dtoList =
-                leaves.stream()
-                        .map(this::convertToDTO)
-                        .collect(Collectors.toList());
+		NotificationDTO notification = new NotificationDTO();
+		notification.setTitle("Leave Cancelled");
+		notification.setMessage(request.getEmployee().getFirstName() + " cancelled their leave request.");
+		notification.setType("LEAVE");
+		notification.setStatus("ACTIVE");
 
-        return new ApiResponse(200,
-                "Leave History Fetched Successfully",
-                dtoList);
-    }
+		notificationService.createNotificationForAll(notification);
 
-    
-    @Override
-    public ApiResponse getPendingLeaves(Long employeeId) {
+		activityLogService.log("LEAVE_CANCELLED", "Leave Management",
+				"Leave cancelled by " + request.getEmployee().getFirstName(), "SUCCESS", request);
 
-        List<LeaveRequest> leaves =
-                leaveRequestRepo.findByEmployee_Id(employeeId);
+		return new ApiResponse(200, "Leave Cancelled Successfully", null);
+	}
 
-        List<LeaveRequestDTO> dtoList =
-                leaves.stream()
-                        .map(this::convertToDTO)
-                        .filter(dto -> dto.getStatus().equalsIgnoreCase("PENDING"))
-                        .collect(Collectors.toList());
+	@Override
+	public ApiResponse getLeaveHistory(Long employeeId) {
 
-        return new ApiResponse(200,
-                "Pending Leaves Fetched Successfully",
-                dtoList);
-    }
+		logger.info("Fetching leave history for employee {}", employeeId);
 
-   
-    @Override
-    public ApiResponse getLeaveById(Long leaveId) {
+		List<LeaveRequest> leaves = leaveRequestRepo.findByEmployee_IdOrderByStartDateDesc(employeeId);
 
-        LeaveRequest leave = leaveRequestRepo.findById(leaveId)
-                .orElseThrow(() -> new RuntimeException("Leave not found"));
+		List<LeaveRequestDTO> dtoList = leaves.stream().map(this::convertToDTO).collect(Collectors.toList());
 
-        LeaveRequestDTO dto = convertToDTO(leave);
+		logger.debug("Total leave history records {}", dtoList.size());
 
-        return new ApiResponse(200,
-                "Leave Details Fetched Successfully",
-                dto);
-    }
+		return new ApiResponse(200, "Leave History Fetched Successfully", dtoList);
+	}
 
-    
-    private LeaveRequestDTO convertToDTO(LeaveRequest leave) {
+	@Override
+	public ApiResponse getPendingLeaves(Long employeeId) {
 
-        long days = ChronoUnit.DAYS.between(
-                leave.getStartDate(),
-                leave.getEndDate()) + 1;
+		logger.info("Fetching pending leaves for employee {}", employeeId);
 
-        String status = "PENDING";
+		List<LeaveRequest> leaves = leaveRequestRepo.findByEmployee_Id(employeeId);
 
-        if (leave.getLeaveApproval() != null) {
-            status = leave.getLeaveApproval().getStatus() != null
-                    ? leave.getLeaveApproval().getStatus()
-                    : "PENDING";
-        }
+		List<LeaveRequestDTO> dtoList = leaves.stream().map(this::convertToDTO)
+				.filter(dto -> dto.getStatus().equalsIgnoreCase("PENDING")).collect(Collectors.toList());
 
-        return new LeaveRequestDTO(
-                leave.getId(),
-                leave.getEmployee() != null ? leave.getEmployee().getId() : null,
-                leave.getEmployee() != null
-                        ? leave.getEmployee().getFirstName() + " " +
-                          leave.getEmployee().getLastName()
-                        : "N/A",
-                leave.getLeaveType() != null ? leave.getLeaveType().getId() : null,
-                leave.getLeaveType() != null
-                        ? leave.getLeaveType().getTypeName()
-                        : "N/A",
-                leave.getStartDate(),
-                leave.getEndDate(),
-                (int) days,
-                leave.getReason(),
-                status
-        );
-    }
+		logger.debug("Pending leaves count {}", dtoList.size());
+
+		return new ApiResponse(200, "Pending Leaves Fetched Successfully", dtoList);
+	}
+
+	@Override
+	public ApiResponse getLeaveById(Long leaveId) {
+
+		logger.info("Fetching leave by id {}", leaveId);
+
+		LeaveRequest leave = leaveRequestRepo.findById(leaveId).orElseThrow(() -> {
+			logger.error("Leave not found {}", leaveId);
+			return new RuntimeException("Leave not found");
+		});
+
+		LeaveRequestDTO dto = convertToDTO(leave);
+
+		return new ApiResponse(200, "Leave Details Fetched Successfully", dto);
+	}
+
+	private LeaveRequestDTO convertToDTO(LeaveRequest leave) {
+
+		long days = ChronoUnit.DAYS.between(leave.getStartDate(), leave.getEndDate()) + 1;
+
+		String status = "PENDING";
+
+		if (leave.getLeaveApproval() != null) {
+			status = leave.getLeaveApproval().getStatus() != null ? leave.getLeaveApproval().getStatus() : "PENDING";
+		}
+
+		return new LeaveRequestDTO(leave.getId(), leave.getEmployee() != null ? leave.getEmployee().getId() : null,
+				leave.getEmployee() != null
+						? leave.getEmployee().getFirstName() + " " + leave.getEmployee().getLastName()
+						: "N/A",
+				leave.getLeaveType() != null ? leave.getLeaveType().getId() : null,
+				leave.getLeaveType() != null ? leave.getLeaveType().getTypeName() : "N/A", leave.getStartDate(),
+				leave.getEndDate(), (int) days, leave.getReason(), status);
+	}
+
 }

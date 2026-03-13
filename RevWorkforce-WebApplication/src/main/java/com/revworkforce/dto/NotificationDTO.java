@@ -16,9 +16,8 @@ public class NotificationDTO {
 	@NotBlank(message = "Message cannot be empty")
 	@Size(min = 3, max = 1000, message = "Message must be between 3 and 1000 characters")
 	private String message;
-	
-	@Pattern(regexp = "LEAVE|PERFORMANCE|ANNOUNCEMENT|SYSTEM",
-            message = "Type must be LEAVE, PERFORMANCE, ANNOUNCEMENT or SYSTEM")
+
+	@Pattern(regexp = "LEAVE|PERFORMANCE|ANNOUNCEMENT|SYSTEM", message = "Type must be LEAVE, PERFORMANCE, ANNOUNCEMENT or SYSTEM")
 	private String type;
 
 	@NotBlank(message = "Status is required")
@@ -37,10 +36,10 @@ public class NotificationDTO {
 	public NotificationDTO() {
 	}
 
-	public NotificationDTO(Long notificationId, String employeeId, String title, String message, String type, String status,
-			Boolean isRead, LocalDateTime createdAt, Long referenceId) {
+	public NotificationDTO(Long notificationId, String employeeId, String title, String message, String type,
+			String status, Boolean isRead, LocalDateTime createdAt, Long referenceId) {
 		this.notificationId = notificationId;
-		this.employeeId =employeeId;
+		this.employeeId = employeeId;
 		this.title = title;
 		this.message = message;
 		this.type = type;

@@ -12,9 +12,7 @@ import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.DepartmentRepository;
 import com.revworkforce.repository.DesignationRepository;
 import com.revworkforce.repository.EmployeeRepository;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,10 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -183,4 +179,5 @@ public class EmployeeManagementServiceImplTest {
 		when(employeeRepository.countByRole("MANAGER")).thenReturn(2L);
 		assertEquals(2, service.countManagers());
 	}
+
 }

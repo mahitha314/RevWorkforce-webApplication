@@ -7,9 +7,9 @@ import com.revworkforce.model.Goal;
 
 @Repository
 public interface GoalRepository extends JpaRepository<Goal, Long> {
-    
+
 	List<Goal> findByEmployee_Manager_Id(Long managerId);
 
-    List<Goal> findByEmployee_Id(Long employeeId);
-    
+	List<Goal> findByEmployee_Id(Long employeeId);
+
 }

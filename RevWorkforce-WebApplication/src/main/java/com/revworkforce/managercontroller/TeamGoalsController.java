@@ -10,45 +10,34 @@ import com.revworkforce.managerservice.TeamGoalsService;
 @RequestMapping("/manager/goals")
 public class TeamGoalsController {
 
-    private final TeamGoalsService service;
+	private final TeamGoalsService service;
 
-    public TeamGoalsController(TeamGoalsService service) {
-        this.service = service;
-    }
+	public TeamGoalsController(TeamGoalsService service) {
+		this.service = service;
+	}
 
-    @GetMapping("/{managerId}")
-    public ResponseEntity<ApiResponse> getGoals(@PathVariable Long managerId) {
+	@GetMapping("/{managerId}")
+	public ResponseEntity<ApiResponse> getGoals(@PathVariable Long managerId) {
 
-        ApiResponse response = service.getTeamGoals(managerId);
+		ApiResponse response = service.getTeamGoals(managerId);
 
-        return ResponseEntity
-                .status(response.getStatus())
-                .body(response);
-    }
+		return ResponseEntity.status(response.getStatus()).body(response);
+	}
 
-    @PutMapping("/update/{managerId}")
-    public ResponseEntity<ApiResponse> updateGoal(
-            @PathVariable Long managerId,
-            @RequestBody GoalDTO dto) {
+	@PutMapping("/update/{managerId}")
+	public ResponseEntity<ApiResponse> updateGoal(@PathVariable Long managerId, @RequestBody GoalDTO dto) {
 
-        ApiResponse response =
-                service.updateGoalProgress(managerId, dto);
+		ApiResponse response = service.updateGoalProgress(managerId, dto);
 
-        return ResponseEntity
-                .status(response.getStatus())
-                .body(response);
-    }
+		return ResponseEntity.status(response.getStatus()).body(response);
+	}
 
-    @GetMapping("/summary/{managerId}")
-    public ResponseEntity<ApiResponse> goalSummary(
-            @PathVariable Long managerId) {
+	@GetMapping("/summary/{managerId}")
+	public ResponseEntity<ApiResponse> goalSummary(@PathVariable Long managerId) {
 
-        ApiResponse response =
-                service.getGoalSummary(managerId);
+		ApiResponse response = service.getGoalSummary(managerId);
 
-        return ResponseEntity
-                .status(response.getStatus())
-                .body(response);
-    }
-    
+		return ResponseEntity.status(response.getStatus()).body(response);
+	}
+
 }

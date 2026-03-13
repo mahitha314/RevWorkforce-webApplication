@@ -3,26 +3,21 @@
 <head>
     <title>Manager Profile</title>
 
-    <!-- Header Fragment (contains global CSS, sidebar styles, topbar styles) -->
     <th:block th:replace="fragments/header :: header('Manager Profile')"></th:block>
 
-    <style>
-
-   
+    <style>  
 
     body {
         background: linear-gradient(135deg, #eef3f9, #ffffff);
         font-family: 'Segoe UI', sans-serif;
     }
 
-    /* Main content area (same spacing as other manager pages) */
     .content {
         margin-left: 240px;
         margin-top: 90px;
         padding: 40px;
     }
 
-    /* Profile Container */
     .profile-container {
         max-width: 1200px;
         margin: auto;
@@ -41,7 +36,6 @@
         box-shadow: 0 35px 75px rgba(0,0,0,0.12);
     }
 
-    /* Avatar */
     .avatar {
         width: 100px;
         height: 100px;
@@ -109,9 +103,7 @@
     .update-btn:hover {
         transform: translateY(-3px);
         box-shadow: 0 15px 30px rgba(25,135,84,0.4);
-    }
-
-   
+    }  
 
     @media (max-width: 992px) {
         .content {
@@ -154,12 +146,9 @@
 
 <body>
 
-
 <div th:replace="fragments/manager-sidebar :: managerSidebar"></div>
 
-
 <div th:replace="fragments/header :: topbar('Profile')"></div>
-
 
 <div class="content">
 

@@ -25,5 +25,5 @@ public interface SystemConfigService {
 	long countDepartments();
 
 	long countDesignations();
-	
+
 }

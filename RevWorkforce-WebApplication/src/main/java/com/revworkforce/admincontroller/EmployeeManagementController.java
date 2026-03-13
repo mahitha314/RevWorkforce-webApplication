@@ -22,134 +22,99 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/admin")
 public class EmployeeManagementController {
 
-    private final EmployeeManagementService employeeManagementService;
-    private final DesignationRepository designationRepository;
-    private final DepartmentRepository departmentRepository;
-    private final EmployeeRepository employeeRepository;
+	private final EmployeeManagementService employeeManagementService;
+	private final DesignationRepository designationRepository;
+	private final DepartmentRepository departmentRepository;
+	private final EmployeeRepository employeeRepository;
 
-    public EmployeeManagementController(
-            EmployeeManagementService employeeManagementService,
-            DesignationRepository designationRepository,
-            DepartmentRepository departmentRepository,
-            EmployeeRepository employeeRepository) {
+	public EmployeeManagementController(EmployeeManagementService employeeManagementService,
+			DesignationRepository designationRepository, DepartmentRepository departmentRepository,
+			EmployeeRepository employeeRepository) {
 
-        this.employeeManagementService = employeeManagementService;
-        this.designationRepository = designationRepository;
-        this.departmentRepository = departmentRepository;
-        this.employeeRepository = employeeRepository;
-    }
-    @PutMapping("/employees/{employeeId}")
-    public ResponseEntity<ApiResponse> updateEmployee(
-            @PathVariable String employeeId,
-            @RequestBody EmployeeDTO dto) {
+		this.employeeManagementService = employeeManagementService;
+		this.designationRepository = designationRepository;
+		this.departmentRepository = departmentRepository;
+		this.employeeRepository = employeeRepository;
+	}
 
-        return employeeManagementService.updateEmployee(employeeId, dto);
-    }
-   
-    @DeleteMapping("/employees/{employeeId}")
-    public ResponseEntity<ApiResponse> deleteEmployee(
-            @PathVariable String employeeId) {
+	@PutMapping("/employees/{employeeId}")
+	public ResponseEntity<ApiResponse> updateEmployee(@PathVariable String employeeId, @RequestBody EmployeeDTO dto) {
 
-        return employeeManagementService.deleteEmployee(employeeId);
-    }
-    
-    @GetMapping("/departments")
-    public ResponseEntity<ApiResponse> getAllDepartments() {
+		return employeeManagementService.updateEmployee(employeeId, dto);
+	}
 
-        List<Department> departments = departmentRepository.findAll();
+	@DeleteMapping("/employees/{employeeId}")
+	public ResponseEntity<ApiResponse> deleteEmployee(@PathVariable String employeeId) {
 
-        return ResponseEntity.ok(
-                new ApiResponse(200,
-                        "Departments fetched successfully",
-                        departments));
-    }
+		return employeeManagementService.deleteEmployee(employeeId);
+	}
 
-    
+	@GetMapping("/departments")
+	public ResponseEntity<ApiResponse> getAllDepartments() {
 
-    @GetMapping("/designations/by-department/{deptId}")
-    public ResponseEntity<ApiResponse> getDesignationsByDepartment(
-            @PathVariable Long deptId) {
+		List<Department> departments = departmentRepository.findAll();
 
-        List<Designation> designations =
-                designationRepository.findByDepartmentId(deptId);
+		return ResponseEntity.ok(new ApiResponse(200, "Departments fetched successfully", departments));
+	}
 
-        return ResponseEntity.ok(
-                new ApiResponse(200,
-                        "Designations fetched successfully",
-                        designations));
-    }
+	@GetMapping("/designations/by-department/{deptId}")
+	public ResponseEntity<ApiResponse> getDesignationsByDepartment(@PathVariable Long deptId) {
 
-    
-    @GetMapping("/managers")
-    public ResponseEntity<ApiResponse> getManagers() {
+		List<Designation> designations = designationRepository.findByDepartmentId(deptId);
 
-        List<Employee> managers =
-                employeeManagementService.getManagers();
+		return ResponseEntity.ok(new ApiResponse(200, "Designations fetched successfully", designations));
+	}
 
-        return ResponseEntity.ok(
-                new ApiResponse(200,
-                        "Managers fetched successfully",
-                        managers));
-    }
+	@GetMapping("/managers")
+	public ResponseEntity<ApiResponse> getManagers() {
 
-   
-    @PostMapping("/employees")
-    public ResponseEntity<ApiResponse> addEmployee(@RequestBody EmployeeDTO dto) {
+		List<Employee> managers = employeeManagementService.getManagers();
 
-        return employeeManagementService.addEmployee(dto);
-    }
-   
+		return ResponseEntity.ok(new ApiResponse(200, "Managers fetched successfully", managers));
+	}
 
-   
+	@PostMapping("/employees")
+	public ResponseEntity<ApiResponse> addEmployee(@RequestBody EmployeeDTO dto) {
 
-    @GetMapping("/employees")
-    public ResponseEntity<ApiResponse> getAllEmployees() {
+		return employeeManagementService.addEmployee(dto);
+	}
 
-        return employeeManagementService.getAllEmployees();
-    }
+	@GetMapping("/employees")
+	public ResponseEntity<ApiResponse> getAllEmployees() {
 
-    
+		return employeeManagementService.getAllEmployees();
+	}
 
-    @GetMapping("/employees/{employeeId}")
-    public ResponseEntity<ApiResponse> getEmployeeById(
-            @PathVariable String employeeId) {
+	@GetMapping("/employees/{employeeId}")
+	public ResponseEntity<ApiResponse> getEmployeeById(@PathVariable String employeeId) {
 
-        return employeeManagementService.getByEmployeeId(employeeId);
-    }
+		return employeeManagementService.getByEmployeeId(employeeId);
+	}
 
-    
-    @GetMapping("/employees/search")
-    public ResponseEntity<ApiResponse> searchEmployees(
-            @RequestParam("q") String query) {
+	@GetMapping("/employees/search")
+	public ResponseEntity<ApiResponse> searchEmployees(@RequestParam("q") String query) {
 
-        return employeeManagementService.searchEmployees(query);
-    }
+		return employeeManagementService.searchEmployees(query);
+	}
 
-    @PutMapping("/employees/{employeeId}/deactivate")
-    public ResponseEntity<ApiResponse> deactivateEmployee(
-            @PathVariable String employeeId,
-            @RequestParam(required = false) String reason) {
+	@PutMapping("/employees/{employeeId}/deactivate")
+	public ResponseEntity<ApiResponse> deactivateEmployee(@PathVariable String employeeId,
+			@RequestParam(required = false) String reason) {
 
-        return employeeManagementService
-                .deactivateEmployee(employeeId, reason);
-    }
+		return employeeManagementService.deactivateEmployee(employeeId, reason);
+	}
 
-    @PutMapping("/employees/{employeeId}/reactivate")
-    public ResponseEntity<ApiResponse> reactivateEmployee(
-            @PathVariable String employeeId,
-            @RequestParam(required = false) String reason) {
+	@PutMapping("/employees/{employeeId}/reactivate")
+	public ResponseEntity<ApiResponse> reactivateEmployee(@PathVariable String employeeId,
+			@RequestParam(required = false) String reason) {
 
-        return employeeManagementService
-                .reactivateEmployee(employeeId, reason);
-    }
+		return employeeManagementService.reactivateEmployee(employeeId, reason);
+	}
 
-    @PutMapping("/employees/{employeeId}/manager/{managerId}")
-    public ResponseEntity<ApiResponse> changeManager(
-            @PathVariable String employeeId,
-            @PathVariable Long managerId) {
+	@PutMapping("/employees/{employeeId}/manager/{managerId}")
+	public ResponseEntity<ApiResponse> changeManager(@PathVariable String employeeId, @PathVariable Long managerId) {
 
-        return employeeManagementService
-                .changeManager(employeeId, managerId);
-    }
+		return employeeManagementService.changeManager(employeeId, managerId);
+	}
 
 }

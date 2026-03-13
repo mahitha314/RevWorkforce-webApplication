@@ -7,7 +7,7 @@ import com.revworkforce.model.Employee;
 import com.revworkforce.model.LeaveBalance;
 
 public interface LeaveManagementService {
-	
+
 	LeaveTypeDTO createLeaveType(LeaveTypeDTO dto);
 
 	List<LeaveTypeDTO> getAllLeaveTypes();
@@ -21,7 +21,7 @@ public interface LeaveManagementService {
 	List<LeaveBalance> getDepartmentLeaveReport(Long departmentId);
 
 	long countLeaves();
-	
+
 	List<Employee> getEmployeesNotAssignedToLeaveType(Long leaveTypeId);
 
 }

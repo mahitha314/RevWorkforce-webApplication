@@ -8,7 +8,8 @@ import com.revworkforce.model.LeaveType;
 @Repository
 public interface LeaveTypeRepository extends JpaRepository<LeaveType, Long> {
 
-    Optional<LeaveType> findByTypeName(String typeName);
-    boolean existsByTypeName(String typeName);
-    
+	Optional<LeaveType> findByTypeName(String typeName);
+
+	boolean existsByTypeName(String typeName);
+
 }

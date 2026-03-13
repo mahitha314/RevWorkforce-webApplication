@@ -11,11 +11,14 @@ import com.revworkforce.model.LeaveType;
 public interface LeaveBalanceRepository extends JpaRepository<LeaveBalance, Long> {
 
 	List<LeaveBalance> findByEmployee(Employee employee);
+
 	List<LeaveBalance> findByEmployee_Id(Long employeeId);
-    Optional<LeaveBalance> findByEmployeeAndLeaveType(Employee employee, LeaveType leaveType);
+
+	Optional<LeaveBalance> findByEmployeeAndLeaveType(Employee employee, LeaveType leaveType);
+
 	@Query("SELECT lb FROM LeaveBalance lb WHERE lb.employee.department.id = :departmentId")
 	List<LeaveBalance> findByDepartmentId(Long departmentId);
-	
+
 	Optional<LeaveBalance> findByEmployee_IdAndLeaveType_Id(Long employeeId, Long leaveTypeId);
 
 }

@@ -32,10 +32,8 @@
 
 <body>
 
-    <!-- SIDEBAR -->
     <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
-    <!-- TOPBAR -->
     <div th:replace="~{fragments/header :: topbar('Manager Notifications')}"></div>
 
     <div class="content-wrapper">
@@ -46,7 +44,6 @@
                     <div class="card shadow border-0 rounded-4">
                         <div class="card-body p-4 p-md-5">
 
-                            <!-- Header -->
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                                 <h3 class="fw-bold mb-0">
                                     <i class="bi bi-bell text-primary me-2"></i>
@@ -66,7 +63,6 @@
                                 </div>
                             </div>
 
-                            <!-- Notification List -->
                             <div th:if="${notifications != null and !#lists.isEmpty(notifications)}">
                                 <div th:each="n : ${notifications}"
                                      th:class="'card mb-3 shadow-sm notification-card ' + (${n.isRead} ? '' : 'border-start border-4 border-primary')">
@@ -103,7 +99,6 @@
                                 </div>
                             </div>
 
-                            <!-- Empty State -->
                             <div th:if="${notifications == null or #lists.isEmpty(notifications)}"
                                  class="text-center text-muted py-5">
                                 <i class="bi bi-bell fs-1"></i>
