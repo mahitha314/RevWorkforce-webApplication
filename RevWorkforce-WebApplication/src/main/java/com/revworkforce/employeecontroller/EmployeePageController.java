@@ -153,7 +153,7 @@ public class EmployeePageController {
 
         return "redirect:/employee/goals";
     }
-
+//goals
     @PostMapping("/goals/update-progress/{id}")
     public String updateProgress(@PathVariable Long id,
                                  @RequestParam int progress,

@@ -29,6 +29,7 @@ public class ActivityLogServiceImpl implements ActivityLogService {
         this.employeeRepository = employeeRepository;
     }
 
+    
     @Override
     public void log(String action, String module, String description, String status, HttpServletRequest request) {
 
