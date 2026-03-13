@@ -87,11 +87,21 @@
                                 </span>
                             </td>
 
-                            <td>
-                                <span class="badge bg-info"
-                                      th:text="${goal.status}">
-                                </span>
-                            </td>
+							<td>
+
+							<span th:if="${goal.progress == 0}" class="badge bg-secondary">
+							NOT_STARTED
+							</span>
+
+							<span th:if="${goal.progress > 0 and goal.progress < 100}" class="badge bg-info">
+							IN_PROGRESS
+							</span>
+
+							<span th:if="${goal.progress == 100}" class="badge bg-success">
+							COMPLETED
+							</span>
+
+							</td>
 
                             <td th:text="${goal.deadline}"></td>
 

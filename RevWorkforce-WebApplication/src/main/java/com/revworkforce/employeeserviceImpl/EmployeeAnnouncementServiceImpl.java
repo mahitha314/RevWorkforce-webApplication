@@ -5,6 +5,8 @@ import com.revworkforce.model.Announcement;
 import com.revworkforce.repository.AnnouncementRepository;
 import com.revworkforce.employeeservice.AnnouncementService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,17 +14,29 @@ import java.util.List;
 @Service
 public class EmployeeAnnouncementServiceImpl implements AnnouncementService {
 
-	private final AnnouncementRepository announcementRepo;
+    private static final Logger logger =
+            LoggerFactory.getLogger(EmployeeAnnouncementServiceImpl.class);
 
-	public EmployeeAnnouncementServiceImpl(AnnouncementRepository announcementRepo) {
-		this.announcementRepo = announcementRepo;
-	}
+    private final AnnouncementRepository announcementRepo;
 
-	@Override
-	public ApiResponse getAllAnnouncements() {
+    public EmployeeAnnouncementServiceImpl(AnnouncementRepository announcementRepo) {
+        this.announcementRepo = announcementRepo;
+        logger.info("EmployeeAnnouncementServiceImpl initialized");
+    }
 
-		List<Announcement> announcements = announcementRepo.findAll();
+    @Override
+    public ApiResponse getAllAnnouncements() {
 
-		return new ApiResponse(200, "Announcements fetched successfully", announcements);
-	}
+        logger.info("Fetching all announcements for employees");
+
+        List<Announcement> announcements = announcementRepo.findAll();
+
+        logger.debug("Total announcements fetched: {}", announcements.size());
+
+        return new ApiResponse(
+                200,
+                "Announcements fetched successfully",
+                announcements
+        );
+    }
 }

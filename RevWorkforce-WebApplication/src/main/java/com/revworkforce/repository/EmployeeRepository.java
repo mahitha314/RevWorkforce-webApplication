@@ -75,4 +75,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 	        )
 	    """)
 	    List<Employee> findEmployeesNotAssignedToLeaveType(@Param("leaveTypeId") Long leaveTypeId);
+		List<Employee> findByEmployeeIdContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+				String keyword, String keyword2, String keyword3, String keyword4);
 }

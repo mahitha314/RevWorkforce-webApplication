@@ -4,7 +4,11 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.revworkforce.dto.ApiResponse;
 import com.revworkforce.dto.GoalDTO;
 import com.revworkforce.dto.NotificationDTO;
@@ -18,102 +22,142 @@ import com.revworkforce.repository.GoalRepository;
 @Service
 public class TeamGoalsServiceImpl implements TeamGoalsService {
 
-	private final GoalRepository goalRepo;
-	private final EmployeeRepository employeeRepo;
-	private final NotificationService notificationService;
+    private static final Logger logger =
+            LoggerFactory.getLogger(TeamGoalsServiceImpl.class);
 
-	public TeamGoalsServiceImpl(GoalRepository goalRepo, EmployeeRepository employeeRepo,
-			NotificationService notificationService) {
-		this.goalRepo = goalRepo;
-		this.employeeRepo = employeeRepo;
-		this.notificationService = notificationService;
-	}
+    private final GoalRepository goalRepo;
+    private final EmployeeRepository employeeRepo;
+    private final NotificationService notificationService;
 
-	@Override
-	public ApiResponse getTeamGoals(Long managerId) {
+    public TeamGoalsServiceImpl(GoalRepository goalRepo,
+                                EmployeeRepository employeeRepo,
+                                NotificationService notificationService) {
+        this.goalRepo = goalRepo;
+        this.employeeRepo = employeeRepo;
+        this.notificationService = notificationService;
 
-		if (!employeeRepo.existsById(managerId)) {
-			return new ApiResponse(404, "Manager not found", null);
-		}
+        logger.info("TeamGoalsServiceImpl initialized");
+    }
 
-		List<Goal> goals = goalRepo.findByEmployee_Manager_Id(managerId);
+    @Override
+    public ApiResponse getTeamGoals(Long managerId) {
 
-		System.out.println("ActivityLog: Manager " + managerId + " viewed team goals at " + LocalDateTime.now());
+        logger.info("Manager {} requested team goals", managerId);
 
-		return new ApiResponse(200, "Team goals fetched successfully", goals);
-	}
+        if (!employeeRepo.existsById(managerId)) {
+            logger.warn("Manager not found with id {}", managerId);
+            return new ApiResponse(404, "Manager not found", null);
+        }
 
-	@Override
-	public ApiResponse updateGoalProgress(Long managerId, GoalDTO dto) {
+        List<Goal> goals = goalRepo.findByEmployee_Manager_Id(managerId);
 
-		Goal goal = goalRepo.findById(dto.getGoalId()).orElse(null);
+        logger.debug("Total goals fetched for manager {}: {}", managerId, goals.size());
 
-		if (goal == null) {
-			throw new ResourceNotFoundException("Goal not found");
-		}
+        return new ApiResponse(200, "Team goals fetched successfully", goals);
+    }
 
-		if (goal.getEmployee().getManager() == null || !goal.getEmployee().getManager().getId().equals(managerId)) {
-			return new ApiResponse(403, "Unauthorized action", null);
-		}
+    @Override
+    public ApiResponse updateGoalProgress(Long managerId, GoalDTO dto) {
 
-		if (dto.getProgress() == null) {
-			return new ApiResponse(400, "Progress is required", null);
-		}
+        logger.info("Manager {} updating goal progress", managerId);
 
-		if (dto.getProgress() < 0 || dto.getProgress() > 100) {
-			return new ApiResponse(400, "Progress must be between 0 and 100", null);
-		}
+        Goal goal = goalRepo.findById(dto.getGoalId()).orElse(null);
 
-		goal.setProgress(dto.getProgress());
+        if (goal == null) {
+            logger.error("Goal not found with id {}", dto.getGoalId());
+            throw new ResourceNotFoundException("Goal not found");
+        }
 
-		if (dto.getProgress() == 100) {
-			goal.setStatus("COMPLETED");
-		} else {
-			goal.setStatus("IN_PROGRESS");
-		}
+        if (goal.getEmployee().getManager() == null ||
+                !goal.getEmployee().getManager().getId().equals(managerId)) {
 
-		goalRepo.save(goal);
+            logger.warn("Unauthorized goal update attempt by manager {}", managerId);
+            return new ApiResponse(403, "Unauthorized action", null);
+        }
 
-		NotificationDTO notification = new NotificationDTO();
-		notification.setEmployeeId(goal.getEmployee().getEmployeeId());
-		notification.setTitle("Goal Progress Updated");
-		notification.setMessage("Your goal progress has been updated to " + dto.getProgress() + "%.");
-		notification.setType("PERFORMANCE"); // GOAL not allowed in DTO
-		notification.setStatus("DELIVERED");
-		notification.setIsRead(false);
-		notification.setCreatedAt(LocalDateTime.now());
-		notification.setReferenceId(goal.getId());
+        if (dto.getProgress() == null) {
+            logger.warn("Progress value missing for goal {}", dto.getGoalId());
+            return new ApiResponse(400, "Progress is required", null);
+        }
 
-		notificationService.createNotification(notification);
+        if (dto.getProgress() < 0 || dto.getProgress() > 100) {
 
-		System.out.println("ActivityLog: Manager " + managerId + " updated goal " + goal.getId() + " for Employee "
-				+ goal.getEmployee().getEmployeeId() + " to progress " + dto.getProgress() + "% at "
-				+ LocalDateTime.now());
+            logger.warn("Invalid progress {} for goal {}",
+                    dto.getProgress(), dto.getGoalId());
 
-		return new ApiResponse(200, "Goal progress updated successfully", goal);
-	}
+            return new ApiResponse(400, "Progress must be between 0 and 100", null);
+        }
 
-	@Override
-	public ApiResponse getGoalSummary(Long managerId) {
+        goal.setProgress(dto.getProgress());
 
-		if (!employeeRepo.existsById(managerId)) {
-			return new ApiResponse(404, "Manager not found", null);
-		}
+        if (dto.getProgress() == 100) {
+            goal.setStatus("COMPLETED");
+        } else {
+            goal.setStatus("IN_PROGRESS");
+        }
 
-		List<Goal> goals = goalRepo.findByEmployee_Manager_Id(managerId);
+        goalRepo.save(goal);
 
-		long total = goals.size();
-		long completed = goals.stream().filter(g -> "COMPLETED".equals(g.getStatus())).count();
-		long inProgress = goals.stream().filter(g -> "IN_PROGRESS".equals(g.getStatus())).count();
-		long assigned = goals.stream().filter(g -> "ASSIGNED".equals(g.getStatus())).count();
+        logger.debug("Goal {} updated to {}% progress",
+                goal.getId(), dto.getProgress());
 
-		Map<String, Object> summary = new HashMap<>();
-		summary.put("totalGoals", total);
-		summary.put("completedGoals", completed);
-		summary.put("inProgressGoals", inProgress);
-		summary.put("assignedGoals", assigned);
+        NotificationDTO notification = new NotificationDTO();
+        notification.setEmployeeId(goal.getEmployee().getEmployeeId());
+        notification.setTitle("Goal Progress Updated");
+        notification.setMessage("Your goal progress has been updated to "
+                + dto.getProgress() + "%.");
+        notification.setType("PERFORMANCE");
+        notification.setStatus("DELIVERED");
+        notification.setIsRead(false);
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setReferenceId(goal.getId());
 
-		return new ApiResponse(200, "Goal summary fetched successfully", summary);
-	}
+        notificationService.createNotification(notification);
 
+        logger.info("Notification sent to employee {} for goal {}",
+                goal.getEmployee().getEmployeeId(),
+                goal.getId());
+
+        return new ApiResponse(200,
+                "Goal progress updated successfully",
+                goal);
+    }
+
+    @Override
+    public ApiResponse getGoalSummary(Long managerId) {
+
+        logger.info("Manager {} requested goal summary", managerId);
+
+        if (!employeeRepo.existsById(managerId)) {
+
+            logger.warn("Manager not found with id {}", managerId);
+            return new ApiResponse(404, "Manager not found", null);
+        }
+
+        List<Goal> goals = goalRepo.findByEmployee_Manager_Id(managerId);
+
+        long total = goals.size();
+        long completed = goals.stream()
+                .filter(g -> "COMPLETED".equals(g.getStatus()))
+                .count();
+        long inProgress = goals.stream()
+                .filter(g -> "IN_PROGRESS".equals(g.getStatus()))
+                .count();
+        long assigned = goals.stream()
+                .filter(g -> "ASSIGNED".equals(g.getStatus()))
+                .count();
+
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("totalGoals", total);
+        summary.put("completedGoals", completed);
+        summary.put("inProgressGoals", inProgress);
+        summary.put("assignedGoals", assigned);
+
+        logger.debug("Goal summary for manager {} -> total: {}, completed: {}, inProgress: {}, assigned: {}",
+                managerId, total, completed, inProgress, assigned);
+
+        return new ApiResponse(200,
+                "Goal summary fetched successfully",
+                summary);
+    }
 }

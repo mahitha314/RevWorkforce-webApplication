@@ -39,9 +39,6 @@ public class AdminController {
 	private final SystemConfigService systemConfigService;
 	private final EmployeeManagementService employeeManagementService;
 	private final SystemActivityLogRepository logRepository;
-	 
-
-	
 
 	public AdminController(AdminService adminService, LeaveManagementService leaveService,
 			EmployeeRepository employeeRepository, HolidayService holidayService,
@@ -100,133 +97,152 @@ public class AdminController {
 	@GetMapping("/employee-management")
 	public String employeeManagementPage(Authentication authentication, Model model) {
 
-	    model.addAttribute("view", "employee");
+		model.addAttribute("view", "employee");
 
-	    String email = authentication.getName();
+		String email = authentication.getName();
 
-	    Employee employee = adminService.getEmployeeByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+		Employee employee = adminService.getEmployeeByEmail(email)
+				.orElseThrow(() -> new RuntimeException("User not found"));
 
-	    model.addAttribute("employee", employee);
+		model.addAttribute("employee", employee);
 
-	    List<Employee> employees = employeeRepository.findAll();
-	    model.addAttribute("employees", employees);
+		List<Employee> employees = employeeRepository.findAll();
+		model.addAttribute("employees", employees);
 
-	    List<Department> departments = systemConfigService.getAllDepartments();
-	    model.addAttribute("departments", departments);
+		List<Department> departments = systemConfigService.getAllDepartments();
+		model.addAttribute("departments", departments);
 
-	    List<Employee> managers = employeeManagementService.getManagers();
-	    model.addAttribute("managers", managers);
+		List<Employee> managers = employeeManagementService.getManagers();
+		model.addAttribute("managers", managers);
 
-	    return "admin/employee-management";
+		return "admin/employee-management";
+	}
+	@GetMapping("/employees/deactivate/{id}")
+	public String deactivateEmployee(@PathVariable Long id) {
+
+	    Employee emp = employeeRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+	    emp.setStatus("INACTIVE");
+	    employeeRepository.save(emp);
+
+	    return "redirect:/admin/employee-management";
+	}
+
+
+	@GetMapping("/employees/activate/{id}")
+	public String activateEmployee(@PathVariable Long id) {
+
+	    Employee emp = employeeRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+	    emp.setStatus("ACTIVE");
+	    employeeRepository.save(emp);
+
+	    return "redirect:/admin/employee-management";
 	}
 
 	@GetMapping("/leave-management")
 	public String leavePage(Authentication authentication, Model model) {
 
-	    model.addAttribute("view", "leave");
+		model.addAttribute("view", "leave");
 
-	    String email = authentication.getName();
+		String email = authentication.getName();
 
-	    Employee employee = adminService.getEmployeeByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+		Employee employee = adminService.getEmployeeByEmail(email)
+				.orElseThrow(() -> new RuntimeException("User not found"));
 
-	    model.addAttribute("employee", employee);
+		model.addAttribute("employee", employee);
 
-	    model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
-	    model.addAttribute("employees", employeeRepository.findAll());
-	    model.addAttribute("departments", systemConfigService.getAllDepartments());
+		model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
+		model.addAttribute("employees", employeeRepository.findAll());
+		model.addAttribute("departments", systemConfigService.getAllDepartments());
 
-	    return "admin/leave-management";
+		return "admin/leave-management";
 	}
 
 	@PostMapping("/leave/type")
 	public String createLeaveType(@RequestParam String typeName, @RequestParam Integer totalDays) {
 
-	    LeaveTypeDTO dto = new LeaveTypeDTO(null, typeName, totalDays);
-	    leaveService.createLeaveType(dto);
+		LeaveTypeDTO dto = new LeaveTypeDTO(null, typeName, totalDays);
+		leaveService.createLeaveType(dto);
 
-	    return "redirect:/admin/leave-management";
+		return "redirect:/admin/leave-management";
 	}
 
 	@PostMapping("/leave/assign")
-	public String assignLeave(@RequestParam Long employeeId,
-	                          @RequestParam Long leaveTypeId,
-	                          @RequestParam int totalDays) {
+	public String assignLeave(@RequestParam Long employeeId, @RequestParam Long leaveTypeId,
+			@RequestParam int totalDays) {
 
-	    leaveService.assignLeaveToEmployee(employeeId, leaveTypeId, totalDays);
+		leaveService.assignLeaveToEmployee(employeeId, leaveTypeId, totalDays);
 
-	    return "redirect:/admin/leave-management";
+		return "redirect:/admin/leave-management";
 	}
 
 	@PostMapping("/leave/adjust")
-	public String adjustLeave(@RequestParam Long employeeId,
-	                          @RequestParam Long leaveTypeId,
-	                          @RequestParam Integer days,
-	                          @RequestParam String reason) {
+	public String adjustLeave(@RequestParam Long employeeId, @RequestParam Long leaveTypeId, @RequestParam Integer days,
+			@RequestParam String reason) {
 
-	    LeaveBalanceDTO dto = new LeaveBalanceDTO();
-	    dto.setEmployeeId(employeeId);
-	    dto.setLeaveTypeId(leaveTypeId);
-	    dto.setDays(days);
-	    dto.setReason(reason);
+		LeaveBalanceDTO dto = new LeaveBalanceDTO();
+		dto.setEmployeeId(employeeId);
+		dto.setLeaveTypeId(leaveTypeId);
+		dto.setDays(days);
+		dto.setReason(reason);
 
-	    leaveService.adjustLeave(dto);
+		leaveService.adjustLeave(dto);
 
-	    return "redirect:/admin/leave-management";
+		return "redirect:/admin/leave-management";
 	}
 
 	@GetMapping("/leave/employee-view")
 	public String viewEmployeeLeave(@RequestParam Long employeeId, Model model) {
 
-	    model.addAttribute("view", "leave");
-	    model.addAttribute("leaveBalances", leaveService.getEmployeeLeaveInfo(employeeId));
-	    model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
-	    model.addAttribute("employees", employeeRepository.findAll());
-	    model.addAttribute("departments", systemConfigService.getAllDepartments());
+		model.addAttribute("view", "leave");
+		model.addAttribute("leaveBalances", leaveService.getEmployeeLeaveInfo(employeeId));
+		model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
+		model.addAttribute("employees", employeeRepository.findAll());
+		model.addAttribute("departments", systemConfigService.getAllDepartments());
 
-	    return "admin/leave-management";
+		return "admin/leave-management";
 	}
 
 	@GetMapping("/leave/department-view")
 	public String viewDepartmentLeave(@RequestParam Long departmentId, Model model) {
 
-	    model.addAttribute("view", "leave");
-	    model.addAttribute("departmentLeaveBalances", leaveService.getDepartmentLeaveReport(departmentId));
-	    model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
-	    model.addAttribute("employees", employeeRepository.findAll());
-	    model.addAttribute("departments", systemConfigService.getAllDepartments());
+		model.addAttribute("view", "leave");
+		model.addAttribute("departmentLeaveBalances", leaveService.getDepartmentLeaveReport(departmentId));
+		model.addAttribute("leaveTypes", leaveService.getAllLeaveTypes());
+		model.addAttribute("employees", employeeRepository.findAll());
+		model.addAttribute("departments", systemConfigService.getAllDepartments());
 
-	    return "admin/leave-management";
+		return "admin/leave-management";
 	}
-	
+
 	@GetMapping("/system-config")
-	public String systemConfig(@RequestParam(required = false) Long deptId,
-	                           Authentication authentication,
-	                           Model model) {
+	public String systemConfig(@RequestParam(required = false) Long deptId, Authentication authentication,
+			Model model) {
 
-	    model.addAttribute("view", "system-config");
+		model.addAttribute("view", "system-config");
 
-	 
-	    String email = authentication.getName();
-	    Employee employee = adminService.getEmployeeByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+		String email = authentication.getName();
+		Employee employee = adminService.getEmployeeByEmail(email)
+				.orElseThrow(() -> new RuntimeException("User not found"));
 
-	    model.addAttribute("employee", employee);
+		model.addAttribute("employee", employee);
 
-	    model.addAttribute("departments", systemConfigService.getAllDepartments());
-	    model.addAttribute("department", new Department());
-	    model.addAttribute("designation", new Designation());
+		model.addAttribute("departments", systemConfigService.getAllDepartments());
+		model.addAttribute("department", new Department());
+		model.addAttribute("designation", new Designation());
 
-	    if (deptId != null) {
-	        Department selected = systemConfigService.getDepartmentById(deptId);
-	        model.addAttribute("selectedDept", selected);
-	        model.addAttribute("designations",
-	                systemConfigService.getDesignationsByDepartmentId(deptId));
-	    }
+		if (deptId != null) {
+			Department selected = systemConfigService.getDepartmentById(deptId);
+			model.addAttribute("selectedDept", selected);
+			model.addAttribute("designations", systemConfigService.getDesignationsByDepartmentId(deptId));
+		}
 
-	    return "admin/system-config";
+		return "admin/system-config";
 	}
+
 	@PostMapping("/departments/save")
 	public String saveDepartment(@ModelAttribute Department department, RedirectAttributes redirectAttributes) {
 
@@ -280,21 +296,20 @@ public class AdminController {
 	@GetMapping("/logs")
 	public String viewAllLogs(Authentication authentication, Model model) {
 
-	    model.addAttribute("view", "logs");
+		model.addAttribute("view", "logs");
 
-	    String email = authentication.getName();
+		String email = authentication.getName();
 
-	    Employee employee = adminService.getEmployeeByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+		Employee employee = adminService.getEmployeeByEmail(email)
+				.orElseThrow(() -> new RuntimeException("User not found"));
 
-	    model.addAttribute("employee", employee);
+		model.addAttribute("employee", employee);
 
-	    List<SystemActivityLog> logs = logRepository.findAllByOrderByCreatedAtDesc();
-	    model.addAttribute("logs", logs);
+		List<SystemActivityLog> logs = logRepository.findAllByOrderByCreatedAtDesc();
+		model.addAttribute("logs", logs);
 
-	    return "admin/activity-logs";
+		return "admin/activity-logs";
 	}
-	
 
 	@GetMapping("/logs/search")
 	public String searchLogs(@RequestParam("keyword") String keyword, Model model) {
@@ -307,49 +322,59 @@ public class AdminController {
 	}
 
 	@GetMapping("/logs/filter")
-	public String filterByDate(@RequestParam("from") String fromDate, @RequestParam("to") String toDate, Model model) {
+	public String filterByDate(@RequestParam(required = false) String from, @RequestParam(required = false) String to,
+			Model model) {
 
-		LocalDateTime start = LocalDate.parse(fromDate).atStartOfDay();
+		LocalDateTime start = null;
+		LocalDateTime end = null;
 
-		LocalDateTime end = LocalDate.parse(toDate).atTime(23, 59, 59);
+		if (from != null && !from.isBlank()) {
+			start = LocalDate.parse(from).atStartOfDay();
+		}
 
-		List<SystemActivityLog> logs = logRepository.findByCreatedAtBetween(start, end);
+		if (to != null && !to.isBlank()) {
+			end = LocalDate.parse(to).atTime(23, 59, 59);
+		}
+
+		List<SystemActivityLog> logs;
+
+		if (start != null && end != null) {
+			logs = logRepository.findByCreatedAtBetween(start, end);
+		} else {
+			logs = logRepository.findAllByOrderByCreatedAtDesc();
+		}
 
 		model.addAttribute("logs", logs);
 
 		return "admin/activity-logs";
 	}
-	
-	
-	
+
 	@GetMapping("/departments/edit/{id}")
 	public String editDepartment(@PathVariable Long id, Model model) {
 
-	    model.addAttribute("view", "system-config");
+		model.addAttribute("view", "system-config");
 
-	    model.addAttribute("departments", systemConfigService.getAllDepartments());
-	    model.addAttribute("department", systemConfigService.getDepartmentById(id));
-	    model.addAttribute("designation", new Designation());
+		model.addAttribute("departments", systemConfigService.getAllDepartments());
+		model.addAttribute("department", systemConfigService.getDepartmentById(id));
+		model.addAttribute("designation", new Designation());
 
-	    return "admin/system-config";
+		return "admin/system-config";
 	}
-	
+
 	@GetMapping("/departments/designation/edit/{id}/{deptId}")
-	public String editDesignation(@PathVariable Long id,
-	                              @PathVariable Long deptId,
-	                              Model model) {
+	public String editDesignation(@PathVariable Long id, @PathVariable Long deptId, Model model) {
 
-	    model.addAttribute("view", "system-config");
+		model.addAttribute("view", "system-config");
 
-	    model.addAttribute("departments", systemConfigService.getAllDepartments());
-	    model.addAttribute("department", new Department());
-	    model.addAttribute("designation", systemConfigService.getDesignationById(id));
+		model.addAttribute("departments", systemConfigService.getAllDepartments());
+		model.addAttribute("department", new Department());
+		model.addAttribute("designation", systemConfigService.getDesignationById(id));
 
-	    Department selectedDept = systemConfigService.getDepartmentById(deptId);
-	    model.addAttribute("selectedDept", selectedDept);
-	    model.addAttribute("designations", systemConfigService.getDesignationsByDepartmentId(deptId));
+		Department selectedDept = systemConfigService.getDepartmentById(deptId);
+		model.addAttribute("selectedDept", selectedDept);
+		model.addAttribute("designations", systemConfigService.getDesignationsByDepartmentId(deptId));
 
-	    return "admin/system-config";
+		return "admin/system-config";
 	}
 
 }

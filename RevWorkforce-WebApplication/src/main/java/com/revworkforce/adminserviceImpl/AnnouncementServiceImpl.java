@@ -3,6 +3,8 @@ package com.revworkforce.adminserviceImpl;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +14,6 @@ import com.revworkforce.dto.NotificationDTO;
 import com.revworkforce.model.Announcement;
 import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.AnnouncementRepository;
-//import com.revworkforce.service.AnnouncementService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -20,83 +21,144 @@ import jakarta.servlet.http.HttpServletRequest;
 @Transactional
 public class AnnouncementServiceImpl implements AnnouncementService {
 
-	private final AnnouncementRepository repository;
-	private final NotificationService notificationService;
-	private final ActivityLogService activityLogService;
-	private final HttpServletRequest request;
+    private static final Logger logger = LoggerFactory.getLogger(AnnouncementServiceImpl.class);
 
-	public AnnouncementServiceImpl(AnnouncementRepository repository, NotificationService notificationService,
-			ActivityLogService activityLogService, HttpServletRequest request) {
-		this.repository = repository;
-		this.notificationService = notificationService;
-		this.activityLogService = activityLogService;
-		this.request = request;
-	}
+    private final AnnouncementRepository repository;
+    private final NotificationService notificationService;
+    private final ActivityLogService activityLogService;
+    private final HttpServletRequest request;
 
-	@Override
-	public Announcement saveAnnouncement(Announcement announcement) {
-		announcement.setPostedDate(LocalDate.now());
-		Announcement announced = repository.save(announcement);
+    public AnnouncementServiceImpl(AnnouncementRepository repository,
+                                   NotificationService notificationService,
+                                   ActivityLogService activityLogService,
+                                   HttpServletRequest request) {
+        this.repository = repository;
+        this.notificationService = notificationService;
+        this.activityLogService = activityLogService;
+        this.request = request;
+        logger.info("AnnouncementServiceImpl initialized");
+    }
 
-		NotificationDTO dto = new NotificationDTO();
-		dto.setTitle("New Company Announcement");
-		dto.setMessage(announced.getTitle() + " - " + announced.getMessage());
-		dto.setType("ANNOUNCEMENT");
-		dto.setStatus("ACTIVE");
-		dto.setReferenceId(announced.getId());
+    @Override
+    public Announcement saveAnnouncement(Announcement announcement) {
 
-		notificationService.createNotificationForAll(dto);
+        logger.info("Saving new announcement with title: {}", announcement.getTitle());
 
-		activityLogService.log("Created Announcement", "Announcement", "Created announcement: " + announced.getTitle(),
-				"SUCCESS", request);
+        announcement.setPostedDate(LocalDate.now());
 
-		return announced;
-	}
+        Announcement announced = repository.save(announcement);
 
-	@Override
-	public Announcement updateAnnouncement(Long id, Announcement announcement) {
-		Announcement existing = repository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Announcement not found"));
+        logger.debug("Announcement saved with id: {}", announced.getId());
 
-		existing.setTitle(announcement.getTitle());
-		existing.setMessage(announcement.getMessage());
+        NotificationDTO dto = new NotificationDTO();
+        dto.setTitle("New Company Announcement");
+        dto.setMessage(announced.getTitle() + " - " + announced.getMessage());
+        dto.setType("ANNOUNCEMENT");
+        dto.setStatus("ACTIVE");
+        dto.setReferenceId(announced.getId());
 
-		Announcement updated = repository.save(existing);
+        logger.info("Sending notification for announcement id: {}", announced.getId());
 
-		NotificationDTO dto = new NotificationDTO();
-		dto.setTitle("Announcement Updated");
-		dto.setMessage("Announcement \"" + existing.getTitle() + "\" has been updated.");
-		dto.setType("ANNOUNCEMENT");
-		dto.setStatus("ACTIVE");
-		dto.setReferenceId(updated.getId());
+        notificationService.createNotificationForAll(dto);
 
-		notificationService.createNotificationForAll(dto);
+        activityLogService.log(
+                "Created Announcement",
+                "Announcement",
+                "Created announcement: " + announced.getTitle(),
+                "SUCCESS",
+                request
+        );
 
-		activityLogService.log("Updated Announcement", "Announcement", "Updated announcement: " + updated.getTitle(),
-				"SUCCESS", request);
+        logger.info("Announcement created successfully: {}", announced.getTitle());
 
-		return updated;
-	}
+        return announced;
+    }
 
-	@Override
-	public void deleteAnnouncement(Long id) {
-		Announcement existing = repository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Announcement not found"));
+    @Override
+    public Announcement updateAnnouncement(Long id, Announcement announcement) {
 
-		repository.delete(existing);
+        logger.info("Updating announcement with id: {}", id);
 
-		activityLogService.log("Deleted Announcement", "Announcement", "Deleted announcement: " + existing.getTitle(),
-				"SUCCESS", request);
-	}
+        Announcement existing = repository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("Announcement not found with id: {}", id);
+                    return new RuntimeException("Announcement not found");
+                });
 
-	@Override
-	public Announcement getAnnouncementById(Long id) {
-		return repository.findById(id).orElseThrow(() -> new RuntimeException("Announcement not found"));
-	}
+        existing.setTitle(announcement.getTitle());
+        existing.setMessage(announcement.getMessage());
 
-	@Override
-	public List<Announcement> getAllAnnouncements() {
-		return repository.findAllByOrderByPostedDateDesc();
-	}
+        Announcement updated = repository.save(existing);
 
+        logger.debug("Announcement updated successfully with id: {}", updated.getId());
+
+        NotificationDTO dto = new NotificationDTO();
+        dto.setTitle("Announcement Updated");
+        dto.setMessage("Announcement \"" + existing.getTitle() + "\" has been updated.");
+        dto.setType("ANNOUNCEMENT");
+        dto.setStatus("ACTIVE");
+        dto.setReferenceId(updated.getId());
+
+        notificationService.createNotificationForAll(dto);
+
+        activityLogService.log(
+                "Updated Announcement",
+                "Announcement",
+                "Updated announcement: " + updated.getTitle(),
+                "SUCCESS",
+                request
+        );
+
+        logger.info("Announcement updated successfully: {}", updated.getTitle());
+
+        return updated;
+    }
+
+    @Override
+    public void deleteAnnouncement(Long id) {
+
+        logger.info("Deleting announcement with id: {}", id);
+
+        Announcement existing = repository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("Announcement not found with id: {}", id);
+                    return new RuntimeException("Announcement not found");
+                });
+
+        repository.delete(existing);
+
+        logger.info("Announcement deleted successfully: {}", existing.getTitle());
+
+        activityLogService.log(
+                "Deleted Announcement",
+                "Announcement",
+                "Deleted announcement: " + existing.getTitle(),
+                "SUCCESS",
+                request
+        );
+    }
+
+    @Override
+    public Announcement getAnnouncementById(Long id) {
+
+        logger.info("Fetching announcement by id: {}", id);
+
+        return repository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("Announcement not found with id: {}", id);
+                    return new RuntimeException("Announcement not found");
+                });
+    }
+
+    @Override
+    public List<Announcement> getAllAnnouncements() {
+
+        logger.info("Fetching all announcements");
+
+        List<Announcement> announcements = repository.findAllByOrderByPostedDateDesc();
+
+        logger.debug("Total announcements fetched: {}", announcements.size());
+
+        return announcements;
+    }
 }

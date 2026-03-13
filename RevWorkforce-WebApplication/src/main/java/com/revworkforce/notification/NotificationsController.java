@@ -29,7 +29,6 @@ public class NotificationsController {
         model.addAttribute("pageTitle", "Notifications");
         model.addAttribute("view", "notifications");
 
-        // get logged-in user
         String email = authentication.getName();
 
         Employee employee = adminService.getEmployeeByEmail(email)

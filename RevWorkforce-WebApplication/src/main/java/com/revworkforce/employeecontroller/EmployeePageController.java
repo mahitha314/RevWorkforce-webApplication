@@ -18,39 +18,42 @@ import java.util.List;
 @RequestMapping("/employee")
 public class EmployeePageController {
 
-    private final EmployeeRepository employeeRepo;
-    private final LeaveBalanceRepository leaveBalanceRepo;
-    private final LeaveTypeRepository leaveTypeRepo;
-    private final LeaveRequestRepository leaveRequestRepo;
-    private final GoalRepository goalRepository;
-    private final AnnouncementRepository announcementRepo;
-    private final NotificationRepository notificationRepo;
-    private final PerformanceReviewRepository performanceReviewRepo;
-    private final HolidayRepository holidayRepository;
-    private final PasswordEncoder passwordEncoder;
+	private final EmployeeRepository employeeRepo;
+	private final LeaveBalanceRepository leaveBalanceRepo;
+	private final LeaveTypeRepository leaveTypeRepo;
+	private final LeaveRequestRepository leaveRequestRepo;
+	private final GoalRepository goalRepository;
+	private final AnnouncementRepository announcementRepo;
+	private final NotificationRepository notificationRepo;
+	private final PerformanceReviewRepository performanceReviewRepo;
+	private final HolidayRepository holidayRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final LeaveApprovalRepository leaveApprovalRepo;
 
-    public EmployeePageController(EmployeeRepository employeeRepo,
-                                  LeaveBalanceRepository leaveBalanceRepo,
-                                  LeaveTypeRepository leaveTypeRepo,
-                                  LeaveRequestRepository leaveRequestRepo,
-                                  GoalRepository goalRepository,
-                                  AnnouncementRepository announcementRepo,
-                                  NotificationRepository notificationRepo,
-                                  PerformanceReviewRepository performanceReviewRepo,
-                                  HolidayRepository holidayRepository,
-                                  PasswordEncoder passwordEncoder) {
+	public EmployeePageController(EmployeeRepository employeeRepo,
+	                              LeaveBalanceRepository leaveBalanceRepo,
+	                              LeaveTypeRepository leaveTypeRepo,
+	                              LeaveRequestRepository leaveRequestRepo,
+	                              GoalRepository goalRepository,
+	                              AnnouncementRepository announcementRepo,
+	                              NotificationRepository notificationRepo,
+	                              PerformanceReviewRepository performanceReviewRepo,
+	                              HolidayRepository holidayRepository,
+	                              PasswordEncoder passwordEncoder,
+	                              LeaveApprovalRepository leaveApprovalRepo) {
 
-        this.employeeRepo = employeeRepo;
-        this.leaveBalanceRepo = leaveBalanceRepo;
-        this.leaveTypeRepo = leaveTypeRepo;
-        this.leaveRequestRepo = leaveRequestRepo;
-        this.goalRepository = goalRepository;
-        this.announcementRepo = announcementRepo;
-        this.notificationRepo = notificationRepo;
-        this.performanceReviewRepo = performanceReviewRepo;
-        this.holidayRepository = holidayRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+	    this.employeeRepo = employeeRepo;
+	    this.leaveBalanceRepo = leaveBalanceRepo;
+	    this.leaveTypeRepo = leaveTypeRepo;
+	    this.leaveRequestRepo = leaveRequestRepo;
+	    this.goalRepository = goalRepository;
+	    this.announcementRepo = announcementRepo;
+	    this.notificationRepo = notificationRepo;
+	    this.performanceReviewRepo = performanceReviewRepo;
+	    this.holidayRepository = holidayRepository;
+	    this.passwordEncoder = passwordEncoder;
+	    this.leaveApprovalRepo = leaveApprovalRepo;
+	}
 
     private Employee getEmployee() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -200,7 +203,20 @@ public class EmployeePageController {
 
         return "redirect:/employee/leave";
     }
+    @PostMapping("/cancel/{id}")
+    public String cancelLeave(@PathVariable Long id,
+                              RedirectAttributes redirectAttributes) {
 
+        LeaveRequest leave = leaveRequestRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Leave not found"));
+
+        leaveRequestRepo.delete(leave);
+
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Leave cancelled successfully!");
+
+        return "redirect:/employee/leave#status";
+    }
     @GetMapping("/performance")
     public String performancePage(Model model) {
 
@@ -274,12 +290,10 @@ public class EmployeePageController {
 
         model.addAttribute("view", "holidays");
         model.addAttribute("employee", getEmployee());
-        model.addAttribute("holidays",
-                holidayRepository.findByHolidayDateGreaterThanEqualOrderByHolidayDateAsc(LocalDate.now()));
+        model.addAttribute("holidays", holidayRepository.findAll());
 
         return "employee/holidays";
     }
-
     @GetMapping("/directory")
     public String directoryPage(@RequestParam(required = false) String keyword, Model model) {
 

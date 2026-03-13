@@ -11,6 +11,8 @@ import com.revworkforce.repository.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
@@ -20,7 +22,10 @@ import java.util.stream.Collectors;
 @Service
 public class LeaveRequestServiceImpl implements LeaveRequestService {
 
-	private final LeaveRequestRepository leaveRequestRepo;
+    private static final Logger logger =
+            LoggerFactory.getLogger(LeaveRequestServiceImpl.class);
+
+    private final LeaveRequestRepository leaveRequestRepo;
     private final EmployeeRepository employeeRepo;
     private final LeaveTypeRepository leaveTypeRepo;
     private final NotificationService notificationService;
@@ -41,33 +46,43 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         this.notificationService = notificationService;
         this.activityLogService = activityLogService;
         this.request = request;
+
+        logger.info("LeaveRequestServiceImpl initialized");
     }
 
-    
     @Override
     public ApiResponse applyLeave(LeaveRequestDTO dto) {
 
+        logger.info("Employee {} applying leave", dto.getEmployeeId());
+
         Employee employee = employeeRepo.findById(dto.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> {
+                    logger.error("Employee not found with id {}", dto.getEmployeeId());
+                    return new RuntimeException("Employee not found");
+                });
 
         LeaveType leaveType = leaveTypeRepo.findById(dto.getLeaveTypeId())
-                .orElseThrow(() -> new RuntimeException("Leave type not found"));
+                .orElseThrow(() -> {
+                    logger.error("Leave type not found with id {}", dto.getLeaveTypeId());
+                    return new RuntimeException("Leave type not found");
+                });
 
-        LeaveRequest request = new LeaveRequest();
-        request.setEmployee(employee);
-        request.setLeaveType(leaveType);
-        request.setStartDate(dto.getStartDate());
-        request.setEndDate(dto.getEndDate());
-        request.setReason(dto.getReason());
+        LeaveRequest leaveRequest = new LeaveRequest();
+        leaveRequest.setEmployee(employee);
+        leaveRequest.setLeaveType(leaveType);
+        leaveRequest.setStartDate(dto.getStartDate());
+        leaveRequest.setEndDate(dto.getEndDate());
+        leaveRequest.setReason(dto.getReason());
 
-       
         LeaveApproval approval = new LeaveApproval();
         approval.setStatus("PENDING");
-        approval.setLeaveRequest(request);
+        approval.setLeaveRequest(leaveRequest);
 
-        request.setLeaveApproval(approval);
+        leaveRequest.setLeaveApproval(approval);
 
-        leaveRequestRepo.save(request);
+        leaveRequestRepo.save(leaveRequest);
+
+        logger.debug("Leave request saved for employee {}", employee.getEmployeeId());
 
         NotificationDTO notification = new NotificationDTO();
         notification.setTitle("New Leave Request");
@@ -77,16 +92,16 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         notification.setType("LEAVE");
         notification.setStatus("ACTIVE");
 
-        notificationService.createNotificationForAll(notification); // change if manager-specific
+        notificationService.createNotificationForAll(notification);
+
+        logger.info("Notification sent for leave request");
 
         activityLogService.log(
                 "LEAVE_APPLIED",
                 "Leave Management",
-                "Employee " + employee.getFirstName()
-                        + " applied leave",
+                "Employee " + employee.getFirstName() + " applied leave",
                 "SUCCESS",
                 request
-                
         );
 
         return new ApiResponse(201,
@@ -97,26 +112,35 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     @Override
     public ApiResponse cancelLeave(Long leaveId) {
 
-        LeaveRequest request = leaveRequestRepo.findById(leaveId)
-                .orElseThrow(() -> new RuntimeException("Leave not found"));
+        logger.info("Cancelling leave request {}", leaveId);
 
-        if (request.getLeaveApproval() != null &&
-                !request.getLeaveApproval().getStatus().equalsIgnoreCase("PENDING")) {
+        LeaveRequest leaveRequest = leaveRequestRepo.findById(leaveId)
+                .orElseThrow(() -> {
+                    logger.error("Leave request not found with id {}", leaveId);
+                    return new RuntimeException("Leave not found");
+                });
+
+        if (leaveRequest.getLeaveApproval() != null &&
+                !leaveRequest.getLeaveApproval().getStatus().equalsIgnoreCase("PENDING")) {
+
+            logger.warn("Attempt to cancel non-pending leave {}", leaveId);
 
             return new ApiResponse(400,
                     "Only Pending Leave Can Be Cancelled",
                     null);
         }
 
-        if (request.getLeaveApproval() != null) {
-            request.getLeaveApproval().setStatus("CANCELLED");
+        if (leaveRequest.getLeaveApproval() != null) {
+            leaveRequest.getLeaveApproval().setStatus("CANCELLED");
         }
 
-        leaveRequestRepo.save(request);
+        leaveRequestRepo.save(leaveRequest);
+
+        logger.debug("Leave request {} cancelled", leaveId);
 
         NotificationDTO notification = new NotificationDTO();
         notification.setTitle("Leave Cancelled");
-        notification.setMessage(request.getEmployee().getFirstName()
+        notification.setMessage(leaveRequest.getEmployee().getFirstName()
                 + " cancelled their leave request.");
         notification.setType("LEAVE");
         notification.setStatus("ACTIVE");
@@ -126,8 +150,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         activityLogService.log(
                 "LEAVE_CANCELLED",
                 "Leave Management",
-                "Leave cancelled by "
-                        + request.getEmployee().getFirstName(),
+                "Leave cancelled by " + leaveRequest.getEmployee().getFirstName(),
                 "SUCCESS",
                 request
         );
@@ -137,11 +160,12 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 null);
     }
 
-   
     @Override
     public ApiResponse getLeaveHistory(Long employeeId) {
 
-    	List<LeaveRequest> leaves =
+        logger.info("Fetching leave history for employee {}", employeeId);
+
+        List<LeaveRequest> leaves =
                 leaveRequestRepo.findByEmployee_IdOrderByStartDateDesc(employeeId);
 
         List<LeaveRequestDTO> dtoList =
@@ -149,14 +173,17 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                         .map(this::convertToDTO)
                         .collect(Collectors.toList());
 
+        logger.debug("Total leave history records: {}", dtoList.size());
+
         return new ApiResponse(200,
                 "Leave History Fetched Successfully",
                 dtoList);
     }
 
-    
     @Override
     public ApiResponse getPendingLeaves(Long employeeId) {
+
+        logger.info("Fetching pending leaves for employee {}", employeeId);
 
         List<LeaveRequest> leaves =
                 leaveRequestRepo.findByEmployee_Id(employeeId);
@@ -167,17 +194,23 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                         .filter(dto -> dto.getStatus().equalsIgnoreCase("PENDING"))
                         .collect(Collectors.toList());
 
+        logger.debug("Pending leaves count: {}", dtoList.size());
+
         return new ApiResponse(200,
                 "Pending Leaves Fetched Successfully",
                 dtoList);
     }
 
-   
     @Override
     public ApiResponse getLeaveById(Long leaveId) {
 
+        logger.info("Fetching leave details for id {}", leaveId);
+
         LeaveRequest leave = leaveRequestRepo.findById(leaveId)
-                .orElseThrow(() -> new RuntimeException("Leave not found"));
+                .orElseThrow(() -> {
+                    logger.error("Leave not found with id {}", leaveId);
+                    return new RuntimeException("Leave not found");
+                });
 
         LeaveRequestDTO dto = convertToDTO(leave);
 
@@ -186,7 +219,6 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 dto);
     }
 
-    
     private LeaveRequestDTO convertToDTO(LeaveRequest leave) {
 
         long days = ChronoUnit.DAYS.between(
@@ -205,14 +237,13 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 leave.getId(),
                 leave.getEmployee() != null ? leave.getEmployee().getId() : null,
                 leave.getEmployee() != null
-                        ? leave.getEmployee().getFirstName() + " " +
-                          leave.getEmployee().getLastName()
+                        ? leave.getEmployee().getFirstName() + " "
+                        + leave.getEmployee().getLastName()
                         : "N/A",
                 leave.getLeaveType() != null ? leave.getLeaveType().getId() : null,
                 leave.getLeaveType() != null
                         ? leave.getLeaveType().getTypeName()
                         : "N/A",
-
                 leave.getStartDate(),
                 leave.getEndDate(),
                 (int) days,

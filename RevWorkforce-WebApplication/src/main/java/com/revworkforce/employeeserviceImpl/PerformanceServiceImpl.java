@@ -12,19 +12,23 @@ import com.revworkforce.notification.NotificationService;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.PerformanceReviewRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 @Transactional
 public class PerformanceServiceImpl implements PerformanceService {
 
-	private final PerformanceReviewRepository reviewRepo;
+    private static final Logger logger =
+            LoggerFactory.getLogger(PerformanceServiceImpl.class);
+
+    private final PerformanceReviewRepository reviewRepo;
     private final EmployeeRepository employeeRepo;
     private final NotificationService notificationService;
     private final ActivityLogService activityLogService;
@@ -33,19 +37,25 @@ public class PerformanceServiceImpl implements PerformanceService {
                                   EmployeeRepository employeeRepo,
                                   NotificationService notificationService,
                                   ActivityLogService activityLogService) {
+
         this.reviewRepo = reviewRepo;
         this.employeeRepo = employeeRepo;
         this.notificationService = notificationService;
         this.activityLogService = activityLogService;
+
+        logger.info("PerformanceServiceImpl initialized");
     }
 
-   
     @Override
     public ApiResponse createSelfReview(Long employeeId, PerformanceReviewDTO dto) {
 
+        logger.info("Creating self performance review for employee {}", employeeId);
+
         Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+                .orElseThrow(() -> {
+                    logger.error("Employee not found with id {}", employeeId);
+                    return new EmployeeNotFoundException("Employee not found");
+                });
 
         PerformanceReview review = new PerformanceReview();
         review.setEmployee(employee);
@@ -59,8 +69,9 @@ public class PerformanceServiceImpl implements PerformanceService {
         review.setSubmittedDate(LocalDate.now());
 
         PerformanceReview saved = reviewRepo.save(review);
-        
-     // Activity Log
+
+        logger.debug("Performance review draft created with id {}", saved.getId());
+
         activityLogService.log(
                 employee.getId(),
                 "Created self performance review draft"
@@ -76,15 +87,21 @@ public class PerformanceServiceImpl implements PerformanceService {
     @Override
     public ApiResponse getEmployeeReviews(Long employeeId) {
 
+        logger.info("Fetching performance reviews for employee {}", employeeId);
+
         employeeRepo.findById(employeeId)
-                .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found"));
+                .orElseThrow(() -> {
+                    logger.error("Employee not found with id {}", employeeId);
+                    return new EmployeeNotFoundException("Employee not found");
+                });
 
         List<PerformanceReviewDTO> reviews =
                 reviewRepo.findByEmployee_Id(employeeId)
                         .stream()
                         .map(this::mapToDTO)
                         .collect(Collectors.toList());
+
+        logger.debug("Total reviews fetched: {}", reviews.size());
 
         return new ApiResponse(
                 200,
@@ -93,23 +110,28 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-  
     @Override
     public ApiResponse submitReview(Long reviewId) {
 
+        logger.info("Submitting performance review {}", reviewId);
+
         PerformanceReview review = reviewRepo.findById(reviewId)
-                .orElseThrow(() ->
-                        new RuntimeException("Review not found"));
+                .orElseThrow(() -> {
+                    logger.error("Performance review not found with id {}", reviewId);
+                    return new RuntimeException("Review not found");
+                });
 
         review.setStatus("Submitted");
         review.setSubmittedDate(LocalDate.now());
 
         reviewRepo.save(review);
-        
+
         Employee employee = review.getEmployee();
 
-       
         if (employee.getManager() != null) {
+
+            logger.info("Sending notification to manager {} for submitted review",
+                    employee.getManager().getId());
 
             NotificationDTO notificationDTO = new NotificationDTO();
             notificationDTO.setTitle("Performance Review Submitted");
@@ -121,7 +143,6 @@ public class PerformanceServiceImpl implements PerformanceService {
             notificationService.createNotification(notificationDTO);
         }
 
-        // Activity Log
         activityLogService.log(
                 employee.getId(),
                 "Submitted performance review"
@@ -134,15 +155,21 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    
     @Override
     public ApiResponse deleteReview(Long reviewId) {
 
+        logger.info("Deleting performance review {}", reviewId);
+
         PerformanceReview review = reviewRepo.findById(reviewId)
-                .orElseThrow(() ->
-                        new RuntimeException("Review not found"));
+                .orElseThrow(() -> {
+                    logger.error("Performance review not found with id {}", reviewId);
+                    return new RuntimeException("Review not found");
+                });
 
         if ("Submitted".equalsIgnoreCase(review.getStatus())) {
+
+            logger.warn("Attempt to delete submitted review {}", reviewId);
+
             return new ApiResponse(
                     400,
                     "Submitted review cannot be deleted",
@@ -151,8 +178,9 @@ public class PerformanceServiceImpl implements PerformanceService {
         }
 
         reviewRepo.delete(review);
-        
-     // Activity Log
+
+        logger.debug("Performance review {} deleted", reviewId);
+
         activityLogService.log(
                 review.getEmployee().getId(),
                 "Deleted performance review draft"
