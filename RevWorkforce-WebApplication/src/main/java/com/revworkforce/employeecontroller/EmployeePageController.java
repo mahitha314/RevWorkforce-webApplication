@@ -274,8 +274,7 @@ public class EmployeePageController {
 
         model.addAttribute("view", "holidays");
         model.addAttribute("employee", getEmployee());
-        model.addAttribute("holidays",
-                holidayRepository.findByHolidayDateGreaterThanEqualOrderByHolidayDateAsc(LocalDate.now()));
+        model.addAttribute("holidays", holidayRepository.findAll());
 
         return "employee/holidays";
     }
@@ -343,5 +342,20 @@ public class EmployeePageController {
         model.addAttribute("performanceRating", performanceRating);
 
         return "employee/employee-dashboard";
+    }
+    
+    @PostMapping("/cancel/{id}")
+    public String cancelLeave(@PathVariable Long id,
+                              RedirectAttributes redirectAttributes) {
+
+        LeaveRequest leave = leaveRequestRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Leave not found"));
+
+        leaveRequestRepo.delete(leave);
+
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Leave cancelled successfully!");
+
+        return "redirect:/employee/leave#status";
     }
 }

@@ -3,58 +3,53 @@
 
 <head>
     <th:block th:replace="~{fragments/header :: header('Leave Management')}"></th:block>
-	<style>
-	       body {
-	           margin: 0;
-	           overflow-x: hidden;
-	       }
 
-	      
-	       .layout {
-	           display: flex;
-	       }
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
 
-	       
-	       .main-content {
-	           margin-top: 60px;      /* Topbar height */
-	           margin-left: 250px;    /* Sidebar width */
-	           padding: 30px;
-	           width: 100%;
-	           transition: all 0.3s ease;
-	       }
+        .layout {
+            display: flex;
+        }
 
-	      
-	       @media (max-width: 768px) {
-	           .main-content {
-	               margin-left: 0;
-	               padding: 20px;
-	           }
-	       }
+        .main-content {
+            margin-top: 60px;
+            margin-left: 250px;
+            padding: 30px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
 
-	       .table-responsive {
-	           overflow-x: auto;
-	       }
-	   </style>
-	</head>
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+    </style>
+</head>
 
 <body>
-
 
 <div th:replace="~{fragments/header :: topbar('Leave Management')}"></div>
 
 <div class="layout">
 
-  
     <div th:replace="~{fragments/employee-sidebar :: sidebar}"></div>
 
-   
     <div class="main-content">
 
         <div class="container-fluid">
 
             <h4 class="mb-4">Leave Management</h4>
 
-            
+            <!-- Tabs -->
             <ul class="nav nav-pills mb-4 flex-wrap gap-2">
 
                 <li class="nav-item">
@@ -97,7 +92,7 @@
 
             <div class="tab-content">
 
-                
+                <!-- APPLY LEAVE -->
                 <div class="tab-pane fade show active" id="apply">
 
                     <div class="card shadow-sm">
@@ -116,14 +111,11 @@
                                 <span th:text="${errorMessage}"></span>
                             </div>
 
-                            <form th:action="@{/employee/apply-leave}"
-                                  method="post">
+                            <form th:action="@{/employee/apply-leave}" method="post">
 
                                 <div class="mb-3">
                                     <label class="form-label">Leave Type</label>
-                                    <select name="leaveTypeId"
-                                            class="form-select"
-                                            required>
+                                    <select name="leaveTypeId" class="form-select" required>
                                         <option th:each="type : ${leaveTypes}"
                                                 th:value="${type.id}"
                                                 th:text="${type.typeName}">
@@ -132,6 +124,7 @@
                                 </div>
 
                                 <div class="row">
+
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Start Date</label>
                                         <input type="date"
@@ -147,6 +140,7 @@
                                                class="form-control"
                                                required>
                                     </div>
+
                                 </div>
 
                                 <div class="mb-3">
@@ -156,9 +150,7 @@
                                               required></textarea>
                                 </div>
 
-                                <button class="btn btn-primary">
-                                    Apply Leave
-                                </button>
+                                <button class="btn btn-primary">Apply Leave</button>
 
                             </form>
 
@@ -167,7 +159,8 @@
 
                 </div>
 
-           
+
+                <!-- LEAVE BALANCE -->
                 <div class="tab-pane fade" id="balance">
 
                     <div class="card shadow-sm">
@@ -175,6 +168,7 @@
 
                             <div class="table-responsive">
                                 <table class="table table-bordered text-center align-middle">
+
                                     <thead class="table-dark">
                                     <tr>
                                         <th>Leave Type</th>
@@ -185,6 +179,7 @@
                                     </thead>
 
                                     <tbody>
+
                                     <tr th:each="balance : ${leaveBalances}">
                                         <td th:text="${balance.leaveType.typeName}"></td>
                                         <td th:text="${balance.totalLeaves}"></td>
@@ -197,7 +192,9 @@
                                             No Leave Balance Available
                                         </td>
                                     </tr>
+
                                     </tbody>
+
                                 </table>
                             </div>
 
@@ -205,123 +202,134 @@
                     </div>
 
                 </div>
-		
-		<div class="tab-pane fade" id="status">
 
-		    <div class="card shadow-sm">
-		        <div class="card-body">
 
-		            <table class="table table-bordered text-center align-middle">
-		                <thead class="table-dark">
-		                <tr>
-		                    <th>Leave Type</th>
-		                    <th>Start</th>
-		                    <th>End</th>
-		                    <th>Status</th>
-		                    <th>Action</th>
-		                </tr>
-		                </thead>
+                <!-- LEAVE STATUS -->
+                <div class="tab-pane fade" id="status">
 
-		                <tbody>
+                    <div class="card shadow-sm">
+                        <div class="card-body">
 
-		                <tr th:each="leave : ${leaves}">
-		                    <td th:text="${leave.leaveType.typeName}"></td>
-		                    <td th:text="${leave.startDate}"></td>
-		                    <td th:text="${leave.endDate}"></td>
+                            <div class="table-responsive">
 
-		                    
-		                    <td>
+                                <table class="table table-bordered text-center align-middle">
 
-		                       
-		                        <span th:if="${leave.leaveApproval == null}"
-		                              class="badge bg-warning text-dark">
-		                            Pending
-		                        </span>
+                                    <thead class="table-dark">
+                                    <tr>
+                                        <th>Leave Type</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
 
-		                       
-		                        <span th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'APPROVED'}"
-		                              class="badge bg-success">
-		                            Approved
-		                        </span>
+                                    <tbody>
 
-		                        
-		                        <span th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'REJECTED'}"
-		                              class="badge bg-danger">
-		                            Rejected
-		                        </span>
+                                    <tr th:each="leave : ${leaves}">
 
-		                    </td>
+                                        <td th:text="${leave.leaveType.typeName}"></td>
+                                        <td th:text="${leave.startDate}"></td>
+                                        <td th:text="${leave.endDate}"></td>
+										<td>
 
-		                    
-		                    <td>
+										<span th:if="${leave.leaveApproval == null}"
+										      class="badge bg-warning text-dark">
+										    Pending
+										</span>
 
-		                      
-		                        <form th:if="${leave.leaveApproval == null}"
-		                              th:action="@{'/employee/cancel/' + ${leave.id}}"
-		                              method="post">
+										<span th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'APPROVED'}"
+										      class="badge bg-success">
+										    Approved
+										</span>
 
-		                            <button type="submit"
-		                                    class="btn btn-sm btn-outline-danger">
-		                                Cancel
-		                            </button>
-		                        </form>
+										<span th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'REJECTED'}"
+										      class="badge bg-danger">
+										    Rejected
+										</span>
 
-		                      
-		                        <span th:if="${leave.leaveApproval != null}">-</span>
+										<span th:if="${leave.leaveApproval != null and leave.leaveApproval.status == 'CANCELLED'}"
+										      class="badge bg-secondary">
+										    Cancelled
+										</span>
 
-		                    </td>
+										</td>
 
-		                </tr>
 
-		              
-		                <tr th:if="${#lists.isEmpty(leaves)}">
-		                    <td colspan="5" class="text-muted">
-		                        No Leave Requests Found
-		                    </td>
-		                </tr>
+                                        <!-- ACTION -->
+                                        <td>
 
-		                </tbody>
+                                            <form th:if="${leave.leaveApproval == null}"
+                                                  th:action="@{'/employee/cancel/' + ${leave.id}}"
+                                                  method="post">
 
-		            </table>
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('Are you sure you want to cancel this leave?')">
+                                                    Cancel
+                                                </button>
 
-		        </div>
-		    </div>
+                                            </form>
 
-		</div>
-       
-        <div class="tab-pane fade" id="history">
+                                            <span th:if="${leave.leaveApproval != null}">-</span>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
+                                        </td>
 
-                    <table class="table table-bordered text-center align-middle">
-                        <thead class="table-dark">
-                        <tr>
-                            <th>Leave Type</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>Reason</th>
-                        </tr>
-                        </thead>
+                                    </tr>
 
-                        <tbody>
-                        <tr th:each="leave : ${leaves}">
-                            <td th:text="${leave.leaveType.typeName}"></td>
-                            <td th:text="${leave.startDate}"></td>
-                            <td th:text="${leave.endDate}"></td>
-                            <td th:text="${leave.reason}"></td>
-                        </tr>
+                                    <tr th:if="${#lists.isEmpty(leaves)}">
+                                        <td colspan="5" class="text-muted">
+                                            No Leave Requests Found
+                                        </td>
+                                    </tr>
 
-                        <tr th:if="${#lists.isEmpty(leaves)}">
-                            <td colspan="4" class="text-muted">
-                                No Leave History Available
-                            </td>
-                        </tr>
-                        </tbody>
+                                    </tbody>
 
-                    </table>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
 
                 </div>
+
+
+                <!-- HISTORY -->
+                <div class="tab-pane fade" id="history">
+
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+
+                            <table class="table table-bordered text-center align-middle">
+
+                                <thead class="table-dark">
+                                <tr>
+                                    <th>Leave Type</th>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th>Reason</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+                                <tr th:each="leave : ${leaves}">
+                                    <td th:text="${leave.leaveType.typeName}"></td>
+                                    <td th:text="${leave.startDate}"></td>
+                                    <td th:text="${leave.endDate}"></td>
+                                    <td th:text="${leave.reason}"></td>
+                                </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
@@ -329,7 +337,6 @@
     </div>
 
 </div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
