@@ -1,88 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<<<<<<< HEAD
-<body>
 
-	<div th:fragment="header">
-
-		<div class="header">
-			<div style="background:#111827;color:white;padding:15px;">
-				<h2>RevWorkForce HRM</h2>
-			</div>
-
-			<div class="right-section">
-
-				
-				<div class="notification-wrapper">
-					<div class="notification-icon" onclick="toggleDropdown()">
-						🔔
-						<span class="badge" id="notificationCount">0</span>
-					</div>
-
-					<div class="notification-dropdown" id="notificationDropdown">
-						<ul id="notificationList"></ul>
-					</div>
-				</div>
-
-				<div class="profile">
-					Ravi Kumar (Manager)
-				</div>
-
-			</div>
-		</div>
-
-	</div>
-
-	<script>
-
-		const token = localStorage.getItem("token");
-		const managerId = 1; 
-
-		function loadNotifications() {
-
-			fetch(`/manager/notifications/${managerId}`, {
-				headers: {"Authorization": "Bearer " + token}
-			})
-				.then(res => res.json())
-				.then(data => {
-
-					const list = document.getElementById("notificationList");
-					const badge = document.getElementById("notificationCount");
-
-					list.innerHTML = "";
-					badge.innerText = data.length;
-
-					if (data.length === 0) {
-						list.innerHTML = "<li>No Notifications</li>";
-						return;
-					}
-
-					data.forEach(n => {
-						list.innerHTML += `
-                <li>
-                    ${n.message}
-                    <br>
-                    <small>${n.createdAt}</small>
-                </li>
-            `;
-					});
-				});
-		}
-
-		function toggleDropdown() {
-			const dropdown = document.getElementById("notificationDropdown");
-			dropdown.style.display =
-				dropdown.style.display === "block" ? "none" : "block";
-		}
-
-		document.addEventListener("DOMContentLoaded", loadNotifications);
-
-	</script>
-
-</body>
-=======
-<!-- ================= HEADER FRAGMENT ================= -->
 <head th:fragment="header(title)">
 
     <title th:text="${title}">RevWorkForce</title>
@@ -100,7 +19,7 @@
             margin: 0;
         }
 
-        /* ================= SIDEBAR ================= */
+      
         .sidebar {
             height: 100vh;
             width: 240px;
@@ -135,7 +54,7 @@
             background-color: rgba(255,255,255,0.28);
         }
 
-        /* ================= TOPBAR ================= */
+       
         .topbar {
             position: fixed;
             top: 0;
@@ -189,15 +108,7 @@
             position: relative;
         }
 
-        .notify-dot {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            width: 8px;
-            height: 8px;
-            background: red;
-            border-radius: 50%;
-        }
+      
 
         /* ================= CONTENT ================= */
         .content {
@@ -221,7 +132,7 @@
 </head>
 
 
-<!-- ================= TOPBAR FRAGMENT ================= -->
+
 <div th:fragment="topbar(pageTitle)">
 
 <div class="topbar d-flex justify-content-between align-items-center">
@@ -237,22 +148,20 @@
         </div>
     </a>
 
-    <!-- Right: Notification + Logged in Name -->
+   
     <div class="topbar-actions">
-        <button class="icon-btn" type="button" onclick="openNotifications()" title="Notifications">
-            <i class="bi bi-bell"></i>
-            <span class="notify-dot"></span>
-        </button>
+       
+           
+      
 
 		<span>
 		    Welcome,
-		    <span th:text="${employee != null ? employee.firstName + ' ' + employee.lastName : 'User'}"></span>
+		    <span th:text="${employee != null ? employee.firstName + ' ' + employee.lastName : ''}"></span>
 		</span>
     </div>
 
 </div>
 
 </div>
->>>>>>> 944634d64525c94d45f2e839b6217a836dd74da4
 
 </html>

@@ -1,78 +1,64 @@
-<<<<<<< HEAD
-<div class="sidebar" th:fragment="sidebar">
-
-    <ul>
-        <li><a th:href="@{/manager/dashboard}">Dashboard</a></li>
-        <li><a th:href="@{/manager/profile}">My Profile</a></li>
-        <li><a th:href="@{/manager/team-leaves}">Leave Requests</a></li>
-        <li><a th:href="@{/manager/performance_review}">Performance Reviews</a></li>
-        <li><a th:href="@{/manager/team-goals}">Team Goals</a></li>
-        <li><a th:href="@{/manager/team-structure}">Team Structure</a></li>
-        <li><a th:href="@{/logout}">Logout</a></li>
-    </ul>
-=======
 <div th:fragment="sidebar(view)" class="sidebar">
 
     <h4 class="text-center mb-4">RevWorkForce</h4>
 
-    <!-- Dashboard -->
+   
     <a th:href="@{/admin/dashboard}"
-       th:classappend="${view == null} ? ' active' : ''">
+       th:classappend="${view == 'dashboard'} ? ' active' : ''">
         <i class="bi bi-speedometer2"></i> Dashboard
     </a>
 
-    <!-- My Profile -->
+    
     <a th:href="@{/admin/profile}"
        th:classappend="${view == 'profile'} ? ' active' : ''">
         <i class="bi bi-person-circle"></i> My Profile
     </a>
 
-    <!-- Employee Management -->
+   
     <a th:href="@{/admin/employee-management}"
        th:classappend="${view == 'employee'} ? ' active' : ''">
         <i class="bi bi-people"></i> Employee Management
     </a>
 
-    <!-- Leave Management -->
+    
     <a th:href="@{/admin/leave-management}"
        th:classappend="${view == 'leave'} ? ' active' : ''">
         <i class="bi bi-calendar-check"></i> Leave Management
     </a>
 
-    <!-- Holiday Calendar -->
+    
     <a th:href="@{/admin/holiday}"
        th:classappend="${view == 'holiday'} ? ' active' : ''">
         <i class="bi bi-calendar-event"></i> Holiday Calendar
     </a>
 
-    <!-- Announcements -->
+   
     <a th:href="@{/admin/announcement}"
        th:classappend="${view == 'announcement'} ? ' active' : ''">
         <i class="bi bi-megaphone"></i> Announcements
     </a>
 
-    <!-- Departments -->
+    
     <a th:href="@{/admin/system-config}"
        th:classappend="${view == 'system-config'} ? ' active' : ''">
         <i class="bi bi-gear"></i> Departments
     </a>
 
-	<!-- Notifications -->
+	
 	<a th:href="@{/ui/notifications}"
 	   th:classappend="${view == 'notifications'} ? ' active' : ''">
 	    <i class="bi bi-bell"></i> Notifications
 	</a>
 
-    <!-- Activity Logs -->
+    
     <a th:href="@{/admin/logs}"
        th:classappend="${view == 'logs'} ? ' active' : ''">
         <i class="bi bi-bar-chart-line"></i> Activity Logs
     </a>
 
-    <!-- Logout -->
+   
     <a th:href="@{/logout}">
         <i class="bi bi-box-arrow-right"></i> Logout
     </a>
->>>>>>> 944634d64525c94d45f2e839b6217a836dd74da4
 
 </div>

@@ -26,14 +26,14 @@
 </head>
 
 <body>
-	<	<!-- TOPBAR -->
+	
 	<th:block th:replace="~{fragments/header :: topbar('System Configuration')}"></th:block>
 
-	<!-- SIDEBAR -->
+
 	<th:block th:replace="~{fragments/sidebar :: sidebar(${view})}"></th:block>
 	<div class="content">
 	<div class="container-fluid mt-4">
-		<!-- Success Alert -->
+		
 		<div th:if="${successMessage}" 
 		     class="alert alert-success alert-dismissible fade show mt-3" 
 		     role="alert">
@@ -45,7 +45,7 @@
 		</div>
 	    <div class="row">
 
-	        <!-- ================= LEFT SIDE - DEPARTMENTS ================= -->
+	       
 	        <div class="col-md-5">
 
 	            <div class="card shadow-sm">
@@ -55,12 +55,12 @@
 
 	                <div class="card-body">
 
-	                    <!-- ✅ Add Department Form -->
+	                   
 						<form th:action="@{/admin/departments/save}"
 						      method="post"
 						      th:object="${department}">
 
-						    <!-- Hidden ID for Update -->
+						  
 						    <input type="hidden" th:field="*{id}" />
 
 						    <div class="mb-3">
@@ -72,21 +72,21 @@
 						               required>
 						    </div>
 
-						    <!-- ADD BUTTON -->
+						  
 						    <button type="submit"
 						            class="btn btn-success w-100"
 						            th:if="${department.id == null}">
 						        Add Department
 						    </button>
 
-						    <!-- UPDATE BUTTON -->
+						    
 						    <button type="submit"
 						            class="btn btn-primary w-100"
 						            th:if="${department.id != null}">
 						        Update Department
 						    </button>
 
-						    <!-- CANCEL BUTTON -->
+						   
 						    <a th:href="@{/admin/system-config}"
 						       class="btn btn-secondary w-100 mt-2"
 						       th:if="${department.id != null}">
@@ -97,7 +97,7 @@
 
 	                    <hr>
 
-	                    <!-- Department List -->
+	                   
 	                    <h6 class="mb-3">Existing Departments</h6>
 
 						<table class="table table-bordered table-hover">
@@ -111,7 +111,7 @@
 						    <tbody>
 						        <tr th:each="dept : ${departments}">
 
-						            <!-- Department Name (Clickable) -->
+						            
 						            <td>
 						                <a class="fw-bold text-decoration-none"
 						                   th:href="@{/admin/system-config(deptId=${dept.id})}"
@@ -119,16 +119,16 @@
 						                </a>
 						            </td>
 
-						            <!-- Actions -->
+						           
 						            <td>
 
-						                <!-- EDIT -->
+						               
 						                <a th:href="@{/admin/system-config(editDeptId=${dept.id})}"
 						                   class="btn btn-sm btn-warning me-2">
 						                    Edit
 						                </a>
 
-						                <!-- DELETE -->
+						            
 										<a href="javascript:void(0);"
 										   th:attr="onclick=|confirmDeleteDept(${dept.id})|"
 										   class="btn btn-sm btn-danger">
@@ -147,7 +147,7 @@
 	        </div>
 
 
-	        <!-- ================= RIGHT SIDE - DESIGNATIONS ================= -->
+
 	        <div class="col-md-7">
 
 	            <div th:if="${selectedDept != null}">
@@ -162,12 +162,12 @@
 
 	                    <div class="card-body">
 
-	                        <!-- ✅ Add Designation -->
+	                       
 							<form th:action="@{/admin/departments/designation/save/{deptId}(deptId=${selectedDept.id})}"
 							      method="post"
 							      th:object="${designation}">
 
-							    <!-- Hidden ID -->
+							  
 							    <input type="hidden" th:field="*{id}" />
 
 							    <div class="mb-3">
@@ -179,21 +179,21 @@
 							               required>
 							    </div>
 
-							    <!-- ADD -->
+							    
 							    <button type="submit"
 							            class="btn btn-success w-100"
 							            th:if="${designation.id == null}">
 							        Add Designation
 							    </button>
 
-							    <!-- UPDATE -->
+							    
 							    <button type="submit"
 							            class="btn btn-primary w-100"
 							            th:if="${designation.id != null}">
 							        Update Designation
 							    </button>
 
-							    <!-- CANCEL -->
+							  
 							    <a th:href="@{/admin/system-config(deptId=${selectedDept.id})}"
 							       class="btn btn-secondary w-100 mt-2"
 							       th:if="${designation.id != null}">
@@ -204,7 +204,7 @@
 
 	                        <hr>
 
-	                        <!-- Designation List -->
+	                       
 	                        <h6 class="mb-3">Existing Designations</h6>
 
 	                        <table class="table table-bordered table-hover">
@@ -221,7 +221,7 @@
 
 									<td>
 
-									    <!-- EDIT -->
+									    
 									    <a th:href="@{/admin/system-config(
 									            deptId=${selectedDept.id},
 									            editDesId=${des.id})}"
@@ -229,7 +229,7 @@
 									        Edit
 									    </a>
 
-									    <!-- DELETE -->
+									   
 										<a href="javascript:void(0);"
 										   th:attr="onclick=|confirmDeleteDes(${des.id}, ${selectedDept.id})|"
 										   class="btn btn-sm btn-danger">
@@ -246,7 +246,7 @@
 
 	            </div>
 
-	            <!-- If no department selected -->
+	           
 	            <div th:if="${selectedDept == null}">
 	                <div class="alert alert-warning">
 	                    Select a department from the left to manage its designations.
@@ -263,7 +263,6 @@
 	<div th:replace="~{fragments/footer :: footer}"></div>
 
 	
-	<!-- SweetAlert CDN -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<script>

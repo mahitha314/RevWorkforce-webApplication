@@ -2,16 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<<<<<<< HEAD
-	<title>Performance Reviews</title>
-	<link rel="stylesheet" th:href="@{/css/manager.css}">
-=======
     <title>Team Performance Reviews</title>
 
-    <!-- Global Header -->
+
     <th:block th:replace="~{fragments/header :: header('Team Performance Reviews')}"></th:block>
 
-    <!-- SweetAlert -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -19,7 +15,7 @@
             background: #f4f6f9;
         }
 
-        /* ===== FIXED LAYOUT STRUCTURE ===== */
+    
 
         .content-wrapper {
             margin-left: 240px;   /* sidebar width */
@@ -54,134 +50,17 @@
             border-radius: 8px;
         }
     </style>
->>>>>>> 944634d64525c94d45f2e839b6217a836dd74da4
 </head>
 
 <body>
 
-<<<<<<< HEAD
-	<div th:replace="~{fragments/header :: header}"></div>
-	<div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-	<div class="main-content">
-
-		<div class="card">
-			<h2>Performance Reviews – 2026</h2>
-
-			<table id="reviewTable">
-				<thead>
-					<tr>
-						<th>Employee</th>
-						<th>Self Rating</th>
-						<th>Status</th>
-						<th>Action</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
-		</div>
-
-
-		<div id="reviewModal" class="modal">
-			<div class="modal-content">
-				<h3>Manager Review</h3>
-
-				<label>Manager Rating:</label>
-				<select id="managerRating">
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-				</select>
-
-				<br><br>
-
-				<label>Manager Feedback:</label>
-				<textarea id="managerFeedback" rows="4"></textarea>
-
-				<br><br>
-
-				<button onclick="submitReview()" class="primary-btn">
-					Submit Review
-				</button>
-				<button onclick="closeModal()">Cancel</button>
-			</div>
-		</div>
-
-	</div>
-
-	<script>
-
-		const token = localStorage.getItem("token");
-		const managerId = 1;
-
-		let selectedReviewId = null;
-
-		fetch(`/manager/performance/pending/${managerId}`, {
-			headers: {"Authorization": "Bearer " + token}
-		})
-			.then(res => res.json())
-			.then(data => {
-
-				const table = document.querySelector("#reviewTable tbody");
-				table.innerHTML = "";
-
-				data.forEach(review => {
-					table.innerHTML += `
-        <tr>
-            <td>${review.employeeName}</td>
-            <td>${review.selfRating}/5</td>
-            <td>${review.status}</td>
-            <td>
-                <button class="primary-btn" onclick="openReview(${review.reviewId})">
-                    Review
-                </button>
-            </td>
-        </tr>`;
-				});
-			});
-
-		function openReview(reviewId) {
-			selectedReviewId = reviewId;
-			document.getElementById("reviewModal").style.display = "block";
-		}
-
-		function closeModal() {
-			document.getElementById("reviewModal").style.display = "none";
-		}
-
-		function submitReview() {
-
-			const rating = document.getElementById("managerRating").value;
-			const feedback = document.getElementById("managerFeedback").value;
-
-			fetch(`/manager/performance/review/${selectedReviewId}?rating=${rating}&feedback=${feedback}&managerId=${managerId}`, {
-				method: "PUT",
-				headers: {"Authorization": "Bearer " + token}
-			})
-				.then(res => {
-					if (res.ok) {
-						alert("Review Submitted Successfully");
-						location.reload();
-					} else {
-						alert("Error submitting review");
-					}
-				});
-		}
-
-	</script>
-
-</body>
-
-=======
-    <!-- Sidebar -->
+  
     <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
-    <!-- Topbar -->
+    
     <div th:replace="~{fragments/header :: topbar('Team Performance Reviews')}"></div>
 
-    <!-- ===== MAIN CONTENT ===== -->
+   
     <div class="content-wrapper">
 
         <div class="container-fluid">
@@ -196,7 +75,7 @@
 
     </div>
 
-    <!-- Get Manager ID -->
+    
     <script th:inline="javascript">
         let managerId = /*[[${managerId}]]*/ 0;
     </script>
@@ -323,5 +202,4 @@
     </script>
 
 </body>
->>>>>>> 944634d64525c94d45f2e839b6217a836dd74da4
 </html>

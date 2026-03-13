@@ -81,9 +81,7 @@ public class AnnouncementServiceImplTest {
 				any(HttpServletRequest.class));
 	}
 
-	// ==============================
-	// UPDATE - Positive
-	// ==============================
+	
 	@Test
 	public void updateAnnouncement_Positive() {
 
